@@ -99,7 +99,7 @@ const Mural: React.FC = () => {
     if (!selectedProfessor) return null;
 
     return (
-        <div className="h-screen w-full bg-[#008080] relative overflow-hidden font-sans cursor-default select-none">
+        <div className="h-screen w-full bg-[#008080] relative overflow-hidden font-sans select-none">
             <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/pinstripe-dark.png')]"></div>
 
             {/* Background Subject Icons */}

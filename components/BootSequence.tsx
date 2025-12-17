@@ -70,7 +70,7 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
       playProcessingNoise();
       
       bootLines.forEach((line, index) => {
-        const lineDelay = Math.random() * 500 + 150; // Slower for detail
+        const lineDelay = Math.random() * 400 + 100;
         delay += lineDelay;
         
         setTimeout(() => {
@@ -91,7 +91,7 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
 
   return (
     <div className="h-screen w-full bg-black flex flex-col items-center justify-center text-white font-mono-tech relative overflow-hidden">
-      <div className="crt-container absolute inset-0 w-full h-full pointer-events-none z-50"></div>
+      <div className="crt-container z-50"></div>
       
       <AnimatePresence mode="wait">
         {phase === 'prompt' && (
@@ -109,10 +109,22 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
             </p>
             <div className="flex flex-col gap-6">
               <div className="flex gap-4 justify-center">
-                <motion.button onClick={() => handleChoice('yes')} whileHover={{ scale: 1.1, backgroundColor: "rgba(34, 197, 94, 0.2)" }} className="px-10 py-3 border-2 border-green-500 text-green-500 font-bold uppercase tracking-widest">[ SIM ]</motion.button>
-                <motion.button onClick={() => handleChoice('no')} whileHover={{ scale: 1.1, backgroundColor: "rgba(239, 68, 68, 0.2)" }} className="px-10 py-3 border-2 border-red-500 text-red-500 font-bold uppercase tracking-widest">[ NÃO ]</motion.button>
+                <motion.button 
+                  onClick={() => handleChoice('yes')} 
+                  whileHover={{ scale: 1.05, backgroundColor: "rgba(34, 197, 94, 0.2)" }} 
+                  className="px-10 py-3 border-2 border-green-500 text-green-500 font-bold uppercase tracking-widest transition-colors relative z-30"
+                >
+                  [ SIM ]
+                </motion.button>
+                <motion.button 
+                  onClick={() => handleChoice('no')} 
+                  whileHover={{ scale: 1.05, backgroundColor: "rgba(239, 68, 68, 0.2)" }} 
+                  className="px-10 py-3 border-2 border-red-500 text-red-500 font-bold uppercase tracking-widest transition-colors relative z-30"
+                >
+                  [ NÃO ]
+                </motion.button>
               </div>
-              <button onClick={handleSkip} className="text-[10px] text-gray-600 hover:text-green-500 transition-colors uppercase tracking-[0.2em]">Pular e forçar tela cheia</button>
+              <button onClick={handleSkip} className="text-[10px] text-gray-600 hover:text-green-500 transition-colors uppercase tracking-[0.2em] relative z-30">Pular e forçar tela cheia</button>
             </div>
           </motion.div>
         )}
@@ -122,14 +134,20 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
             key="joke"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="z-20 text-center max-w-lg p-10 bg-red-900/10 border-2 border-red-500"
+            className="z-20 text-center max-w-lg p-10 bg-red-900/10 border-2 border-red-500 shadow-[0_0_40px_rgba(239,68,68,0.2)]"
           >
             <AlertTriangle size={64} className="mx-auto mb-6 text-red-500" />
-            <h1 className="text-2xl text-red-500 mb-4 font-bold">ERRO DE PERMISSÃO</h1>
-            <p className="text-white mb-8 font-mono">
-              O SIGAA detectou uma tentativa de fuga da realidade acadêmica. O botão "NÃO" foi desabilitado por decreto da reitoria.
+            <h1 className="text-2xl text-red-500 mb-4 font-bold uppercase">Erro de Permissão</h1>
+            <p className="text-white mb-8 font-mono text-sm leading-relaxed">
+              O SIGAA detectou uma tentativa de fuga da realidade acadêmica. O botão "NÃO" foi desabilitado por decreto da reitoria para preservar sua produtividade.
             </p>
-            <motion.button onClick={() => setPhase('prompt')} className="px-8 py-3 bg-red-600 text-white font-bold uppercase">Entendido (Aceitar Destino)</motion.button>
+            <motion.button 
+              onClick={() => setPhase('prompt')} 
+              whileHover={{ scale: 1.05 }}
+              className="px-8 py-3 bg-red-600 text-white font-bold uppercase tracking-widest shadow-lg relative z-30"
+            >
+              Entendido (Aceitar Destino)
+            </motion.button>
           </motion.div>
         )}
 
@@ -138,7 +156,7 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
             key="booting"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="w-full h-full p-8 md:p-12 overflow-y-auto font-mono-tech text-green-500 text-sm md:text-lg"
+            className="w-full h-full p-8 md:p-12 overflow-y-auto font-mono-tech text-green-500 text-sm md:text-lg scrollbar-retro"
           >
             <div className="max-w-4xl mx-auto flex flex-col gap-2">
               <div className="flex justify-between border-b border-green-900 pb-2 mb-4 opacity-50">

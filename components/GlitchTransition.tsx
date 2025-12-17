@@ -125,7 +125,7 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
 
   if (phase === 'loading') {
     return (
-      <div className="min-h-screen bg-[#dcdcdc] flex items-center justify-center flex-col p-12 font-sans border-8 border-white">
+      <div className="min-h-screen bg-[#dcdcdc] flex items-center justify-center flex-col p-12 font-sans border-8 border-white overflow-hidden">
         <button onClick={() => setPhase('error')} className="absolute top-6 right-6 text-[10px] text-gray-500 hover:text-blue-700 flex items-center gap-2 uppercase font-black border-2 border-gray-400 px-3 py-1 shadow-sm">
             <FastForward size={14}/> Ignorar Troll Loading
         </button>
@@ -148,7 +148,7 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
 
   if (phase === 'error') {
     return (
-      <div className="min-h-screen bg-[#0000AA] text-white font-mono flex items-center justify-center p-12 cursor-none select-none relative overflow-hidden">
+      <div className="min-h-screen bg-[#0000AA] text-white font-mono flex items-center justify-center p-12 select-none relative overflow-hidden">
         <div className="max-w-4xl w-full space-y-8 relative z-10">
           <div className="bg-white text-[#0000AA] inline-block px-4 py-1 font-black text-2xl mb-8">UERN_HALT_RECOVERY</div>
           <p className="text-3xl font-bold leading-tight">

@@ -64,14 +64,14 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <div className="cursor-pixel">
-      <UserContext.Provider value={{ 
-        selectedProfessor, setSelectedProfessor, unlockedAchievements, unlockAchievement,
-        lastUnlocked, setLastUnlocked, gameStage, advanceStage, resetGame
-      }}>
+    <UserContext.Provider value={{ 
+      selectedProfessor, setSelectedProfessor, unlockedAchievements, unlockAchievement,
+      lastUnlocked, setLastUnlocked, gameStage, advanceStage, resetGame
+    }}>
+      <div className="min-h-screen w-full flex flex-col relative overflow-hidden">
         {children}
-      </UserContext.Provider>
-    </div>
+      </div>
+    </UserContext.Provider>
   );
 };
 

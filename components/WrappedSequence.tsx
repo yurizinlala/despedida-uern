@@ -14,22 +14,20 @@ const TOTAL_SLIDES = 11;
 const AUTO_PLAY_DELAY = 6000;
 
 const containerVariants = {
-  hidden: { opacity: 0, scale: 1.05 },
+  hidden: { opacity: 0 },
   visible: { 
-    opacity: 1, 
-    scale: 1,
-    transition: { staggerChildren: 0.15, delayChildren: 0.2, duration: 0.8 }
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.1, duration: 0.5 }
   },
-  exit: { opacity: 0, scale: 0.95, transition: { duration: 0.4 } }
+  exit: { opacity: 0, transition: { duration: 0.3 } }
 };
 
 const itemVariants = {
-  hidden: { y: 30, opacity: 0, filter: 'blur(10px)' },
+  hidden: { y: 20, opacity: 0 },
   visible: { 
     y: 0, 
-    opacity: 1, 
-    filter: 'blur(0px)',
-    transition: { type: "spring", stiffness: 80, damping: 15 }
+    opacity: 1,
+    transition: { type: "spring", stiffness: 100, damping: 20 }
   }
 };
 
@@ -86,11 +84,11 @@ const WrappedSequence: React.FC = () => {
   }, [currentSlide, isPaused, nextSlide]);
 
   return (
-    <div className="h-screen w-full bg-black text-white overflow-hidden relative font-body select-none transition-colors duration-1000 will-change-contents">
+    <div className="h-screen w-full bg-black text-white overflow-hidden relative font-body select-none transition-colors duration-1000">
       <motion.div 
         className="absolute inset-0 z-0" 
-        animate={{ background: `radial-gradient(circle at center, ${currentColor}22 0%, #000000 100%)` }} 
-        transition={{ duration: 1.5 }} 
+        animate={{ backgroundColor: currentColor }} 
+        style={{ opacity: 0.1, transition: 'background-color 1.5s ease' }} 
       />
       
       {/* ProgressBar Top */}
@@ -98,7 +96,7 @@ const WrappedSequence: React.FC = () => {
         {Array.from({ length: TOTAL_SLIDES }).map((_, i) => (
           <div key={i} className="h-1 flex-1 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm cursor-pointer" onClick={() => {setCurrentSlide(i); setTimeLeft(0);}}>
              <motion.div 
-                className="h-full bg-white shadow-[0_0_8px_white]" 
+                className="h-full bg-white" 
                 initial={{ width: "0%" }} 
                 animate={{ width: i < currentSlide ? "100%" : i === currentSlide ? `${timeLeft}%` : "0%" }} 
                 transition={{ duration: 0.1, ease: "linear" }} 
@@ -124,7 +122,7 @@ const WrappedSequence: React.FC = () => {
       </motion.button>
 
       <AnimatePresence mode="wait">
-        <motion.div key={currentSlide} variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="h-full w-full flex flex-col items-center justify-center p-8 relative z-10 pointer-events-none">
+        <motion.div key={currentSlide} variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="h-full w-full flex flex-col items-center justify-center p-8 relative z-10 pointer-events-none will-change-transform">
           {currentSlide === 0 && (
             <div className="text-center">
               <motion.div variants={itemVariants} className="text-[10px] font-mono-tech mb-6 text-white/50 tracking-[0.8em] uppercase">YEAR IN REVIEW {new Date().getFullYear()}</motion.div>
@@ -136,12 +134,12 @@ const WrappedSequence: React.FC = () => {
             <div className="text-center w-full max-w-2xl">
                <motion.div variants={itemVariants} className="mb-8"><Clock size={48} className="mx-auto text-white/40" /></motion.div>
                <motion.h2 variants={itemVariants} className="text-xs uppercase tracking-[0.4em] mb-4 opacity-50">Carga Horária de Sofrimento</motion.h2>
-               <motion.div variants={itemVariants} className="font-display text-[10rem] md:text-[14rem] leading-none tracking-tighter text-white shadow-sm"><Counter value={wrapped.totalHours} /></motion.div>
+               <motion.div variants={itemVariants} className="font-display text-[10rem] md:text-[14rem] leading-none tracking-tighter text-white"><Counter value={wrapped.totalHours} /></motion.div>
                <motion.div variants={itemVariants} className="text-2xl font-bold mt-4 tracking-widest text-white/80">HORAS NO SIGAA</motion.div>
             </div>
           )}
           {currentSlide === 2 && (
-            <motion.div variants={itemVariants} className="bg-[#f0f0f0] text-black p-10 max-w-sm w-full font-mono text-xs shadow-[25px_25px_0px_rgba(255,255,255,0.05)] rotate-1 relative border-t-[10px] border-blue-600">
+            <motion.div variants={itemVariants} className="bg-[#f0f0f0] text-black p-10 max-w-sm w-full font-mono text-xs shadow-[15px_15px_0px_rgba(255,255,255,0.05)] rotate-1 relative border-t-[10px] border-blue-600">
                <div className="absolute -top-3 -left-3 w-8 h-8 bg-yellow-400 border-2 border-black rotate-[-15deg] flex items-center justify-center font-bold">!</div>
                <div className="flex justify-between items-end border-b-2 border-black pb-4 mb-8"><div><h1 className="text-2xl font-black italic">EXTRATO ACADÊMICO</h1><p className="text-[9px] opacity-60">REF: SEMESTRE_LOUCURA_25</p></div></div>
                <div className="space-y-4 mb-10">
@@ -155,9 +153,9 @@ const WrappedSequence: React.FC = () => {
           )}
           {currentSlide === 3 && (
             <div className="w-full max-w-5xl flex flex-col md:flex-row items-center justify-around gap-16 px-12">
-               <motion.div variants={itemVariants} className="text-center group"><div className="w-40 h-40 rounded-full border-2 border-white/20 mx-auto mb-6 flex items-center justify-center bg-white/5 backdrop-blur-lg overflow-hidden relative"><span className="text-6xl z-10">🧑‍🎓</span><div className="absolute inset-0 bg-red-500/20 blur-2xl"></div></div><h3 className="text-sm font-bold uppercase opacity-50 mb-2">ALUNOS (MÉDIA)</h3><div className="text-6xl font-display"><Counter value={wrapped.comparison.studentValue} /></div></motion.div>
+               <motion.div variants={itemVariants} className="text-center group"><div className="w-40 h-40 rounded-full border-2 border-white/20 mx-auto mb-6 flex items-center justify-center bg-white/5 backdrop-blur-lg overflow-hidden relative"><span className="text-6xl z-10">🧑‍🎓</span></div><h3 className="text-sm font-bold uppercase opacity-50 mb-2">ALUNOS (MÉDIA)</h3><div className="text-6xl font-display"><Counter value={wrapped.comparison.studentValue} /></div></motion.div>
                <motion.div variants={itemVariants} className="text-center flex flex-col items-center"><Swords size={40} className="mb-4 text-yellow-500 animate-pulse" /><h2 className="text-xl font-bold uppercase bg-white/10 px-6 py-3 border border-white/20 rounded-full backdrop-blur-md">{wrapped.comparison.label}</h2></motion.div>
-               <motion.div variants={itemVariants} className="text-center group"><div className="w-40 h-40 rounded-full border-2 border-white/20 mx-auto mb-6 flex items-center justify-center bg-white/5 backdrop-blur-lg overflow-hidden relative"><span className="text-6xl z-10">👨‍🏫</span><div className="absolute inset-0 bg-green-500/20 blur-2xl"></div></div><h3 className="text-sm font-bold uppercase opacity-50 mb-2">VOCÊ (DOCENTE)</h3><div className="text-6xl font-display"><Counter value={wrapped.comparison.profValue} /></div></motion.div>
+               <motion.div variants={itemVariants} className="text-center group"><div className="w-40 h-40 rounded-full border-2 border-white/20 mx-auto mb-6 flex items-center justify-center bg-white/5 backdrop-blur-lg overflow-hidden relative"><span className="text-6xl z-10">👨‍🏫</span></div><h3 className="text-sm font-bold uppercase opacity-50 mb-2">VOCÊ (DOCENTE)</h3><div className="text-6xl font-display"><Counter value={wrapped.comparison.profValue} /></div></motion.div>
             </div>
           )}
           {currentSlide === 4 && (
@@ -166,9 +164,9 @@ const WrappedSequence: React.FC = () => {
               <div className="relative h-72 flex items-end justify-between gap-3">
                  <div className="absolute inset-x-0 bottom-0 h-[2px] bg-white/10"></div>
                  {[40, 60, 35, 80, 50, 95, 100, 70, 45].map((h, i) => (
-                   <motion.div key={i} initial={{ height: 0 }} animate={{ height: `${h}%` }} transition={{ duration: 1, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }} className={`w-full rounded-t-lg relative group ${h === 100 ? 'bg-gradient-to-t from-red-600 to-red-400 shadow-[0_0_30px_rgba(239,68,68,0.4)]' : 'bg-white/10 hover:bg-white/20 transition-colors'}`}>
+                   <motion.div key={i} initial={{ height: 0 }} animate={{ height: `${h}%` }} transition={{ duration: 1, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }} className={`w-full rounded-t-lg relative group ${h === 100 ? 'bg-gradient-to-t from-red-600 to-red-400' : 'bg-white/10 hover:bg-white/20 transition-colors'}`}>
                      {h === 100 && (
-                       <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: -60, opacity: 1 }} transition={{ delay: 1.2 }} className="absolute -top-4 left-1/2 -translate-x-1/2 w-56 text-center"><div className="bg-white text-black font-black text-[10px] p-3 rounded-lg shadow-2xl uppercase tracking-tighter">{wrapped.peakSeason.event}</div><div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[10px] border-t-white mx-auto mt-[-2px]"></div></motion.div>
+                       <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: -60, opacity: 1 }} transition={{ delay: 1.0 }} className="absolute -top-4 left-1/2 -translate-x-1/2 w-56 text-center"><div className="bg-white text-black font-black text-[10px] p-3 rounded-lg shadow-2xl uppercase tracking-tighter">{wrapped.peakSeason.event}</div></motion.div>
                      )}
                    </motion.div>
                  ))}
@@ -178,12 +176,10 @@ const WrappedSequence: React.FC = () => {
           )}
           {currentSlide === 5 && (
             <div className="relative w-full h-full flex flex-col items-center justify-center">
-               <motion.div animate={{ rotate: 360, scale: [1, 1.15, 1] }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 50%, ${wrapped.aura.color}22, transparent 65%)` }} />
                <motion.div variants={itemVariants} className="z-10 bg-white/[0.03] backdrop-blur-3xl p-16 rounded-[4rem] border border-white/10 shadow-2xl text-center max-w-lg w-full">
                   <h3 className="text-[10px] uppercase tracking-[0.5em] mb-10 opacity-40 italic">Aura Docente Detectada</h3>
                   <div className="mb-10 inline-block p-10 rounded-full bg-white/5 border border-white/10 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-                    <Zap size={80} style={{ color: wrapped.aura.color }} className="relative z-10 drop-shadow-[0_0_20px_white]" />
+                    <Zap size={80} style={{ color: wrapped.aura.color }} className="relative z-10" />
                   </div>
                   <h1 className="font-display text-7xl md:text-9xl uppercase leading-none tracking-tighter" style={{ color: wrapped.aura.color }}>{wrapped.aura.vibe}</h1>
                </motion.div>
@@ -191,13 +187,12 @@ const WrappedSequence: React.FC = () => {
           )}
           {currentSlide === 10 && (
             <div className="text-center pointer-events-auto">
-               <motion.div initial={{ scale: 0, rotate: -270 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", duration: 1.8, bounce: 0.4 }} className="w-48 h-48 bg-white text-black mx-auto mb-10 rounded-full flex items-center justify-center border-[12px] border-double border-gray-200 shadow-[0_0_120px_white] relative group">
-                  <div className="absolute inset-0 rounded-full border border-black/5 animate-ping"></div>
+               <motion.div initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", duration: 1.0 }} className="w-48 h-48 bg-white text-black mx-auto mb-10 rounded-full flex items-center justify-center border-[8px] border-double border-gray-200 shadow-[0_0_60px_white] relative group">
                   <Crown size={96} />
                </motion.div>
                <motion.div variants={itemVariants}>
                  <p className="text-[10px] font-mono-tech uppercase tracking-[1em] mb-4 opacity-40">Status Final do Semestre</p>
-                 <h1 className="font-display text-8xl md:text-[11rem] uppercase leading-none text-transparent bg-clip-text bg-gradient-to-b from-yellow-100 via-yellow-400 to-yellow-800 drop-shadow-2xl">{wrapped.finalBadge}</h1>
+                 <h1 className="font-display text-8xl md:text-[11rem] uppercase leading-none text-transparent bg-clip-text bg-gradient-to-b from-yellow-100 via-yellow-400 to-yellow-800">{wrapped.finalBadge}</h1>
                </motion.div>
                <motion.div variants={itemVariants} className="mt-16">
                  <button onClick={() => navigate('/transition')} className="group relative inline-flex items-center justify-center px-12 py-5 font-black text-white transition-all duration-300 bg-transparent font-display text-2xl tracking-[0.15em] uppercase overflow-hidden">
@@ -208,7 +203,6 @@ const WrappedSequence: React.FC = () => {
                </motion.div>
             </div>
           )}
-          {/* Default view for other slides */}
           {(currentSlide > 5 && currentSlide < 10) && (
             <div className="text-center flex flex-col items-center max-w-2xl px-8">
                <motion.div variants={itemVariants} className="mb-12 p-8 rounded-full bg-white/5 border border-white/10">

@@ -124,7 +124,7 @@ const Hub: React.FC = () => {
   if (!selectedProfessor) return null;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-screen w-full bg-[#3ea042] overflow-hidden relative font-pixel cursor-auto pointer-events-auto select-none">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-screen w-full bg-[#3ea042] overflow-hidden relative font-pixel pointer-events-auto select-none">
       <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#2f7a32_12%,transparent_13%)] bg-[size:32px_32px]"></div>
       
       {/* Roads */}
