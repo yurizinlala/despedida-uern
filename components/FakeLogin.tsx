@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import { professors, getAuthText } from '../data/professors';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, Lock, Server, Terminal, Calendar, Trophy, Info, Coffee, UserCheck, MessageSquare } from 'lucide-react';
+import { AlertCircle, Lock, Server, Terminal, Calendar, Trophy, Info, UserCheck, MessageSquare, Newspaper, Bell, ExternalLink, Search } from 'lucide-react';
 import { playKeyClick, playPaperSound, playGlitchSound, playBiosBeep } from '../utils/audio';
 
 interface FakeLoginProps {
@@ -16,6 +16,7 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
   const [error, setError] = useState('');
   const [easterEgg, setEasterEgg] = useState<string | null>(null);
   const [failedAttempts, setFailedAttempts] = useState(0);
+  const [clickedErrors, setClickedErrors] = useState<string[]>([]);
 
   const totalPossibleAchievements = 10;
   const MAX_ATTEMPTS_FOR_HINT = 6;
@@ -25,6 +26,23 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
     playKeyClick();
     setError('');
     setEasterEgg(null);
+  };
+
+  const handleSideAction = (action: string) => {
+    playGlitchSound();
+    if (!clickedErrors.includes(action)) {
+        const next = [...clickedErrors, action];
+        setClickedErrors(next);
+        if (next.length >= 4) unlockAchievement('burocrata_nato');
+    }
+    const jokes: Record<string, string> = {
+      'turmas': 'ERRO: Fila de espera maior que a do SUS. Você é o número 1.452.890.',
+      'lagrimas': 'LOG: Histórico exportado com sucesso. Volume total: 42 Litros (Média Acima da Turma).',
+      'ru': 'AVISO: O cardápio de hoje é SURPRESA (Dica: Envolve algo que já foi um sapato).',
+      'sanidade': 'ERRO 404: Sanidade Docente não encontrada nos arquivos deste servidor.',
+      'trancar': 'NEGADO: O trancamento só é permitido se você apresentar um atestado de imortalidade assinado pela reitoria.'
+    };
+    setError(jokes[action] || 'SISTEMA EM MANUTENÇÃO (ETERNA).');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -62,6 +80,7 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
 
   return (
     <div className="min-h-screen bg-[#d4d4d4] font-sans flex flex-col relative overflow-hidden border-t-[24px] border-blue-900 shadow-inner">
+      
       <div className="bg-gray-200 py-1 px-4 text-[9px] text-gray-500 border-b border-gray-400 flex justify-between font-mono font-bold tracking-tighter">
         <span>GOVERNO FEDERAL | UERN - PORTAL DE SISTEMAS</span>
         <span className="flex gap-4"><span>PORTUGUÊS (PT-BR)</span> <span>ACESSIBILIDADE</span></span>
@@ -71,7 +90,7 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32"></div>
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <div className="w-20 h-20 bg-white p-2 shadow-[4px_4px_0px_rgba(0,0,0,0.3)]">
+            <div onClick={() => unlockAchievement('secret_click')} className="w-20 h-20 bg-white p-2 shadow-[4px_4px_0px_rgba(0,0,0,0.3)] cursor-pointer hover:rotate-12 transition-transform active:scale-90">
                 <div className="w-full h-full border-2 border-blue-900 flex items-center justify-center font-serif font-black text-4xl text-blue-900 italic">U</div>
             </div>
             <div>
@@ -90,8 +109,8 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
       </header>
 
       <div className="bg-yellow-100 border-b border-yellow-400 text-yellow-800 py-1 overflow-hidden whitespace-nowrap font-mono text-[11px] font-bold shadow-inner">
-        <motion.div animate={{ x: ["100%", "-100%"] }} transition={{ repeat: Infinity, duration: 30, ease: "linear" }} className="inline-block">
-          *** AVISO: O sistema ficará indisponível para manutenção preventiva (e corretiva, e espiritual) entre 02:00 e 05:00. *** NOTA: Favor não esquecer o café do professor no laboratório. *** URGENTE: A xerox do bloco IV agora aceita moedas de chocolate. ***
+        <motion.div animate={{ x: ["100%", "-100%"] }} transition={{ repeat: Infinity, duration: 40, ease: "linear" }} className="inline-block">
+          *** AVISO: O sistema ficará indisponível para manutenção preventiva (e espiritual) entre 02:00 e 05:00. *** URGENTE: Aulas de sábado agora são obrigatórias para quem não usa o SIGAA em modo escuro. *** NOTA: Favor não confundir a carne do RU com a sola do sapato do estagiário. *** DICA: Editais de bolsa agora pagam em coxinhas (limite de 2 por mês). ***
         </motion.div>
       </div>
 
@@ -100,17 +119,19 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
           <div className="bg-white border-2 border-gray-400 shadow-md">
             <div className="bg-blue-800 text-white p-2 font-bold text-xs uppercase flex items-center gap-2"><MessageSquare size={14}/> Menu do Sistema</div>
             <ul className="text-[10px] space-y-1 p-2 font-bold text-blue-900 divide-y divide-gray-100">
-              <li className="p-2 hover:bg-blue-50 cursor-pointer flex justify-between"><span>Inscrição em Turmas</span> <Lock size={10}/></li>
-              <li className="p-2 hover:bg-blue-50 cursor-pointer flex justify-between"><span>Histórico de Lágrimas</span> <Lock size={10}/></li>
-              <li className="p-2 hover:bg-blue-50 cursor-pointer">Reclamações do RU</li>
-              <li className="p-2 hover:bg-blue-50 cursor-pointer">Atestado de Sanidade</li>
-              <li className="p-2 hover:bg-blue-50 cursor-pointer text-red-600">Trancar Curso (INDISPONÍVEL)</li>
+              <li onClick={() => handleSideAction('turmas')} className="p-2 hover:bg-blue-50 cursor-pointer flex justify-between items-center group"><span>Inscrição em Turmas</span> <Lock size={10} className="group-hover:text-red-500"/></li>
+              <li onClick={() => handleSideAction('lagrimas')} className="p-2 hover:bg-blue-50 cursor-pointer flex justify-between items-center group"><span>Histórico de Lágrimas</span> <Lock size={10} className="group-hover:text-red-500"/></li>
+              <li onClick={() => handleSideAction('ru')} className="p-2 hover:bg-blue-50 cursor-pointer flex justify-between items-center group"><span>Reclamações do RU</span> <ExternalLink size={10} className="opacity-40" /></li>
+              <li onClick={() => handleSideAction('sanidade')} className="p-2 hover:bg-blue-50 cursor-pointer flex justify-between items-center group"><span>Atestado de Sanidade</span> <ExternalLink size={10} className="opacity-40" /></li>
+              <li onClick={() => handleSideAction('trancar')} className="p-2 hover:bg-blue-50 cursor-pointer text-red-600 font-black italic">TRANCAR CURSO (BLOQUEADO)</li>
             </ul>
           </div>
 
-          <div className="bg-white border-2 border-gray-400 p-4 shadow-md relative overflow-hidden">
+          <div 
+            className="bg-white border-2 border-gray-400 p-4 shadow-md relative overflow-hidden cursor-default group"
+          >
             <div className="flex items-center gap-2 mb-3 text-gray-700 font-bold text-xs uppercase">
-                <Trophy size={16} className="text-yellow-600" /> Registros de Honra
+                <Trophy size={16} className="text-yellow-600 animate-bounce" /> Registros de Honra
             </div>
             <div className="space-y-4 relative z-10">
                 <div className="flex justify-between text-[10px] text-gray-600 font-bold uppercase">
@@ -121,19 +142,30 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
                     <motion.div 
                         initial={{ width: 0 }} 
                         animate={{ width: `${(unlockedAchievements.length / totalPossibleAchievements) * 100}%` }} 
-                        className="h-full bg-green-600"
+                        className="h-full bg-green-600 shadow-[0_0_10px_rgba(34,197,94,0.5)]"
                     />
                 </div>
                 <div className="bg-blue-50 p-2 border border-blue-200 rounded text-[9px] text-blue-800 font-bold leading-tight flex items-start gap-2">
                     <Info size={16} className="shrink-0" />
-                    <span>DICA: Use <span className="underline">TAB</span> para gerenciar o inventário de conquistas.</span>
+                    <span>DICA: Pressione a tecla <span className="underline font-black">9</span> em qualquer momento para gerenciar suas conquistas.</span>
                 </div>
             </div>
           </div>
 
-          <div className="bg-gray-100 border-2 border-gray-400 p-3 text-[10px] space-y-2 text-gray-500 font-mono">
-             <div className="flex justify-between"><span>CARGA DE CAFÉ:</span> <span className="text-orange-600 font-bold">CRÍTICA</span></div>
-             <div className="flex justify-between"><span>PACIÊNCIA:</span> <span className="text-red-600 font-bold">LOW</span></div>
+          <div className="bg-blue-900/5 border-2 border-blue-900/10 p-4 space-y-3">
+             <div className="flex items-center gap-2 text-blue-900 font-black text-[10px] uppercase border-b border-blue-900/20 pb-1">
+                <Bell size={12}/> Notificações do Campus
+             </div>
+             <div className="space-y-2">
+                <div className="text-[9px] leading-tight border-l-2 border-yellow-500 pl-2">
+                    <p className="font-bold text-yellow-700 uppercase">Edital de Monitoria Relâmpago</p>
+                    <p className="text-gray-500 italic">Requisito: Ter 10 anos de experiência em tecnologias que foram lançadas na semana passada.</p>
+                </div>
+                <div className="text-[9px] leading-tight border-l-2 border-blue-500 pl-2">
+                    <p className="font-bold text-blue-700 uppercase">Secretaria fechada</p>
+                    <p className="text-gray-500 italic">Horário de funcionamento: Terças e quintas, das 14:15 às 14:16, mediante oferenda de café.</p>
+                </div>
+             </div>
           </div>
         </aside>
 
@@ -196,20 +228,35 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
             <p className="mt-8 text-gray-500 text-[10px] font-bold uppercase tracking-widest">SISTEMA v4.21.0 - BUILD_2025_RELEASE</p>
         </div>
 
-        <aside className="hidden md:block col-span-3">
+        <aside className="hidden md:block col-span-3 space-y-4">
              <div className="bg-white border-2 border-gray-400 p-4 shadow-md">
                 <div className="bg-gray-100 p-2 font-bold text-[10px] text-gray-500 border-b border-gray-300 flex items-center gap-2 uppercase mb-4"><Calendar size={14}/> Calendário Acadêmico</div>
                 <div className="text-center">
                     <div className="font-black text-4xl text-red-600 font-serif italic">SET</div>
                     <div className="text-6xl font-black text-gray-800">20</div>
                     <div className="h-px bg-gray-200 my-4"></div>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase leading-tight">Último dia para não desistir de tudo.</p>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase leading-tight italic">Previsão: Matrícula com 100% de instabilidade nos servidores.</p>
                 </div>
              </div>
-             
-             <div className="mt-6 bg-blue-900/5 p-4 border border-blue-900/10 rounded">
-                <h4 className="text-[10px] font-black text-blue-900 uppercase mb-2">Suporte Técnico</h4>
-                <p className="text-[9px] text-gray-600">Em caso de erro, reinicie sua paciência ou procure o centro de informática no bloco IV.</p>
+
+             <div className="bg-white border-2 border-gray-400 shadow-md">
+                <div className="bg-blue-900 text-white p-2 font-bold text-[10px] uppercase flex items-center gap-2">
+                    <Newspaper size={14}/> Notícias do Campus
+                </div>
+                <div className="p-3 space-y-4">
+                    <div className="border-b border-gray-100 pb-2">
+                        <h4 className="text-[9px] font-black text-blue-800 uppercase">Café do Lab Antigo</h4>
+                        <p className="text-[8px] text-gray-500 leading-tight">Arqueólogos encontram café de 2012 na cafeteira. A bebida criou consciência e está tentando codificar em COBOL.</p>
+                    </div>
+                    <div className="border-b border-gray-100 pb-2">
+                        <h4 className="text-[9px] font-black text-blue-800 uppercase">Greve de Arrastão</h4>
+                        <p className="text-[8px] text-gray-500 leading-tight">Os ratos do laboratório antigo exigem upgrades de hardware e queijo artesanal da serra.</p>
+                    </div>
+                    <div>
+                        <h4 className="text-[9px] font-black text-blue-800 uppercase">Vaga no RU</h4>
+                        <p className="text-[8px] text-gray-500 leading-tight">Novo recorde: Fila do RU atinge a BR-110. Alunos levam barracas para jantar na próxima semana.</p>
+                    </div>
+                </div>
              </div>
         </aside>
       </main>

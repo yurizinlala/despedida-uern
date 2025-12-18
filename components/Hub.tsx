@@ -4,29 +4,85 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Brain, Coffee, GraduationCap, Ghost, Lock, Clock, Compass, AlertCircle, Trophy, Sparkles, CloudRain, Sun, Moon, Wind
+  Clock, Sun, Moon, Lock, ArrowRight, X
 } from 'lucide-react';
-import { playKeyClick, playTone, playMeow, playBiosBeep } from '../utils/audio';
+import { playKeyClick, playMeow, playBiosBeep } from '../utils/audio';
+import { MuralLoading, ClassroomTransition } from './Transitions';
+
+const ASSETS = {
+  uern_natal: "assets/uern_natal.png",
+  complexo: "assets/complexo.png",
+  secretaria: "assets/secretaria.png",
+  gato: "assets/gato.png",
+  arvore: "assets/arvore.png",
+  sol: "assets/sol.png",
+  lua: "assets/lua.png",
+  nuvem_dia: "assets/nuvem_dia.png",
+  nuvem_noite: "assets/nuvem_noite.png"
+};
+
+const Sky: React.FC<{ isDay: boolean }> = ({ isDay }) => {
+  return (
+    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+      <motion.div 
+        animate={{ 
+            y: [20, -10, 20],
+            rotate: [0, 5, -5, 0] 
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute right-[15%] top-[10%] w-24 h-24 md:w-32 md:h-32"
+      >
+        <img src={isDay ? ASSETS.sol : ASSETS.lua} alt={isDay ? "Sol" : "Lua"} className="w-full h-full object-contain pixel-art" />
+      </motion.div>
+
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={i}
+          initial={{ x: -300 }}
+          animate={{ x: "110vw" }}
+          transition={{ 
+            duration: 50 + (i * 15), 
+            repeat: Infinity, 
+            delay: i * 8, 
+            ease: "linear" 
+          }}
+          style={{ top: `${8 + (i * 14)}%` }}
+          className="absolute w-32 h-20 md:w-56 md:h-32"
+        >
+          <img src={isDay ? ASSETS.nuvem_dia : ASSETS.nuvem_noite} alt="Nuvem" className="w-full h-full object-contain pixel-art" />
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
+const Tree: React.FC<{ x: number, y: number }> = ({ x, y }) => (
+  <div 
+    className="absolute z-10 w-24 h-28 pointer-events-none select-none"
+    style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -100%)' }}
+  >
+    <img src={ASSETS.arvore} alt="Árvore" className="w-full h-full object-contain pixel-art" />
+  </div>
+);
 
 const CampusCat: React.FC = () => {
     const { unlockAchievement, selectedProfessor } = useUser();
     const [clicks, setClicks] = useState(0);
-    const [pos, setPos] = useState({ x: 25, y: 15 });
+    const [pos, setPos] = useState({ x: 30, y: 80 });
     const [bubble, setBubble] = useState<string | null>(null);
 
     const catQuotes = [
       "Miau. O TCC está pronto?",
-      "Prefiro sachê a café.",
-      "Cuidado com o ponteiro nulo.",
-      "Dormir 18h por dia é o ideal.",
-      "Prrru? Ah, é só um bug.",
-      "O reitor me deve um peixe."
+      "O reitor me deve um sachê.",
+      "Prrru? Ah, é só um bug no seu código.",
+      "O campus é meu, vocês só visitam.",
+      "A pauta está aberta, mas minha fome também."
     ];
 
     useEffect(() => {
         const moveInterval = setInterval(() => {
-            setPos({ x: Math.random() * 70 + 15, y: Math.random() * 60 + 15 });
-        }, 8000);
+            setPos({ x: Math.random() * 70 + 15, y: Math.random() * 40 + 45 });
+        }, 15000);
         return () => clearInterval(moveInterval);
     }, []);
 
@@ -36,51 +92,58 @@ const CampusCat: React.FC = () => {
         const newClicks = clicks + 1;
         setClicks(newClicks);
         setBubble(catQuotes[Math.floor(Math.random() * catQuotes.length)]);
-        setTimeout(() => setBubble(null), 2500);
+        setTimeout(() => setBubble(null), 3500);
         if (newClicks === 7) unlockAchievement('campus_cat', selectedProfessor || undefined);
     };
 
     return (
-        <motion.div animate={{ left: `${pos.x}%`, top: `${pos.y}%` }} transition={{ duration: 6, ease: "linear" }} onClick={handleClick} className="absolute z-20 cursor-pointer w-12 h-12 flex items-center justify-center text-4xl filter drop-shadow-lg select-none hover:scale-125 transition-transform group">
+        <motion.div 
+            animate={{ left: `${pos.x}%`, top: `${pos.y}%` }} 
+            transition={{ duration: 12, ease: "easeInOut" }} 
+            onClick={handleClick} 
+            className="absolute z-30 cursor-pointer w-24 h-24 flex items-center justify-center select-none group"
+            style={{ transform: 'translate(-50%, -50%)' }}
+        >
             <AnimatePresence>
               {bubble && (
-                <motion.div initial={{ opacity: 0, y: 10, scale: 0.5 }} animate={{ opacity: 1, y: -50, scale: 1 }} exit={{ opacity: 0, y: -60, scale: 0.8 }} className="absolute whitespace-nowrap bg-white text-black text-[8px] font-pixel p-2 border-2 border-black rounded-lg shadow-xl z-[100]">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.5, y: 0 }} 
+                    animate={{ opacity: 1, scale: 1, y: -70 }} 
+                    exit={{ opacity: 0 }} 
+                    className="absolute whitespace-nowrap bg-white text-black text-[9px] font-pixel p-3 border-4 border-black rounded shadow-[6px_6px_0_rgba(0,0,0,0.2)] z-50 after:content-[''] after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-8 after:border-transparent after:border-t-black"
+                >
                   {bubble}
-                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-8 border-t-black"></div>
                 </motion.div>
               )}
             </AnimatePresence>
-            <motion.span animate={{ y: [0, -4, 0], rotate: [0, 5, -5, 0] }} transition={{ repeat: Infinity, duration: 1 }}>🐈</motion.span>
+            <div className="w-full h-full group-hover:scale-110 transition-transform">
+                <img src={ASSETS.gato} alt="Gato do Campus" className="w-full h-full object-contain pixel-art" />
+            </div>
         </motion.div>
     );
 };
 
-const PixelCard: React.FC<{ children: React.ReactNode; className?: string; onClick?: () => void }> = ({ children, className = '', onClick }) => (
-  <div onClick={onClick} className={`bg-[#e0e0e0] border-t-4 border-l-4 border-white border-b-4 border-r-4 border-gray-600 shadow-lg relative ${className}`}>
-    <div className="p-2 h-full w-full font-pixel text-black">{children}</div>
-  </div>
-);
-
-const MapBuilding: React.FC<{type: any, label: string, x: number, y: number, onClick: (isLocked: boolean) => void, isLocked?: boolean}> = ({ type, label, x, y, onClick, isLocked = false }) => {
-  const style = useMemo(() => {
-    switch(type) {
-      case 'dept': return { bg: 'bg-blue-600', border: 'border-blue-900', icon: <Brain size={32} className="text-white" /> };
-      case 'tavern': return { bg: 'bg-orange-600', border: 'border-orange-900', icon: <Coffee size={32} className="text-white" /> };
-      case 'castle': return { bg: 'bg-yellow-500', border: 'border-yellow-800', icon: <GraduationCap size={32} className="text-white" /> };
-      case 'grave': return { bg: 'bg-gray-600', border: 'border-gray-800', icon: <Ghost size={32} className="text-white" /> };
-      default: return { bg: 'bg-gray-400', border: 'border-gray-500', icon: null };
-    }
-  }, [type]);
+const MapBuilding: React.FC<{id: string, label: string, x: number, y: number, onClick: (isLocked: boolean) => void, isLocked?: boolean}> = ({ id, label, x, y, onClick, isLocked = false }) => {
+  const assetUrl = id === 'mural' ? ASSETS.uern_natal : id === 'quiz' ? ASSETS.complexo : ASSETS.secretaria;
 
   return (
-    <motion.div className={`absolute flex flex-col items-center z-10 cursor-pointer group`} style={{ left: `${x}%`, top: `${y}%` }} whileHover={{ scale: 1.1, y: -5 }} onClick={(e) => { e.stopPropagation(); onClick(isLocked); }}>
-      <div className={`w-20 h-20 md:w-24 md:h-24 ${style.bg} border-b-8 ${style.border} relative shadow-2xl flex items-center justify-center transition-all ${isLocked ? 'grayscale opacity-70' : ''}`}>
-         {isLocked && <div className="absolute inset-0 z-20 bg-black/40 flex items-center justify-center"><Lock size={24} className="text-white/80 animate-pulse" /></div>}
-         <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[40px] border-l-transparent border-r-[40px] border-r-transparent border-b-[24px] border-b-black opacity-30 scale-110"></div>
-         <div className={`absolute -top-6 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[40px] border-l-transparent border-r-[40px] border-r-transparent border-b-[24px] ${style.border}`}></div>
-         <div className="relative z-10 drop-shadow-md pixel-art">{style.icon}</div>
+    <motion.div 
+        className="absolute flex flex-col items-center z-20 cursor-pointer group" 
+        style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)' }} 
+        whileHover={{ scale: 1.05, y: -15 }} 
+        onClick={(e) => { e.stopPropagation(); onClick(isLocked); }}
+    >
+      <div className="w-56 h-56 md:w-80 md:h-80 relative flex items-center justify-center transition-all">
+         <img src={assetUrl} alt={label} className="w-full h-full object-contain pixel-art" />
+         {isLocked && (
+            <div className="absolute top-0 right-0 bg-white border-4 border-black p-2">
+                <Lock size={24} className="text-black" />
+            </div>
+         )}
       </div>
-      <div className={`mt-2 bg-black text-white text-[8px] md:text-[9px] px-2 py-1 font-pixel border border-white opacity-0 group-hover:opacity-100 transition-opacity shadow-lg uppercase`}>{isLocked ? `Locked: ${label}` : label}</div>
+      <div className="mt-2 bg-black text-white text-[9px] px-3 py-2 font-pixel border-2 border-white opacity-0 group-hover:opacity-100 transition-opacity uppercase whitespace-nowrap shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
+        {label}
+      </div>
     </motion.div>
   );
 };
@@ -88,122 +151,175 @@ const MapBuilding: React.FC<{type: any, label: string, x: number, y: number, onC
 const Hub: React.FC = () => {
   const { selectedProfessor, gameStage } = useUser();
   const navigate = useNavigate();
+  const [transitioningTo, setTransitioningTo] = useState<'mural' | 'quiz' | null>(null);
   const [dialogue, setDialogue] = useState<{ open: boolean, text: string, targetRoute?: string, title?: string, type?: 'locked' | 'normal' } | null>(null);
   const [typedText, setTypedText] = useState('');
-  const [sysTime, setSysTime] = useState(new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  const treePositions = useMemo(() => [
+    { x: 10, y: 20 }, { x: 85, y: 15 }, { x: 45, y: 10 }, 
+    { x: 15, y: 85 }, { x: 82, y: 90 }, { x: 55, y: 95 },
+    { x: 35, y: 35 }, { x: 65, y: 30 }, { x: 5, y: 55 },
+    { x: 92, y: 60 }, { x: 48, y: 28 }, { x: 22, y: 12 }
+  ], []);
   
   useEffect(() => {
-    const t = setInterval(() => setSysTime(new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})), 60000);
+    const t = setInterval(() => setCurrentTime(new Date()), 30000);
     return () => clearInterval(t);
   }, []);
+
+  const isDay = currentTime.getHours() >= 6 && currentTime.getHours() < 18;
 
   useEffect(() => {
     if (dialogue?.open && typedText.length < dialogue.text.length) {
       const timeout = setTimeout(() => {
         setTypedText(dialogue.text.slice(0, typedText.length + 1));
         if (typedText.length % 3 === 0) playKeyClick(); 
-      }, 15);
+      }, 25);
       return () => clearTimeout(timeout);
     }
   }, [dialogue, typedText]);
 
   const handleBuildingClick = (id: string, isLocked: boolean) => {
     if (isLocked) {
-      let reason = "Você ainda não possui as permissões necessárias.";
-      if (id === 'quiz') reason = "Pré-requisito: Você deve primeiro acessar seu GABINETE e processar os recados dos alunos.";
-      if (id === 'cert') reason = "Pré-requisito: A Secretaria exige que você sobreviva ao EXAME FINAL na Sala 304 antes da formatura.";
-      setDialogue({ open: true, text: `ACESSO NEGADO: ${reason}`, title: "ERRO DE SEGURANÇA", type: 'locked' });
+      setDialogue({ 
+        open: true, 
+        text: "ERRO DE PROTOCOLO: Este setor está sob manutenção acadêmica preventiva. Continue seu progresso para liberar o acesso.", 
+        title: "SISTEMA UERN", 
+        type: 'locked' 
+      });
     } else {
-      if (id === 'mural') setDialogue({ open: true, text: "O terminal de mensagens está piscando. Muitos alunos deixaram feedbacks sobre o semestre. Deseja processar os dados agora?", targetRoute: "/mural", title: "GABINETE DO DOCENTE" });
-      if (id === 'quiz') setDialogue({ open: true, text: "Os alunos estão em silêncio absoluto. O cheiro de café e nervosismo paira no ar. Iniciar a correção do Exame Final?", targetRoute: "/quiz", title: "SALA 304" });
-      if (id === 'cert') setDialogue({ open: true, text: "A burocracia final te aguarda. Todas as pautas foram fechadas. Pronto para emitir o Diploma de Sobrevivência Acadêmica?", targetRoute: "/certificado", title: "SECRETARIA GERAL" });
+      if (id === 'mural') setDialogue({ open: true, text: "Bem-vindo à UERN NATAL. Os registros da sua jornada estão armazenados aqui.", targetRoute: "/mural", title: "UERN CAMPUS NATAL" });
+      if (id === 'quiz') setDialogue({ open: true, text: "O COMPLEXO está pronto para a sua avaliação final de sanidade. Pronto para os testes?", targetRoute: "/quiz", title: "O COMPLEXO" });
+      if (id === 'certificado') setDialogue({ open: true, text: "A SECRETARIA finalizou o processamento do seu diploma. A imortalidade o aguarda.", targetRoute: "/certificado", title: "SECRETARIA" });
     }
     setTypedText('');
   };
 
-  if (!selectedProfessor) return null;
+  const closeDialogue = () => {
+      if (dialogue?.targetRoute) {
+          playBiosBeep();
+          if (dialogue.targetRoute === '/mural') setTransitioningTo('mural');
+          else if (dialogue.targetRoute === '/quiz') setTransitioningTo('quiz');
+          else navigate(dialogue.targetRoute);
+      }
+      setDialogue(null);
+      setTypedText('');
+  };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-screen w-full bg-[#3ea042] overflow-hidden relative font-pixel pointer-events-auto select-none">
-      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#2f7a32_12%,transparent_13%)] bg-[size:32px_32px]"></div>
+    <div className={`h-screen w-full relative overflow-hidden font-pixel transition-all duration-[3000ms] ease-in-out ${
+      isDay ? 'bg-[#4da6ff]' : 'bg-[#001a33]'
+    }`}>
+      {transitioningTo === 'mural' && <MuralLoading onComplete={() => navigate('/mural')} />}
+      {transitioningTo === 'quiz' && <ClassroomTransition onComplete={() => navigate('/quiz')} />}
+
+      <div className={`absolute inset-0 pointer-events-none z-[40] transition-opacity duration-[3000ms] ${
+        isDay ? 'opacity-0' : 'opacity-30 bg-blue-950/10'
+      }`}></div>
+
+      <Sky isDay={isDay} />
       
-      {/* Roads */}
-      <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-28 bg-[#d8c59a] border-y-8 border-[#bca87b] shadow-inner"></div>
-      <div className="absolute top-0 bottom-0 left-[25%] w-28 bg-[#d8c59a] border-x-8 border-[#bca87b] shadow-inner"></div>
+      <div className={`absolute bottom-0 left-0 right-0 h-1/2 z-0 transition-colors duration-[3000ms] ${
+        isDay ? 'bg-[#56b356]' : 'bg-[#1a331a]'
+      }`}>
+        <div className="absolute inset-0 opacity-15 bg-[url('https://www.transparenttextures.com/patterns/pinstripe-dark.png')]"></div>
+      </div>
+
+      {treePositions.map((p, i) => (
+        <Tree key={i} x={p.x} y={p.y} />
+      ))}
 
       <CampusCat />
 
-      {/* Interface Overlay */}
-      <div className="absolute top-4 left-4 z-50 flex flex-col gap-3">
-        <PixelCard className="w-64 !bg-[#000080] !border-white text-white shadow-2xl">
-          <div className="flex gap-3 items-center">
-            <div className="w-12 h-12 bg-white border-2 border-gray-400 p-1 shrink-0 shadow-md pixel-art"><img src={`https://api.dicebear.com/9.x/pixel-art/svg?seed=${selectedProfessor.nickname}`} alt="Avatar" className="w-full h-full" /></div>
-            <div className="flex-1 space-y-1 min-w-0">
-              <div className="text-[9px] text-yellow-300 uppercase truncate font-bold">{selectedProfessor.nickname}</div>
-              <div className="text-[7px] text-blue-200 flex justify-between uppercase"><span>LVL 99</span><span>{selectedProfessor.theme}</span></div>
-              <div className="flex items-center gap-1"><span className="text-[6px] text-red-500 font-bold">SAN</span><div className="flex-1 h-1.5 bg-black border border-white/20"><motion.div animate={{ width: ['15%', '18%', '15%'] }} transition={{ repeat: Infinity, duration: 2 }} className="h-full bg-red-600 shadow-[0_0_5px_red]"></motion.div></div></div>
-              <div className="flex items-center gap-1"><span className="text-[6px] text-green-500 font-bold">CUR</span><div className="flex-1 h-1.5 bg-black border border-white/20"><motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(1, (gameStage / 3)) * 100}%` }} className="h-full bg-green-500 shadow-[0_0_5px_green]"></motion.div></div></div>
+      <MapBuilding 
+        id="mural" 
+        label="UERN NATAL" 
+        x={22} y={50} 
+        onClick={(locked) => handleBuildingClick('mural', locked)} 
+      />
+      <MapBuilding 
+        id="quiz" 
+        label="COMPLEXO" 
+        x={78} y={45} 
+        isLocked={gameStage < 1}
+        onClick={(locked) => handleBuildingClick('quiz', locked)} 
+      />
+      <MapBuilding 
+        id="certificado" 
+        label="SECRETARIA" 
+        x={50} y={75} 
+        isLocked={gameStage < 2}
+        onClick={(locked) => handleBuildingClick('certificado', locked)} 
+      />
+
+      <div className="absolute top-8 left-8 right-8 z-50 flex justify-between items-start pointer-events-none">
+        <div className="bg-black p-5 border-4 border-white shadow-[10px_10px_0_rgba(0,0,0,0.5)] pointer-events-auto">
+          <div className="flex items-center gap-4 text-white">
+            <div className="p-2 bg-blue-700 border-2 border-white rounded-sm">
+                <Clock size={24} />
+            </div>
+            <div>
+              <p className="text-[8px] opacity-60 uppercase tracking-tighter">Identificação Docente</p>
+              <h2 className="text-xs font-black uppercase tracking-widest leading-none mt-1">{selectedProfessor?.nickname}</h2>
+              <div className="flex items-center gap-2 mt-2">
+                 <span className="text-[10px] text-yellow-400 font-bold">{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                 <span className="w-1 h-1 bg-white/20 rounded-full"></span>
+                 <span className="text-[8px] text-white/40 uppercase">{isDay ? 'Ciclo Diurno' : 'Ciclo Noturno'}</span>
+              </div>
             </div>
           </div>
-        </PixelCard>
-        
-        <PixelCard className="w-64 !bg-gray-800/90 !border-gray-500 text-white !p-3">
-            <div className="flex justify-between items-center text-[8px] font-bold">
-                <div className="flex items-center gap-2 text-cyan-400"><Clock size={12}/> {sysTime}</div>
-                <div className="flex items-center gap-2 text-orange-400"><Sun size={12}/> 32°C</div>
-            </div>
-            <div className="mt-2 text-[7px] text-gray-400 uppercase leading-tight border-t border-white/10 pt-2 italic">Clima: Tensão de Final de Período com rajadas de desespero.</div>
-        </PixelCard>
+        </div>
+
+        <div className="bg-black p-5 border-4 border-white shadow-[10px_10px_0_rgba(0,0,0,0.5)] text-white text-right pointer-events-auto min-w-[200px]">
+           <p className="text-[8px] opacity-40 uppercase mb-2">Protocolo Atual:</p>
+           <h3 className="text-[10px] font-black uppercase tracking-tighter text-cyan-400">
+             {gameStage === 0 ? "Acessar UERN NATAL" : 
+              gameStage === 1 ? "Entrar no COMPLEXO" : 
+              gameStage === 2 ? "Protocolo SECRETARIA" : "Status: Graduado(a)"}
+           </h3>
+           <div className="mt-2 h-1 bg-white/10 w-full overflow-hidden">
+                <motion.div 
+                    initial={{ width: 0 }} 
+                    animate={{ width: `${(gameStage / 3) * 100}%` }} 
+                    className="h-full bg-cyan-400" 
+                />
+           </div>
+        </div>
       </div>
-
-      <div className="absolute top-4 right-4 z-40 w-72">
-          <div className="bg-yellow-400 border-4 border-black p-3 shadow-2xl">
-              <div className="flex items-center gap-3 font-bold text-[9px] mb-2 border-b-2 border-black/10 pb-1">
-                <AlertCircle size={14} className="animate-bounce" /> MISSÃO ATUAL
-              </div>
-              <div className="text-[8px] leading-relaxed uppercase">
-                {gameStage === 0 && (
-                    <><span className="text-blue-900 font-black">LOG:</span> Acesse o Gabinete e processe os feedbacks pendentes dos seus alunos.</>
-                )}
-                {gameStage === 1 && (
-                    <><span className="text-blue-900 font-black">LOG:</span> Dirija-se à Sala 304. O Exame Final aguarda correção manual.</>
-                )}
-                {gameStage === 2 && (
-                    <><span className="text-blue-900 font-black">LOG:</span> Vá até a Secretaria Geral para formalizar sua imortalidade acadêmica.</>
-                )}
-                {gameStage >= 3 && (
-                    <><span className="text-green-700 font-black">COMPLETE:</span> Parabéns! Clique no ícone de Sparkles para finalizar a experiência.</>
-                )}
-              </div>
-          </div>
-      </div>
-
-      {gameStage >= 3 && (
-          <motion.button whileHover={{ scale: 1.1 }} onClick={() => navigate('/credits')} className="absolute bottom-10 right-10 z-[60] bg-white border-4 border-black p-5 font-pixel text-xs flex items-center gap-3 shadow-[8px_8px_0_rgba(0,0,0,0.5)]"><Sparkles className="animate-pulse text-yellow-500" /> FINALIZAR JORNADA</motion.button>
-      )}
-
-      <MapBuilding type="dept" label="GABINETE" x={20} y={30} onClick={(L) => handleBuildingClick('mural', L)} />
-      <MapBuilding type="tavern" label="SALA 304" x={65} y={30} isLocked={gameStage < 1} onClick={(L) => handleBuildingClick('quiz', L)} />
-      <MapBuilding type="castle" label="SECRETARIA" x={65} y={65} isLocked={gameStage < 2} onClick={(L) => handleBuildingClick('cert', L)} />
-      <MapBuilding type="grave" label="LAB. ANTIGO" x={15} y={70} onClick={() => { setDialogue({ open: true, text: "Aqui jazem os computadores com Windows 95 que ainda rodam o kernel original do curso. R.I.P.", title: "CEMITÉRIO DE HARDWARE" }); setTypedText(''); }} />
 
       <AnimatePresence>
         {dialogue?.open && (
-          <motion.div initial={{ y: 200 }} animate={{ y: 0 }} exit={{ y: 200 }} className="fixed bottom-0 left-0 right-0 p-8 z-[100] flex justify-center pointer-events-none">
-            <div className={`pointer-events-auto w-full max-w-4xl border-[4px] border-white shadow-[16px_16px_0_rgba(0,0,0,0.6)] p-8 relative ${dialogue.type === 'locked' ? 'bg-red-800' : 'bg-[#0000AA]'} text-white`}>
-              <div className={`absolute -top-6 left-8 px-8 py-1 text-xs font-bold border-4 border-black shadow-xl uppercase ${dialogue.type === 'locked' ? 'bg-white text-red-800' : 'bg-yellow-400 text-black'}`}>{dialogue.title}</div>
-              <div className="min-h-[100px] text-lg leading-relaxed mb-8 font-mono tracking-wide">{typedText}</div>
-              {typedText.length === dialogue.text.length && (
-                <div className="flex justify-end gap-6">
-                   {dialogue.targetRoute && <button onClick={() => navigate(dialogue.targetRoute!)} className="px-8 py-3 bg-white text-black border-b-4 border-gray-400 hover:bg-yellow-300 transition-all uppercase font-bold text-sm">[ PROCEDER ]</button>}
-                   <button onClick={() => setDialogue(null)} className="px-8 py-3 bg-black text-white border-b-4 border-gray-700 hover:bg-gray-900 transition-all uppercase font-bold text-sm">[ FECHAR ]</button>
+          <div className="fixed inset-0 z-[100] flex items-end justify-center p-10 bg-black/50 backdrop-blur-md" onClick={closeDialogue}>
+            <motion.div 
+              initial={{ y: 200, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 200, opacity: 0 }}
+              className="w-full max-w-5xl bg-black border-[8px] border-white p-10 relative shadow-[20px_20px_0_rgba(0,0,0,0.6)]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="absolute -top-8 left-10 bg-white text-black px-6 py-2 font-black uppercase text-xs border-4 border-black">
+                {dialogue.title || "TERMINAL ACADÊMICO"}
+              </div>
+              <button onClick={closeDialogue} className="absolute top-4 right-4 text-white/30 hover:text-white"><X size={32}/></button>
+              
+              <div className={`text-xl md:text-3xl leading-relaxed min-h-[100px] flex items-center ${dialogue.type === 'locked' ? 'text-red-500' : 'text-white'}`}>
+                {typedText}<span className="inline-block w-4 h-8 bg-white ml-3 animate-pulse"></span>
+              </div>
+
+              {typedText === dialogue.text && (
+                <div className="mt-10 flex justify-end">
+                   <button onClick={closeDialogue} className="flex items-center gap-4 text-yellow-400 animate-bounce text-xs uppercase font-black tracking-widest">
+                      [ Pressione para Avançar ] <ArrowRight size={24} />
+                   </button>
                 </div>
               )}
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 };
+
 export default Hub;

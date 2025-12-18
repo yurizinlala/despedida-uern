@@ -1,6 +1,13 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { Professor, Achievement } from '../types';
+import { Professor } from '../types';
+
+interface AchievementInfo {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+}
 
 interface UserContextType {
   selectedProfessor: Professor | null;
@@ -12,17 +19,35 @@ interface UserContextType {
   gameStage: number; 
   advanceStage: (stage: number) => void;
   resetGame: () => void;
+  masterAchievementsList: AchievementInfo[];
+  hasSkippedIntro: boolean;
+  setHasSkippedIntro: (val: boolean) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
+
+const GLOBAL_ACHIEVEMENTS: AchievementInfo[] = [
+  { id: 'pedro_denial', title: 'PEDRO, É VOCÊ?', description: 'Negou o sistema 3 vezes antes do boot inicial.', icon: 'AlertTriangle' },
+  { id: 'hackerman', title: 'HACKERMAN', description: 'Acertou a senha do SIGAA de primeira.', icon: 'Terminal' },
+  { id: 'konami_god', title: 'LEGACY GOD', description: 'Dominou os códigos antigos na tela de erro.', icon: 'Gamepad2' },
+  { id: 'campus_cat', title: 'GATEIRO ACADÊMICO', description: 'Acariciou o gato do campus 7 vezes seguidas.', icon: 'Cat' },
+  { id: 'paciencia_jo', title: 'PACIÊNCIA DE JÓ', description: 'Esperou o loading troll terminar sem pular.', icon: 'Clock' },
+  { id: 'wrapped_pro', title: 'CINEASTA ACADÊMICO', description: 'Assistiu a retrospectiva completa sem pular nada.', icon: 'Play' },
+  { id: 'diploma_unlocked', title: 'IMORTALIDADE ALCANÇADA', description: 'Chegou ao final da jornada e emitiu o diploma.', icon: 'Crown' },
+  { id: 'secret_click', title: 'CURIOSIDADE ACADÊMICA', description: 'Clicou no brasão ou explorou todos os ícones do desktop.', icon: 'Search' },
+  { id: 'arqueologo', title: 'ARQUEÓLOGO DE LIXO', description: 'Vasculhou os arquivos deletados do docente.', icon: 'Trash2' },
+  { id: 'zero_score', title: 'FRACASSO ÉPICO', description: 'Conseguiu a proeza de tirar 0.0 na prova final.', icon: 'Skull' },
+  { id: 'ten_score', title: 'PERFEIÇÃO ACADÊMICA', description: 'Gabaritou a prova com 10.0 absoluto.', icon: 'Star' },
+  { id: 'eternal_student', title: 'ESTUDANTE ETERNO', description: 'Refez a prova mesmo já estando aprovado.', icon: 'RotateCcw' }
+];
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedProfessor, setSelectedProfessor] = useState<Professor | null>(null);
   const [unlockedAchievements, setUnlockedAchievements] = useState<string[]>([]);
   const [lastUnlocked, setLastUnlocked] = useState<{ title: string; description: string } | null>(null);
   const [gameStage, setGameStage] = useState(0);
+  const [hasSkippedIntro, setHasSkippedIntro] = useState(false);
 
-  // Load persistence
   useEffect(() => {
     const savedAchievements = localStorage.getItem('grad_adventure_achievements');
     const savedStage = localStorage.getItem('grad_adventure_stage');
@@ -30,7 +55,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (savedStage) setGameStage(parseInt(savedStage));
   }, []);
 
-  // Save persistence
   useEffect(() => {
     localStorage.setItem('grad_adventure_achievements', JSON.stringify(unlockedAchievements));
     localStorage.setItem('grad_adventure_stage', gameStage.toString());
@@ -38,16 +62,20 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const unlockAchievement = (id: string, professorData?: Professor) => {
     if (!unlockedAchievements.includes(id)) {
-      setUnlockedAchievements(prev => [...prev, id]);
       let achievementInfo = { title: 'Conquista', description: 'Nova conquista desbloqueada!' };
+      const globalMatch = GLOBAL_ACHIEVEMENTS.find(a => a.id === id);
       
-      if (id === 'hackerman') achievementInfo = { title: 'HACKERMAN', description: 'Acertou a senha de primeira.' };
-      else if (id === 'campus_cat') achievementInfo = { title: 'GATEIRO ACADÊMICO', description: 'Acariciou o gato do campus 7 vezes.' };
-      else if (id === 'konami_god') achievementInfo = { title: 'LEGACY GOD', description: 'Você conhece os códigos antigos...' };
-      else if (professorData) {
+      if (globalMatch) {
+        achievementInfo = { title: globalMatch.title, description: globalMatch.description };
+      } else if (professorData) {
         const ach = professorData.wrapped.achievements.find(a => a.id === id);
         if (ach) achievementInfo = { title: ach.title, description: ach.description };
+      } else if (selectedProfessor) {
+        const ach = selectedProfessor.wrapped.achievements.find(a => a.id === id);
+        if (ach) achievementInfo = { title: ach.title, description: ach.description };
       }
+
+      setUnlockedAchievements(prev => [...prev, id]);
       setLastUnlocked(achievementInfo);
     }
   };
@@ -59,18 +87,24 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const resetGame = () => {
     setUnlockedAchievements([]);
     setGameStage(0);
+    setSelectedProfessor(null);
+    setHasSkippedIntro(false);
     localStorage.removeItem('grad_adventure_achievements');
     localStorage.removeItem('grad_adventure_stage');
   };
 
+  const masterAchievementsList = [
+    ...GLOBAL_ACHIEVEMENTS,
+    ...(selectedProfessor ? selectedProfessor.wrapped.achievements : [])
+  ];
+
   return (
     <UserContext.Provider value={{ 
       selectedProfessor, setSelectedProfessor, unlockedAchievements, unlockAchievement,
-      lastUnlocked, setLastUnlocked, gameStage, advanceStage, resetGame
+      lastUnlocked, setLastUnlocked, gameStage, advanceStage, resetGame,
+      masterAchievementsList, hasSkippedIntro, setHasSkippedIntro
     }}>
-      <div className="min-h-screen w-full flex flex-col relative overflow-hidden">
-        {children}
-      </div>
+      {children}
     </UserContext.Provider>
   );
 };

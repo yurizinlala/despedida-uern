@@ -11,25 +11,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@300;400;700;900&family=Caveat:wght@600&family=Share+Tech+Mono&family=VT323&family=Press+Start+2P&family=UnifrakturMaguntia&family=Cinzel+Decorative:wght@400;700&family=Great+Vibes&family=Pinyon+Script&family=Pirata+One&display=swap" rel="stylesheet">
     <style>
       /* 
-         ULTRA-AGRESSIVE CURSOR ENFORCEMENT 
-         Garante que o mouse nunca suma, especialmente no Boot/Kernel 
+         ULTRA-STABLE SYSTEM CURSOR
+         Força o cursor padrão do sistema em todas as circunstâncias.
       */
-      html, body { 
+      html, body, #root { 
         margin: 0; 
         padding: 0;
         height: 100%;
+        width: 100%;
         overflow: hidden; 
         background: #000;
+        cursor: auto !important;
       }
 
-      /* Aplicar o cursor a absolutamente tudo */
-      * {
-        cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFZJREFUOE9jZKAQMFKon2HgWgD//w8S/M/AwMAApYEYBChmZGRkwCcP04BhAOR7nBpguABGZhjA6Ab0sh6vBvSygV42oJcN6GUDKBuYmZkZpDiELPuIpo8BAC60R0H1S/LSAAAAAElFTkSuQmCC'), default !important;
+      /* Injeção global para anular cursor:none de qualquer fonte */
+      *, *::before, *::after {
+        cursor: auto !important;
       }
 
-      /* Elementos clicáveis devem ter o cursor de mão (pointer) preservando o estilo pixel */
+      /* Cursor de interação para elementos clicáveis */
       a, button, [role="button"], select, input, label, .cursor-pointer {
-        cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFZJREFUOE9jZKAQMFKon2HgWgD//w8S/M/AwMAApYEYBChmZGRkwCcP04BhAOR7nBpguABGZhjA6Ab0sh6vBvSygV42oJcN6GUDKBuYmZkZpDiELPuIpo8BAC60R0H1S/LSAAAAAElFTkSuQmCC'), pointer !important;
+        cursor: pointer !important;
       }
 
       .font-mono-tech { font-family: 'Share Tech Mono', monospace; }
@@ -56,42 +58,47 @@
         animation: glitch 0.2s cubic-bezier(.25, .46, .45, .94) both infinite;
       }
 
-      .crt-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow: hidden; pointer-events: none; }
+      .crt-container { 
+        position: absolute; 
+        top:0; 
+        left:0; 
+        width:100%; 
+        height:100%; 
+        overflow: hidden; 
+        pointer-events: none; 
+        z-index: 9999; 
+      }
       .crt-container::before {
         content: " ";
         display: block;
         position: absolute;
         top: 0; left: 0; bottom: 0; right: 0;
         background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-        z-index: 50;
         background-size: 100% 3px, 3px 100%;
         pointer-events: none;
       }
-      .crt-flicker { animation: flicker 0.15s infinite; }
-      @keyframes flicker { 0% { opacity: 0.98; } 50% { opacity: 1; } 100% { opacity: 0.99; } }
       .pixel-art { image-rendering: pixelated; }
 
-      /* Custom scrollbar for retro feel */
       .scrollbar-retro::-webkit-scrollbar { width: 12px; }
       .scrollbar-retro::-webkit-scrollbar-track { background: #c0c0c0; border: 1px solid #ffffff; }
       .scrollbar-retro::-webkit-scrollbar-thumb { background: #c0c0c0; border: 2px solid; border-color: #ffffff #404040 #404040 #ffffff; }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
-    "react-router-dom": "https://esm.sh/react-router-dom@^7.10.1",
-    "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
-    "recharts": "https://esm.sh/recharts@^2.12.0",
-    "html2canvas": "https://esm.sh/html2canvas@^1.4.1",
-    "jspdf": "https://esm.sh/jspdf@^2.5.1"
-  }
-}
-</script>
-</head>
+    <script type="importmap">
+    {
+      "imports": {
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "react": "https://esm.sh/react@^19.2.3",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+        "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
+        "react-router-dom": "https://esm.sh/react-router-dom@^7.10.1",
+        "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
+        "recharts": "https://esm.sh/recharts@^2.12.0",
+        "html2canvas": "https://esm.sh/html2canvas@^1.4.1",
+        "jspdf": "https://esm.sh/jspdf@^2.5.1"
+      }
+    }
+    </script>
+  </head>
   <body>
     <div id="root"></div>
   </body>

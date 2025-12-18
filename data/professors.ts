@@ -1,7 +1,7 @@
+
 import { Professor, ProfessorTheme, MuralItem } from '../types';
 
 const createMural = (theme: ProfessorTheme, name: string): MuralItem[] => {
-    // Shared decorative stickers based on theme
     const themeStickers: MuralItem[] = [];
     const icons = {
         web: ['🌐', '🎨', '💻', '✨', '📎', '🪙'],
@@ -44,20 +44,8 @@ export const professors: Professor[] = [
         {
             id: 'letter-raul',
             type: 'note',
-            content: "Professor Raul,\n\nEu queria deixar aqui meu agradecimento sincero. Quando entrei no curso, 'User Experience' era só uma buzzword pra mim. Você me ensinou que por trás de cada tela existe uma pessoa, com sentimentos, frustrações e necessidades.\n\nObrigado por ter paciência quando minhas divs não centralizavam e por insistir na importância da acessibilidade. Suas aulas de Computação Afetiva explodiram minha mente e mudaram como vejo a tecnologia.\n\nVou levar seus ensinamentos pra sempre. Prometo nunca fazer um botão que o usuário não consiga clicar!\n\nCom carinho,\nSeu ex-aluno.",
+            content: "Professor Raul,\n\nEu queria deixar aqui meu agradecimento sincero. Você me ensinou que por trás de cada tela existe uma pessoa, com sentimentos, frustrações e necessidades.\n\nObrigado por ter paciência quando minhas divs não centralizavam e por insistir na importância da acessibilidade.",
             style: { x: 30, y: 20, rotation: -2 }
-        },
-        {
-            id: 'postit-raul-1',
-            type: 'postit',
-            content: "Lembrete: Comprar café para o prof!",
-            style: { x: 60, y: 15, rotation: 5, color: '#ff7eb9' }
-        },
-        {
-            id: 'postit-raul-2',
-            type: 'postit',
-            content: "Aquele bug no React era culpa minha...",
-            style: { x: 10, y: 40, rotation: -5, color: '#ffff8d' }
         },
         {
             id: 'photo-raul',
@@ -82,8 +70,8 @@ export const professors: Professor[] = [
         profValue: "8.500"
       },
       achievements: [
-        { id: 'empatia_lvl_max', title: 'Empata Profissional', description: 'Fez a IA chorar.', icon: 'Heart', unlocked: true },
-        { id: 'html_god', title: 'Div Master', description: 'Centralizou uma div sem Flexbox.', icon: 'Layout', unlocked: false }
+        { id: 'empatia_lvl_max', title: 'Empata Profissional', description: 'Fez a IA chorar de emoção.', icon: 'Heart', unlocked: false },
+        { id: 'html_god', title: 'Div Master', description: 'Centralizou uma div sem Flexbox ou Grid.', icon: 'Layout', unlocked: false }
       ],
       techArchetype: { name: "HTML5 Semântico", description: "Estruturado, acessível e cheio de significado.", icon: "Layout" },
       peakSeason: { event: "Projeto Final de Web", intensity: "Caos no CSS" },
@@ -107,20 +95,8 @@ export const professors: Professor[] = [
         {
             id: 'letter-camila',
             type: 'note',
-            content: "Professora Camila,\n\nEu confesso: eu tinha medo de Grafos. Morria de medo de não entender nada. Mas sua didática transformou um bicho de sete cabeças em algo lógico (literalmente).\n\nObrigado por cobrar rigor, por nos fazer pensar fora da caixa e por mostrar a beleza matemática por trás do código. Graças a você, hoje eu olho para um problema complexo e vejo nós e arestas.\n\nVocê é inspiração pura!\n\nAtt,\nAluno Sobrevivente.",
+            content: "Professora Camila,\n\nEu confesso: eu tinha medo de Grafos. Morria de medo de não entender nada. Mas sua didática transformou um bicho de sete cabeças em algo lógico.",
             style: { x: 40, y: 30, rotation: 1 }
-        },
-        {
-            id: 'postit-camila-1',
-            type: 'postit',
-            content: "Nunca vou esquecer o algoritmo de Dijkstra!",
-            style: { x: 15, y: 10, rotation: -10, color: '#7afcff' }
-        },
-        {
-            id: 'postit-camila-2',
-            type: 'postit',
-            content: "SOCORRO PROVA AMANHÃ",
-            style: { x: 80, y: 20, rotation: 15, color: '#ff8a80' }
         },
         {
             id: 'photo-camila',
@@ -145,7 +121,7 @@ export const professors: Professor[] = [
         profValue: "1 tablet"
       },
       achievements: [
-        { id: 'survivor_logic', title: 'Sobrevivente Lógico', description: 'Passou em Grafos sem chorar na sala.', icon: 'GitGraph', unlocked: true },
+        { id: 'survivor_logic', title: 'Sobrevivente Lógico', description: 'Passou em Grafos sem chorar publicamente.', icon: 'GitGraph', unlocked: false },
         { id: 'compiler_god', title: 'Compilador Humano', description: 'Entendeu Autômatos de Pilha de primeira.', icon: 'Binary', unlocked: false }
       ],
       techArchetype: { name: "Árvore Rubro-Negra", description: "Complexa, auto-ajustável e intimidante.", icon: "GitGraph" },
@@ -155,11 +131,9 @@ export const professors: Professor[] = [
       aura: { color: "#4F46E5", vibe: "Lógica Pura" },
       finalBadge: "A Rainha dos Nós"
     }
-  },
-  // ... (Other professors would be similarly updated, kept brief for this response)
+  }
 ];
 
-// Helper functions kept same
 export const getWelcomeText = (gender: 'male' | 'female') => gender === 'male' ? 'Bem-vindo' : 'Bem-vinda';
 export const getAuthText = (gender: 'male' | 'female') => gender === 'male' ? 'do Professor' : 'da Professora';
-export const getLoadingMessages = (theme: ProfessorTheme) => ["Carregando..."]; // Simplified for brevity in this update
+export const getLoadingMessages = (theme: ProfessorTheme) => ["Carregando..."];

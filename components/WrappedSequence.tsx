@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useUser } from '../context/UserContext';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { 
-  ChevronRight, ChevronLeft, Disc, Zap, Crown, 
+  ChevronRight, Disc, Zap, Crown, 
   Swords, Clock, Skull, Cpu, Music, Pause, Play, FastForward
 } from 'lucide-react';
 import { playKeyClick } from '../utils/audio';
@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 const TOTAL_SLIDES = 11; 
 const AUTO_PLAY_DELAY = 6000;
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,
@@ -22,7 +22,7 @@ const containerVariants = {
   exit: { opacity: 0, transition: { duration: 0.3 } }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: { 
     y: 0, 
@@ -32,7 +32,7 @@ const itemVariants = {
 };
 
 const WrappedSequence: React.FC = () => {
-  const { selectedProfessor } = useUser();
+  const { selectedProfessor, unlockAchievement, hasSkippedIntro, setHasSkippedIntro } = useUser();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [timeLeft, setTimeLeft] = useState(100);
@@ -55,6 +55,17 @@ const WrappedSequence: React.FC = () => {
 
   const currentColor = palette[currentSlide % palette.length];
 
+  // Achievement logic: only triggered on state changes, with anti-skip checks
+  useEffect(() => {
+    if (currentSlide === 5) {
+        unlockAchievement('aura_check');
+    }
+    // Grant wrapped_pro ONLY if user reached the final slide and NEVER skipped anything
+    if (currentSlide === TOTAL_SLIDES - 1 && !hasSkippedIntro) {
+        unlockAchievement('wrapped_pro');
+    }
+  }, [currentSlide, unlockAchievement, hasSkippedIntro]);
+
   const nextSlide = useCallback(() => {
     if (currentSlide < TOTAL_SLIDES - 1) {
       setCurrentSlide(p => p + 1);
@@ -68,8 +79,10 @@ const WrappedSequence: React.FC = () => {
       setCurrentSlide(p => p - 1);
       playKeyClick();
       setTimeLeft(0);
+      // Manually going back/navigating skips the pure sequential experience
+      setHasSkippedIntro(true);
     }
-  }, [currentSlide]);
+  }, [currentSlide, setHasSkippedIntro]);
 
   useEffect(() => {
     if (isPaused || currentSlide === TOTAL_SLIDES - 1) return;
@@ -83,6 +96,12 @@ const WrappedSequence: React.FC = () => {
     return () => clearInterval(interval);
   }, [currentSlide, isPaused, nextSlide]);
 
+  const handleManualFinish = () => {
+    // Manually jumping to the end disqualifies the achievement
+    setHasSkippedIntro(true);
+    navigate('/transition');
+  };
+
   return (
     <div className="h-screen w-full bg-black text-white overflow-hidden relative font-body select-none transition-colors duration-1000">
       <motion.div 
@@ -91,10 +110,13 @@ const WrappedSequence: React.FC = () => {
         style={{ opacity: 0.1, transition: 'background-color 1.5s ease' }} 
       />
       
-      {/* ProgressBar Top */}
       <div className="absolute top-6 left-6 right-6 z-50 flex gap-1.5 px-4">
         {Array.from({ length: TOTAL_SLIDES }).map((_, i) => (
-          <div key={i} className="h-1 flex-1 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm cursor-pointer" onClick={() => {setCurrentSlide(i); setTimeLeft(0);}}>
+          <div key={i} className="h-1 flex-1 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm cursor-pointer" onClick={() => {
+              setCurrentSlide(i); 
+              setTimeLeft(0); 
+              setHasSkippedIntro(true);
+          }}>
              <motion.div 
                 className="h-full bg-white" 
                 initial={{ width: "0%" }} 
@@ -115,7 +137,7 @@ const WrappedSequence: React.FC = () => {
       <motion.button
         whileHover={{ scale: 1.05, opacity: 1 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => navigate('/transition')}
+        onClick={handleManualFinish}
         className="absolute bottom-10 right-10 z-50 flex items-center gap-2 bg-white/5 border border-white/20 px-5 py-2.5 rounded-full font-display text-[10px] tracking-[0.2em] uppercase opacity-40 hover:opacity-100 transition-all backdrop-blur-md"
       >
         <FastForward size={14} /> Finalizar Review
@@ -154,7 +176,7 @@ const WrappedSequence: React.FC = () => {
           {currentSlide === 3 && (
             <div className="w-full max-w-5xl flex flex-col md:flex-row items-center justify-around gap-16 px-12">
                <motion.div variants={itemVariants} className="text-center group"><div className="w-40 h-40 rounded-full border-2 border-white/20 mx-auto mb-6 flex items-center justify-center bg-white/5 backdrop-blur-lg overflow-hidden relative"><span className="text-6xl z-10">🧑‍🎓</span></div><h3 className="text-sm font-bold uppercase opacity-50 mb-2">ALUNOS (MÉDIA)</h3><div className="text-6xl font-display"><Counter value={wrapped.comparison.studentValue} /></div></motion.div>
-               <motion.div variants={itemVariants} className="text-center flex flex-col items-center"><Swords size={40} className="mb-4 text-yellow-500 animate-pulse" /><h2 className="text-xl font-bold uppercase bg-white/10 px-6 py-3 border border-white/20 rounded-full backdrop-blur-md">{wrapped.comparison.label}</h2></motion.div>
+               <motion.div variants={itemVariants} className="text-center flex flex-col items-center"><h2 className="text-xl font-bold uppercase bg-white/10 px-6 py-3 border border-white/20 rounded-full backdrop-blur-md">{wrapped.comparison.label}</h2></motion.div>
                <motion.div variants={itemVariants} className="text-center group"><div className="w-40 h-40 rounded-full border-2 border-white/20 mx-auto mb-6 flex items-center justify-center bg-white/5 backdrop-blur-lg overflow-hidden relative"><span className="text-6xl z-10">👨‍🏫</span></div><h3 className="text-sm font-bold uppercase opacity-50 mb-2">VOCÊ (DOCENTE)</h3><div className="text-6xl font-display"><Counter value={wrapped.comparison.profValue} /></div></motion.div>
             </div>
           )}
@@ -164,11 +186,7 @@ const WrappedSequence: React.FC = () => {
               <div className="relative h-72 flex items-end justify-between gap-3">
                  <div className="absolute inset-x-0 bottom-0 h-[2px] bg-white/10"></div>
                  {[40, 60, 35, 80, 50, 95, 100, 70, 45].map((h, i) => (
-                   <motion.div key={i} initial={{ height: 0 }} animate={{ height: `${h}%` }} transition={{ duration: 1, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }} className={`w-full rounded-t-lg relative group ${h === 100 ? 'bg-gradient-to-t from-red-600 to-red-400' : 'bg-white/10 hover:bg-white/20 transition-colors'}`}>
-                     {h === 100 && (
-                       <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: -60, opacity: 1 }} transition={{ delay: 1.0 }} className="absolute -top-4 left-1/2 -translate-x-1/2 w-56 text-center"><div className="bg-white text-black font-black text-[10px] p-3 rounded-lg shadow-2xl uppercase tracking-tighter">{wrapped.peakSeason.event}</div></motion.div>
-                     )}
-                   </motion.div>
+                   <motion.div key={i} initial={{ height: 0 }} animate={{ height: `${h}%` }} transition={{ duration: 1, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }} className={`w-full rounded-t-lg relative group ${h === 100 ? 'bg-red-600' : 'bg-white/10'}`} />
                  ))}
               </div>
               <motion.div variants={itemVariants} className="text-center mt-16"><h1 className="font-display text-6xl md:text-8xl tracking-tight leading-none text-white/90">{wrapped.peakSeason.intensity}</h1></motion.div>
@@ -187,7 +205,7 @@ const WrappedSequence: React.FC = () => {
           )}
           {currentSlide === 10 && (
             <div className="text-center pointer-events-auto">
-               <motion.div initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", duration: 1.0 }} className="w-48 h-48 bg-white text-black mx-auto mb-10 rounded-full flex items-center justify-center border-[8px] border-double border-gray-200 shadow-[0_0_60px_white] relative group">
+               <motion.div initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", duration: 1.0 }} className="w-48 h-48 bg-white text-black mx-auto mb-10 rounded-full flex items-center justify-center border-[8px] border-double border-gray-200 relative group">
                   <Crown size={96} />
                </motion.div>
                <motion.div variants={itemVariants}>
@@ -195,7 +213,7 @@ const WrappedSequence: React.FC = () => {
                  <h1 className="font-display text-8xl md:text-[11rem] uppercase leading-none text-transparent bg-clip-text bg-gradient-to-b from-yellow-100 via-yellow-400 to-yellow-800">{wrapped.finalBadge}</h1>
                </motion.div>
                <motion.div variants={itemVariants} className="mt-16">
-                 <button onClick={() => navigate('/transition')} className="group relative inline-flex items-center justify-center px-12 py-5 font-black text-white transition-all duration-300 bg-transparent font-display text-2xl tracking-[0.15em] uppercase overflow-hidden">
+                 <button onClick={handleManualFinish} className="group relative inline-flex items-center justify-center px-12 py-5 font-black text-white transition-all duration-300 bg-transparent font-display text-2xl tracking-[0.15em] uppercase overflow-hidden">
                     <span className="absolute inset-0 border-2 border-white/30 group-hover:border-white transition-all"></span>
                     <span className="absolute inset-0 bg-white scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></span>
                     <span className="relative z-10 flex items-center gap-4 group-hover:text-black transition-colors">CONTINUAR PARA O CAMPUS <ChevronRight size={24} /></span>

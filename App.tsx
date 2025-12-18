@@ -20,7 +20,6 @@ const AppLayout: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [firstTrySuccess, setFirstTrySuccess] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { unlockedAchievements } = useUser();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,14 +31,20 @@ const AppLayout: React.FC = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Tab' && unlockedAchievements.length > 0) {
-        e.preventDefault(); 
-        setIsMenuOpen(prev => !prev);
+      // Shortcut "9" for Achievements - works globally
+      if (e.key === '9') {
+        const activeEl = document.activeElement;
+        const isInput = activeEl instanceof HTMLInputElement || activeEl instanceof HTMLTextAreaElement || activeEl instanceof HTMLSelectElement;
+        
+        if (!isInput) {
+            e.preventDefault(); 
+            setIsMenuOpen(prev => !prev);
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [unlockedAchievements]);
+  }, []);
 
   if (isMobile) return <MobileBlock />;
 

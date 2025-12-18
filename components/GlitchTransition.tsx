@@ -20,25 +20,20 @@ const fakeErrorLogs = [
   "IRQL_NOT_LESS_OR_EQUAL: O nível de cafeína está abaixo do necessário para o boot.",
   "CRITICAL_PROCESS_DIED: O processo 'vontade_de_estudar.exe' parou de responder.",
   "VIDEO_TDR_FAILURE: Sua placa de vídeo não aguenta o brilho do seu futuro.",
-  "PAGE_FAULT_IN_NONPAGED_AREA: A memória de onde você deixou a chave do gabinete falhou.",
-  "FAULTY_HARDWARE_CORRUPTED_PAGE: O hardware do RU corrompeu seu sistema digestivo.",
   "MEMORY_MANAGEMENT: O SIGAA esqueceu onde guardou sua nota final.",
-  "BAD_POOL_HEADER: O pool de bolsas de pesquisa está vazio.",
   "REGISTRY_ERROR: O registro de presença tem buracos negros lógicos.",
-  "WHEA_UNCORRECTABLE_ERROR: Um erro que nem o Stack Overflow consegue resolver.",
-  "FAT_FILE_SYSTEM: O sistema de arquivos está pesado demais para uma segunda-feira.",
   "DUMP_STACK: Student.RequestExtension() -> Professor.Deny() -> Student.Cry()",
-  "DUMP_STACK: Professor.Brain.Overflow() -> Coffee.Refill() -> Logic.Restored()",
   "DEBUG: Tentando encontrar o ponto-vírgula que falta desde 2018..."
 ];
 
 const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirstTry = false }) => {
-  const { selectedProfessor, unlockAchievement } = useUser();
+  const { selectedProfessor, unlockAchievement, setHasSkippedIntro } = useUser();
   const [progress, setProgress] = useState(0);
   const [currentLine, setCurrentLine] = useState("Iniciando compressão de alma...");
   const [phase, setPhase] = useState<'loading' | 'error' | 'hack'>('loading');
   const [isRegressing, setIsRegressing] = useState(false);
   const [konamiIdx, setKonamiIdx] = useState(0);
+  const skipTriggered = useRef(false);
   
   const messagesRef = useRef<string[]>([]);
 
@@ -52,7 +47,6 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
         "Convertendo café em código C++...",
         "Limpando migalhas do teclado do docente...",
         "Otimizando o algoritmo de 'vista grossa'...",
-        "Verificando se o projetor vai funcionar (Dica: Não vai)...",
         "Calculando o tempo de vida perdido em reuniões..."
       ];
     }
@@ -82,6 +76,7 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
       const updateProgress = () => {
         setProgress((prev) => {
           if (prev >= 100) {
+             if (!skipTriggered.current) unlockAchievement('paciencia_jo');
              setPhase('error');
              playGlitchSound();
              return 100;
@@ -112,7 +107,7 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
       const timeout = setTimeout(() => {
         playProcessingNoise();
         setPhase('hack');
-      }, 10000);
+      }, 6000);
       return () => clearTimeout(timeout);
     }
 
@@ -121,12 +116,18 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
       const delay = isFirstTry ? 6000 : 4000;
       setTimeout(onComplete, delay);
     }
-  }, [phase, onComplete, isFirstTry]);
+  }, [phase, onComplete, isFirstTry, unlockAchievement]);
+
+  const handleSkip = () => {
+      skipTriggered.current = true;
+      setHasSkippedIntro(true);
+      setPhase('error');
+  };
 
   if (phase === 'loading') {
     return (
       <div className="min-h-screen bg-[#dcdcdc] flex items-center justify-center flex-col p-12 font-sans border-8 border-white overflow-hidden">
-        <button onClick={() => setPhase('error')} className="absolute top-6 right-6 text-[10px] text-gray-500 hover:text-blue-700 flex items-center gap-2 uppercase font-black border-2 border-gray-400 px-3 py-1 shadow-sm">
+        <button onClick={handleSkip} className="absolute top-6 right-6 text-[10px] text-gray-500 hover:text-blue-700 flex items-center gap-2 uppercase font-black border-2 border-gray-400 px-3 py-1 shadow-sm">
             <FastForward size={14}/> Ignorar Troll Loading
         </button>
         <div className="w-full max-w-lg space-y-4">
@@ -178,10 +179,6 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
              </div>
           </div>
         </div>
-        
-        {/* Ghost background elements */}
-        <div className="absolute top-20 right-20 opacity-5 -rotate-12"><Ghost size={300} /></div>
-        <div className="absolute bottom-10 left-10 opacity-5 rotate-45"><Terminal size={200} /></div>
       </div>
     );
   }
