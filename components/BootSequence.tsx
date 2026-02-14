@@ -11,12 +11,12 @@ interface BootSequenceProps {
 
 const TypedLine: React.FC<{ text: string; time: string; delay: number; onComplete?: () => void }> = ({ text, time, delay, onComplete }) => {
   const [displayedText, setDisplayedText] = useState("");
-  
+
   useEffect(() => {
     let i = 0;
     const totalDuration = 1000;
     const speed = totalDuration / text.length;
-    
+
     const timeout = setTimeout(() => {
       const interval = setInterval(() => {
         setDisplayedText(text.slice(0, i + 1));
@@ -69,7 +69,7 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
   const fixedTimestamps = useMemo(() => {
     const startTime = new Date();
     return bootLines.map((_, i) => {
-      const time = new Date(startTime.getTime() + i * 1000); 
+      const time = new Date(startTime.getTime() + i * 1000);
       return time.toLocaleTimeString([], { hour12: false });
     });
   }, []);
@@ -116,7 +116,7 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
     if (phase === 'booting' && visibleLinesCount === bootLines.length) {
       const finalTimeout = setTimeout(() => {
         onComplete();
-      }, 5000); 
+      }, 5000);
       return () => clearTimeout(finalTimeout);
     }
   }, [visibleLinesCount, phase, onComplete]);
@@ -133,10 +133,10 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
   return (
     <div className="h-screen w-full bg-black flex flex-col items-center justify-center text-white font-mono-tech relative overflow-hidden">
       <div className="crt-container"></div>
-      
+
       <AnimatePresence mode="wait">
         {phase === 'prompt' && (
-          <motion.div 
+          <motion.div
             key="prompt"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -150,17 +150,17 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
             </p>
             <div className="flex flex-col gap-6">
               <div className="flex gap-4 justify-center">
-                <motion.button 
-                  onClick={() => handleChoice('yes')} 
-                  whileHover={{ scale: 1.05, backgroundColor: "rgba(34, 197, 94, 0.2)" }} 
+                <motion.button
+                  onClick={() => handleChoice('yes')}
+                  whileHover={{ scale: 1.05, backgroundColor: "rgba(34, 197, 94, 0.2)" }}
                   className="px-10 py-3 border-2 border-green-500 text-green-500 font-bold uppercase tracking-widest transition-colors relative z-30"
                 >
                   [ SIM ]
                 </motion.button>
-                <motion.button 
-                  onClick={() => handleChoice('no')} 
-                  whileHover={{ scale: 1.05, backgroundColor: "rgba(239, 68, 68, 0.2)" }} 
-                  className="px-10 py-3 border-2 border-red-500 text-red-500 font-bold uppercase tracking-widest transition-colors relative z-30"
+                <motion.button
+                  onClick={() => noClicks < 3 && handleChoice('no')}
+                  whileHover={noClicks < 3 ? { scale: 1.05, backgroundColor: "rgba(239, 68, 68, 0.2)" } : {}}
+                  className={`px-10 py-3 border-2 border-red-500 text-red-500 font-bold uppercase tracking-widest transition-colors relative z-30 ${noClicks >= 3 ? 'opacity-30 cursor-not-allowed line-through' : ''}`}
                 >
                   [ NÃO ]
                 </motion.button>
@@ -171,7 +171,7 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
         )}
 
         {phase === 'joke' && (
-          <motion.div 
+          <motion.div
             key="joke"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -182,8 +182,8 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
             <p className="text-white mb-8 font-mono text-sm leading-relaxed">
               O SIGAA detectou uma tentativa de fuga da realidade acadêmica. O botão "NÃO" foi desabilitado por decreto da reitoria para preservar sua produtividade.
             </p>
-            <motion.button 
-              onClick={() => setPhase('prompt')} 
+            <motion.button
+              onClick={() => setPhase('prompt')}
               whileHover={{ scale: 1.05 }}
               className="px-8 py-3 bg-red-600 text-white font-bold uppercase tracking-widest shadow-lg relative z-30"
             >
@@ -193,7 +193,7 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
         )}
 
         {phase === 'booting' && (
-          <motion.div 
+          <motion.div
             key="booting"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -201,19 +201,19 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
           >
             <div className="max-w-4xl mx-auto flex flex-col gap-2">
               <div className="flex justify-between border-b border-green-900 pb-2 mb-4 opacity-30">
-                 <span className="flex items-center gap-2 uppercase tracking-widest">System Boot Sequence</span>
-                 <span className="animate-pulse">LOADING...</span>
+                <span className="flex items-center gap-2 uppercase tracking-widest">System Boot Sequence</span>
+                <span className="animate-pulse">LOADING...</span>
               </div>
-              
+
               {bootLines.slice(0, visibleLinesCount).map((line, i) => (
-                <TypedLine 
-                  key={i} 
-                  text={line} 
+                <TypedLine
+                  key={i}
+                  text={line}
                   time={fixedTimestamps[i]}
                   delay={0}
                 />
               ))}
-              
+
               <div ref={bottomRef} className="h-20" />
             </div>
           </motion.div>
