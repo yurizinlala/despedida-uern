@@ -27,7 +27,7 @@ const fakeErrorLogs = [
 ];
 
 const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirstTry = false }) => {
-  const { selectedProfessor, unlockAchievement, setHasSkippedIntro } = useUser();
+  const { selectedProfessor, setHasSkippedIntro } = useUser();
   const [progress, setProgress] = useState(0);
   const [currentLine, setCurrentLine] = useState("Iniciando compressão de alma...");
   const [phase, setPhase] = useState<'loading' | 'error' | 'hack'>('loading');
@@ -58,7 +58,7 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
       if (e.key === KONAMI_CODE[konamiIdx]) {
         const nextIdx = konamiIdx + 1;
         if (nextIdx === KONAMI_CODE.length) {
-          unlockAchievement('konami_god');
+          // achievement placeholder
           playSuccessChime();
           setKonamiIdx(0);
         } else {
@@ -69,14 +69,13 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [phase, konamiIdx, unlockAchievement]);
+  }, [phase, konamiIdx]);
 
   useEffect(() => {
     if (phase === 'loading') {
       const updateProgress = () => {
         setProgress((prev) => {
           if (prev >= 100) {
-            if (!skipTriggered.current) unlockAchievement('paciencia_jo');
             setPhase('error');
             playGlitchSound();
             return 100;
@@ -116,7 +115,7 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
       const delay = isFirstTry ? 6000 : 4000;
       setTimeout(onComplete, delay);
     }
-  }, [phase, onComplete, isFirstTry, unlockAchievement]);
+  }, [phase, onComplete, isFirstTry]);
 
   const handleSkip = () => {
     skipTriggered.current = true;

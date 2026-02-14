@@ -9,7 +9,7 @@ import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
 const Certificate: React.FC = () => {
-  const { selectedProfessor, advanceStage, unlockAchievement } = useUser();
+  const { selectedProfessor, advanceStage } = useUser();
   const navigate = useNavigate();
   const [customName, setCustomName] = useState(selectedProfessor?.name || '');
   const [step, setStep] = useState<'form' | 'biometric' | 'signatures' | 'issuance' | 'ready'>('form');
@@ -37,27 +37,26 @@ const Certificate: React.FC = () => {
     setStep('biometric');
     playProcessingNoise();
     setTimeout(() => {
-        setStep('signatures');
-        playBiosBeep();
-        let p = 0;
-        const interval = setInterval(() => {
-            p += 2;
-            setProgress(p);
-            if (p % 20 === 0) playBiosBeep();
-            if (p >= 100) {
-                clearInterval(interval);
-                setTimeout(() => {
-                    setStep('issuance');
-                    playShimmer();
-                    setTimeout(() => {
-                        setStep('ready');
-                        playSuccessChime();
-                        advanceStage(3);
-                        unlockAchievement('diploma_unlocked');
-                    }, 3000);
-                }, 1000);
-            }
-        }, 50);
+      setStep('signatures');
+      playBiosBeep();
+      let p = 0;
+      const interval = setInterval(() => {
+        p += 2;
+        setProgress(p);
+        if (p % 20 === 0) playBiosBeep();
+        if (p >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            setStep('issuance');
+            playShimmer();
+            setTimeout(() => {
+              setStep('ready');
+              playSuccessChime();
+              advanceStage(3);
+            }, 3000);
+          }, 1000);
+        }
+      }, 50);
     }, 3000);
   };
 
@@ -85,8 +84,8 @@ const Certificate: React.FC = () => {
             <h1 className="text-3xl text-white font-black mb-4 uppercase tracking-tighter italic">Secretaria Virtual</h1>
             <p className="text-gray-400 text-sm mb-8 leading-relaxed">Você chegou ao fim do labirinto. Como deseja ser imortalizado neste documento oficial?</p>
             <div className="relative group mb-8">
-                <input value={customName} onChange={(e) => setCustomName(e.target.value)} className="w-full bg-black border-2 border-white/20 p-5 text-white text-center font-bold focus:border-yellow-500 outline-none transition-all" placeholder="NOME DO DOCENTE" />
-                <div className="absolute -bottom-2 -right-2 bg-yellow-500 text-black px-2 py-0.5 text-[8px] font-black uppercase">Campo Obrigatório</div>
+              <input value={customName} onChange={(e) => setCustomName(e.target.value)} className="w-full bg-black border-2 border-white/20 p-5 text-white text-center font-bold focus:border-yellow-500 outline-none transition-all" placeholder="NOME DO DOCENTE" />
+              <div className="absolute -bottom-2 -right-2 bg-yellow-500 text-black px-2 py-0.5 text-[8px] font-black uppercase">Campo Obrigatório</div>
             </div>
             <button onClick={startProcess} className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black py-5 text-lg shadow-[8px_8px_0_rgba(0,0,0,0.5)] uppercase transition-all active:scale-95 italic">Emitir Diploma de Sobrevivência</button>
             <button onClick={() => navigate('/hub')} className="mt-8 text-gray-500 text-[10px] uppercase font-bold hover:text-white transition-colors tracking-widest">[ Cancelar e Voltar ao Campus ]</button>
@@ -106,11 +105,11 @@ const Certificate: React.FC = () => {
             <FileSearch size={80} className="mx-auto text-yellow-500 mb-8" />
             <h2 className="text-2xl text-white font-black mb-8 uppercase tracking-widest italic">Coletando Firmas da Reitoria</h2>
             <div className="h-6 bg-gray-900 border-2 border-white/20 p-1 mb-6 shadow-inner">
-                <motion.div className="h-full bg-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.8)]" style={{ width: `${progress}%` }} />
+              <motion.div className="h-full bg-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.8)]" style={{ width: `${progress}%` }} />
             </div>
             <div className="flex justify-between text-[9px] font-mono uppercase text-gray-600 font-bold">
-                <span>Processando: {progress}%</span>
-                <span className="animate-pulse">Aguardando carimbo físico...</span>
+              <span>Processando: {progress}%</span>
+              <span className="animate-pulse">Aguardando carimbo físico...</span>
             </div>
           </motion.div>
         )}
@@ -125,9 +124,9 @@ const Certificate: React.FC = () => {
 
         {step === 'ready' && (
           <motion.div key="ready" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="w-full h-full flex flex-col items-center justify-center gap-6 relative">
-            
+
             <div className="relative group transition-transform duration-700 ease-out flex items-center justify-center" style={{ transform: `scale(${scale})` }}>
-              <div 
+              <div
                 ref={certificateRef}
                 className="w-[1000px] h-[707px] bg-[#fdfbf7] p-16 relative flex flex-col items-center justify-between border-[20px] border-double border-[#d4af37] shadow-[0_50px_150px_rgba(0,0,0,0.9)]"
               >
@@ -150,10 +149,10 @@ const Certificate: React.FC = () => {
 
                 <div className="w-full flex justify-between items-end px-8 relative z-10">
                   <div className="text-left font-serif text-xs text-gray-400 uppercase tracking-widest font-bold">
-                    CHAVE: {Math.random().toString(36).substr(2, 12).toUpperCase()}<br/>
+                    CHAVE: {Math.random().toString(36).substr(2, 12).toUpperCase()}<br />
                     EMITIDO EM: {new Date().toLocaleDateString('pt-BR')}
                   </div>
-                  
+
                   {/* Selo Dinâmico de Nota */}
                   <div className="w-40 h-40 bg-[#c62828] rounded-full flex flex-col items-center justify-center text-white font-pixel text-[10px] text-center rotate-[-12deg] shadow-2xl border-[6px] border-[#b71c1c] scale-110">
                     <div className="text-[8px] mb-1">QUALIDADE</div>
@@ -168,16 +167,16 @@ const Certificate: React.FC = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="absolute inset-0 pointer-events-none opacity-30 bg-[url('https://media.giphy.com/media/l41lTfJvS8c8L3o9G/giphy.gif')] mix-blend-screen scale-125"></div>
             </div>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }} className="flex flex-wrap justify-center gap-6 w-full max-w-3xl mt-6 z-20">
               <button onClick={downloadPDF} disabled={isExporting} className="flex-1 min-w-[280px] bg-white text-black py-5 font-black rounded-sm flex items-center justify-center gap-4 hover:bg-gray-100 transition-all shadow-[10px_10px_0_rgba(255,255,255,0.1)] active:translate-x-1 active:translate-y-1 disabled:opacity-50 uppercase tracking-widest">
-                <Download size={24}/> {isExporting ? 'Processando Exportação...' : 'Download Diploma (PDF)'}
+                <Download size={24} /> {isExporting ? 'Processando Exportação...' : 'Download Diploma (PDF)'}
               </button>
               <button onClick={() => navigate('/credits')} className="flex-1 min-w-[280px] bg-yellow-600 text-black py-5 font-black rounded-sm flex items-center justify-center gap-4 hover:bg-yellow-500 transition-all shadow-[10px_10px_0_rgba(234,179,8,0.2)] active:translate-x-1 active:translate-y-1 uppercase tracking-widest">
-                <Star size={24}/> Finalizar Experiência
+                <Star size={24} /> Finalizar Experiência
               </button>
             </motion.div>
           </motion.div>

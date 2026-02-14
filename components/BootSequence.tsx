@@ -2,8 +2,15 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Cpu, Terminal, AlertTriangle } from 'lucide-react';
-import { playBiosBeep, playProcessingNoise, playKeyClick, playGlitchSound } from '../utils/audio';
+import { playKeyClick } from '../utils/audio';
 import { useUser } from '../context/UserContext';
+
+// Custom MP3 sound helpers
+const playSound = (src: string) => {
+  const audio = new Audio(src);
+  audio.play().catch(() => { });
+  return audio;
+};
 
 interface BootSequenceProps {
   onComplete: () => void;
@@ -42,29 +49,38 @@ const TypedLine: React.FC<{ text: string; time: string; delay: number; onComplet
 };
 
 const bootLines = [
-  "BIOS DATA 20/09/2025 VER 1.0.2 - COPYRIGHT (C) UERN SYSTEMS",
-  "CPU: PROCESSADOR QUÂNTICO DE 128-BITS (MODO GAMBIARRA ATIVO)",
-  "MEMÓRIA: 64GB RAM (98% RESERVADO PARA INDEXAÇÃO DO SIGAA)",
+  "XEXISBIOS 14/02/2026 VER 2.2 - COPYRIGHT (C) UERN SYSTEMS",
+  "CPU: PROCESSADOR QUÂNTICO DE 128-BITS",
+  "MEMÓRIA: 64GB RAM (98% RESERVADO PARA RODAR O SIGAA)",
   "VERIFICANDO INTEGRIDADE DOS SONHOS DOS ALUNOS... [OK]",
-  "INICIALIZANDO ADAPTADOR DE VÍDEO (VGA 256 CORES)... OK",
-  "CARREGANDO KERNEL 'DESESPERO_v4'... FEITO",
-  "  > TECLADO... DETECTADO (RESÍDUOS DE PÃO DE QUEIJO ENCONTRADOS)",
-  "  > MOUSE... DETECTADO (ESFERA DE ROLAGEM LIMPA)",
-  "  > CAFETEIRA... ERRO 418 (SOU UM BULE E ESTOU EXAUSTA)",
-  "  > VONTADE DE ESTUDAR... 404 NOT FOUND",
-  "MONTANDO SISTEMA DE ARQUIVOS [MODO PÂNICO]... FEITO",
-  "CALIBRANDO NÍVEIS DE ESTRESSE ACADÊMICO... [EXTREMO]",
-  "CARREGANDO INTERFACE LEGADA DO S.I.G.A.A (IE6 COMPATIBLE)...",
+  "INICIALIZANDO ADAPTADOR DE VÍDEO (TECPIX 16 CORES)... [OK]",
+  "CARREGANDO KERNEL 'SIGAA_v2'... [OK]",
+  "  > TECLADO... [OK] (RESÍDUOS DE COMIDA ENCONTRADOS)",
+  "  > MOUSE... [OK] (ESFERA DE ROLAGEM LIMPA)",
+  "  > XÍCARA DE CAFÉ... [ERRO 444] (PODE ESTAR MEIO FRIO)",
+  "  > VONTADE DE ESTUDAR... [ERRO 404]",
+  "MONTANDO SISTEMA DE ARQUIVOS (MODO RÁPIDO)... [OK]",
+  "CALIBRANDO NÍVEIS DE ESTRESSE ACADÊMICO... [OK]",
+  "CARREGANDO INTERFACE LEGADA DO S.I.G.A.A (TRAVANDO UM POUCO)...",
   "ESTABELECENDO CONEXÃO DISCADA (TURBO 56kbps)...",
-  "SISTEMA PRONTO PARA SOFRER."
+  "SISTEMA PRONTO (TALVEZ)..."
 ];
 
 const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
-  const { unlockAchievement, setHasSkippedIntro } = useUser();
+  const { setHasSkippedIntro } = useUser();
+  const [hasInteracted, setHasInteracted] = useState(false);
   const [phase, setPhase] = useState<'prompt' | 'joke' | 'booting'>('prompt');
   const [visibleLinesCount, setVisibleLinesCount] = useState(0);
   const [noClicks, setNoClicks] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const loadingAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Play kernel-init only after interaction
+  useEffect(() => {
+    if (hasInteracted) {
+      playSound('/sounds/kernel-init.mp3');
+    }
+  }, [hasInteracted]);
 
   const fixedTimestamps = useMemo(() => {
     const startTime = new Date();
@@ -86,21 +102,23 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
     requestFullscreen();
     if (choice === 'yes') {
       setPhase('booting');
-      playBiosBeep();
+      playSound('/sounds/accept.mp3');
     } else {
       const newNoClicks = noClicks + 1;
       setNoClicks(newNoClicks);
-      if (newNoClicks >= 3) {
-        unlockAchievement('pedro_denial');
-      }
       setPhase('joke');
-      playGlitchSound();
+      playSound('/sounds/error.mp3');
     }
   };
 
   useEffect(() => {
     if (phase === 'booting') {
-      playProcessingNoise();
+      // Play kernel-loading and keep reference to stop it later
+      const audio = new Audio('/sounds/kernel-loading.mp3');
+      audio.loop = true;
+      audio.play().catch(() => { });
+      loadingAudioRef.current = audio;
+
       const timer = setInterval(() => {
         setVisibleLinesCount(prev => {
           if (prev < bootLines.length) return prev + 1;
@@ -108,13 +126,26 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
           return prev;
         });
       }, 1000);
-      return () => clearInterval(timer);
+
+      return () => {
+        clearInterval(timer);
+        // Stop kernel-loading when leaving this phase
+        audio.pause();
+        audio.currentTime = 0;
+        loadingAudioRef.current = null;
+      };
     }
   }, [phase]);
 
   useEffect(() => {
     if (phase === 'booting' && visibleLinesCount === bootLines.length) {
       const finalTimeout = setTimeout(() => {
+        // Stop kernel-loading before transitioning
+        if (loadingAudioRef.current) {
+          loadingAudioRef.current.pause();
+          loadingAudioRef.current.currentTime = 0;
+          loadingAudioRef.current = null;
+        }
         onComplete();
       }, 5000);
       return () => clearTimeout(finalTimeout);
@@ -130,6 +161,20 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
     onComplete();
   };
 
+  if (!hasInteracted) {
+    return (
+      <div
+        onClick={() => setHasInteracted(true)}
+        className="h-screen w-full bg-black flex items-center justify-center text-green-500 font-mono-tech cursor-pointer z-50 fixed inset-0"
+      >
+        <div className="text-center animate-pulse">
+          <Terminal size={64} className="mx-auto mb-4" />
+          <p className="text-xl tracking-widest uppercase">[ CLIQUE PARA INICIALIZAR ]</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen w-full bg-black flex flex-col items-center justify-center text-white font-mono-tech relative overflow-hidden">
       <div className="crt-container"></div>
@@ -144,9 +189,9 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
             className="z-20 text-center max-w-lg border-2 border-green-500/50 p-10 bg-black shadow-[0_0_60px_rgba(0,255,0,0.2)]"
           >
             <Terminal size={48} className="mx-auto mb-6 text-green-500 animate-pulse" />
-            <h1 className="text-2xl md:text-3xl text-green-500 mb-6 font-bold tracking-widest uppercase">Kernel UERN v9.0.2</h1>
+            <h1 className="text-2xl md:text-3xl text-green-500 mb-6 font-bold tracking-widest uppercase">SIGAA KERNEL v2</h1>
             <p className="mb-10 text-sm text-gray-400 leading-relaxed">
-              Deseja inicializar o ambiente de simulação acadêmica e restaurar a sanidade do docente?
+              Deseja inicializar o ambiente de simulação acadêmica e colocar à prova sua sanidade?
             </p>
             <div className="flex flex-col gap-6">
               <div className="flex gap-4 justify-center">
@@ -180,14 +225,14 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
             <AlertTriangle size={64} className="mx-auto mb-6 text-red-500" />
             <h1 className="text-2xl text-red-500 mb-4 font-bold uppercase">Erro de Permissão</h1>
             <p className="text-white mb-8 font-mono text-sm leading-relaxed">
-              O SIGAA detectou uma tentativa de fuga da realidade acadêmica. O botão "NÃO" foi desabilitado por decreto da reitoria para preservar sua produtividade.
+              O SIGAA detectou uma tentativa de fuga da realidade acadêmica. O botão "NÃO" será desabilitado em <span className="text-red-400 font-bold text-lg">{Math.max(3 - noClicks, 0)}</span> tentativa{3 - noClicks !== 1 ? 's' : ''} por decreto da reitoria (mais conhecido como Yuri) para colocar em desafio sua sanidade.
             </p>
             <motion.button
-              onClick={() => setPhase('prompt')}
+              onClick={() => { playSound('/sounds/accept.mp3'); setPhase('prompt'); }}
               whileHover={{ scale: 1.05 }}
               className="px-8 py-3 bg-red-600 text-white font-bold uppercase tracking-widest shadow-lg relative z-30"
             >
-              Entendido (Aceitar Destino)
+              Aceitar Meu Destino
             </motion.button>
           </motion.div>
         )}
@@ -201,8 +246,8 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
           >
             <div className="max-w-4xl mx-auto flex flex-col gap-2">
               <div className="flex justify-between border-b border-green-900 pb-2 mb-4 opacity-30">
-                <span className="flex items-center gap-2 uppercase tracking-widest">System Boot Sequence</span>
-                <span className="animate-pulse">LOADING...</span>
+                <span className="flex items-center gap-2 uppercase tracking-widest">SEQUÊNCIA DE BOOT DO SIGAA</span>
+                <span className="animate-pulse">CARREGANDO...</span>
               </div>
 
               {bootLines.slice(0, visibleLinesCount).map((line, i) => (

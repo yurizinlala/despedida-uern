@@ -35,10 +35,17 @@ const AppLayout: React.FC = () => {
       if (e.key === '9') {
         const activeEl = document.activeElement;
         const isInput = activeEl instanceof HTMLInputElement || activeEl instanceof HTMLTextAreaElement || activeEl instanceof HTMLSelectElement;
-        
+
         if (!isInput) {
-            e.preventDefault(); 
-            setIsMenuOpen(prev => !prev);
+          e.preventDefault();
+          setIsMenuOpen(prev => {
+            const next = !prev;
+            if (next) {
+              const audio = new Audio('/sounds/achviements-open.mp3');
+              audio.play().catch(() => { });
+            }
+            return next;
+          });
         }
       }
     };

@@ -12,11 +12,11 @@ interface AchievementInfo {
 interface UserContextType {
   selectedProfessor: Professor | null;
   setSelectedProfessor: (professor: Professor | null) => void;
-  unlockedAchievements: string[]; 
+  unlockedAchievements: string[];
   unlockAchievement: (id: string, professorData?: Professor) => void;
   lastUnlocked: { title: string; description: string } | null;
   setLastUnlocked: (data: { title: string; description: string } | null) => void;
-  gameStage: number; 
+  gameStage: number;
   advanceStage: (stage: number) => void;
   resetGame: () => void;
   masterAchievementsList: AchievementInfo[];
@@ -26,20 +26,7 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-const GLOBAL_ACHIEVEMENTS: AchievementInfo[] = [
-  { id: 'pedro_denial', title: 'PEDRO, É VOCÊ?', description: 'Negou o sistema 3 vezes antes do boot inicial.', icon: 'AlertTriangle' },
-  { id: 'hackerman', title: 'HACKERMAN', description: 'Acertou a senha do SIGAA de primeira.', icon: 'Terminal' },
-  { id: 'konami_god', title: 'LEGACY GOD', description: 'Dominou os códigos antigos na tela de erro.', icon: 'Gamepad2' },
-  { id: 'campus_cat', title: 'GATEIRO ACADÊMICO', description: 'Acariciou o gato do campus 7 vezes seguidas.', icon: 'Cat' },
-  { id: 'paciencia_jo', title: 'PACIÊNCIA DE JÓ', description: 'Esperou o loading troll terminar sem pular.', icon: 'Clock' },
-  { id: 'wrapped_pro', title: 'CINEASTA ACADÊMICO', description: 'Assistiu a retrospectiva completa sem pular nada.', icon: 'Play' },
-  { id: 'diploma_unlocked', title: 'IMORTALIDADE ALCANÇADA', description: 'Chegou ao final da jornada e emitiu o diploma.', icon: 'Crown' },
-  { id: 'secret_click', title: 'CURIOSIDADE ACADÊMICA', description: 'Clicou no brasão ou explorou todos os ícones do desktop.', icon: 'Search' },
-  { id: 'arqueologo', title: 'ARQUEÓLOGO DE LIXO', description: 'Vasculhou os arquivos deletados do docente.', icon: 'Trash2' },
-  { id: 'zero_score', title: 'FRACASSO ÉPICO', description: 'Conseguiu a proeza de tirar 0.0 na prova final.', icon: 'Skull' },
-  { id: 'ten_score', title: 'PERFEIÇÃO ACADÊMICA', description: 'Gabaritou a prova com 10.0 absoluto.', icon: 'Star' },
-  { id: 'eternal_student', title: 'ESTUDANTE ETERNO', description: 'Refez a prova mesmo já estando aprovado.', icon: 'RotateCcw' }
-];
+const GLOBAL_ACHIEVEMENTS: AchievementInfo[] = [];
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedProfessor, setSelectedProfessor] = useState<Professor | null>(null);
@@ -64,7 +51,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (!unlockedAchievements.includes(id)) {
       let achievementInfo = { title: 'Conquista', description: 'Nova conquista desbloqueada!' };
       const globalMatch = GLOBAL_ACHIEVEMENTS.find(a => a.id === id);
-      
+
       if (globalMatch) {
         achievementInfo = { title: globalMatch.title, description: globalMatch.description };
       } else if (professorData) {
@@ -80,8 +67,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const advanceStage = (stage: number) => { 
-    if (stage > gameStage) setGameStage(stage); 
+  const advanceStage = (stage: number) => {
+    if (stage > gameStage) setGameStage(stage);
   };
 
   const resetGame = () => {
@@ -99,7 +86,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   ];
 
   return (
-    <UserContext.Provider value={{ 
+    <UserContext.Provider value={{
       selectedProfessor, setSelectedProfessor, unlockedAchievements, unlockAchievement,
       lastUnlocked, setLastUnlocked, gameStage, advanceStage, resetGame,
       masterAchievementsList, hasSkippedIntro, setHasSkippedIntro

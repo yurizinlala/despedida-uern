@@ -6,10 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { X, FileText, Folder, Trash2, ArrowLeft, Clock, Monitor, HelpCircle, HardDrive, Star, Trophy } from 'lucide-react';
 import { playKeyClick, playPaperSound, playBiosBeep, playGlitchSound } from '../utils/audio';
 
-const Win95Window: React.FC<{title: string, children: React.ReactNode, onClose: () => void, z: number, onFocus: () => void}> = ({ title, children, onClose, z, onFocus }) => (
-    <motion.div 
-        drag 
-        dragMomentum={false} 
+const Win95Window: React.FC<{ title: string, children: React.ReactNode, onClose: () => void, z: number, onFocus: () => void }> = ({ title, children, onClose, z, onFocus }) => (
+    <motion.div
+        drag
+        dragMomentum={false}
         onPointerDown={onFocus}
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -34,7 +34,7 @@ const Win95Window: React.FC<{title: string, children: React.ReactNode, onClose: 
     </motion.div>
 );
 
-const DesktopIcon: React.FC<{icon: any, label: string, onClick: () => void, color?: string}> = ({ icon: Icon, label, onClick, color="text-yellow-400" }) => (
+const DesktopIcon: React.FC<{ icon: any, label: string, onClick: () => void, color?: string }> = ({ icon: Icon, label, onClick, color = "text-yellow-400" }) => (
     <div onClick={onClick} className="w-24 flex flex-col items-center gap-2 cursor-pointer group">
         <div className="p-3 bg-white/0 group-hover:bg-blue-600/30 rounded-lg border border-transparent group-hover:border-white/20 transition-all">
             <Icon size={48} className={`${color} drop-shadow-md pixel-art transition-transform group-hover:scale-110`} />
@@ -44,7 +44,7 @@ const DesktopIcon: React.FC<{icon: any, label: string, onClick: () => void, colo
 );
 
 const Mural: React.FC = () => {
-    const { selectedProfessor, advanceStage, unlockAchievement } = useUser();
+    const { selectedProfessor, advanceStage } = useUser();
     const navigate = useNavigate();
     const [openWindows, setOpenWindows] = useState<string[]>([]);
     const [focusedWindow, setFocusedWindow] = useState('');
@@ -62,11 +62,10 @@ const Mural: React.FC = () => {
 
         const newSet = new Set(clickCount).add(id);
         setClickCount(newSet);
-        if (newSet.size >= 5) unlockAchievement('secret_click');
+
     };
 
     const handleTrashClick = () => {
-        unlockAchievement('arqueologo');
         playGlitchSound();
     };
 
@@ -112,13 +111,13 @@ const Mural: React.FC = () => {
                                 <p className="text-red-600 font-bold border-b border-red-200 pb-2">AVISO: Arquivos aguardando expurgo burocrático.</p>
                                 <div className="grid grid-cols-1 gap-2">
                                     <div className="p-2 flex items-center gap-3 bg-gray-100 border border-gray-300 cursor-help" onClick={handleTrashClick}>
-                                        <FileText size={16} className="text-gray-500"/> Pauta_Excluida_Semana_04.bak
+                                        <FileText size={16} className="text-gray-500" /> Pauta_Excluida_Semana_04.bak
                                     </div>
                                     <div className="p-2 flex items-center gap-3 bg-gray-100 border border-gray-300 cursor-help" onClick={handleTrashClick}>
-                                        <FileText size={16} className="text-gray-500"/> Sonhos_De_Calouro_2024.zip
+                                        <FileText size={16} className="text-gray-500" /> Sonhos_De_Calouro_2024.zip
                                     </div>
                                     <div className="p-2 flex items-center gap-3 bg-gray-100 border border-gray-300 cursor-help" onClick={handleTrashClick}>
-                                        <Trash2 size={16} className="text-red-500"/> Sanidade_Mental_v2.sys
+                                        <Trash2 size={16} className="text-red-500" /> Sanidade_Mental_v2.sys
                                     </div>
                                 </div>
                                 <div className="mt-6 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-[10px] italic">
@@ -152,9 +151,9 @@ const Mural: React.FC = () => {
                                     <h3 className="font-bold text-xl uppercase">Índice de Ajuda</h3>
                                 </div>
                                 <ul className="space-y-3 text-sm">
-                                    <li className="flex items-center gap-2 hover:underline cursor-pointer"><Star size={12}/> Como lidar com pautas de 10 anos atrás</li>
-                                    <li className="flex items-center gap-2 hover:underline cursor-pointer"><Star size={12}/> Tutorial: Café Frio vs. Produtividade</li>
-                                    <li className="flex items-center gap-2 hover:underline cursor-pointer text-red-600 font-bold"><Star size={12}/> BOTÃO DE EMERGÊNCIA (RETORNO AO HUB)</li>
+                                    <li className="flex items-center gap-2 hover:underline cursor-pointer"><Star size={12} /> Como lidar com pautas de 10 anos atrás</li>
+                                    <li className="flex items-center gap-2 hover:underline cursor-pointer"><Star size={12} /> Tutorial: Café Frio vs. Produtividade</li>
+                                    <li className="flex items-center gap-2 hover:underline cursor-pointer text-red-600 font-bold"><Star size={12} /> BOTÃO DE EMERGÊNCIA (RETORNO AO HUB)</li>
                                 </ul>
                             </div>
                         );
@@ -167,11 +166,11 @@ const Mural: React.FC = () => {
 
             {/* Taskbar */}
             <div className="absolute bottom-0 left-0 right-0 h-14 bg-[#c0c0c0] border-t-2 border-white flex items-center p-2 gap-3 z-[1000] shadow-[0_-4px_15px_rgba(0,0,0,0.4)]">
-                <button 
+                <button
                     onClick={() => { playBiosBeep(); advanceStage(1); navigate('/hub'); }}
                     className="bg-[#c0c0c0] border-t-2 border-l-2 border-white border-b-2 border-r-2 border-black flex items-center gap-3 px-5 h-full font-black text-sm active:border-inset shadow-md hover:bg-gray-200 transition-colors group"
                 >
-                    <div className="bg-blue-800 p-1.5 rounded-sm group-hover:scale-110 transition-transform"><ArrowLeft size={16} className="text-white"/></div>
+                    <div className="bg-blue-800 p-1.5 rounded-sm group-hover:scale-110 transition-transform"><ArrowLeft size={16} className="text-white" /></div>
                     <span className="tracking-tighter uppercase italic text-blue-900">RETORNAR AO CAMPUS</span>
                 </button>
                 <div className="h-full w-[2px] bg-gray-500 mx-2 shadow-sm"></div>
@@ -182,7 +181,7 @@ const Mural: React.FC = () => {
                     </div>
                 ))}
                 <div className="ml-auto bg-[#c0c0c0] border-t-2 border-l-2 border-gray-500 border-b-2 border-r-2 border-white px-6 h-full flex items-center gap-4 text-[12px] font-mono font-black shadow-inner">
-                    <Clock size={18} className="text-blue-900"/> {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    <Clock size={18} className="text-blue-900" /> {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </div>
             </div>
         </div>
