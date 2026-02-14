@@ -34,12 +34,12 @@ export const MuralLoading: React.FC<{ onComplete: () => void }> = ({ onComplete 
     <div className="fixed inset-0 bg-[#008080] z-[200] flex flex-col items-center justify-center p-10 font-mono text-white">
       <div className="w-full max-w-md bg-black border-2 border-gray-400 p-6 shadow-[10px_10px_0_rgba(0,0,0,0.5)]">
         <div className="flex items-center gap-3 mb-6 text-green-500">
-           <Folder size={24} />
-           <span className="text-xs uppercase font-bold tracking-widest">File Manager Access</span>
+          <Folder size={24} />
+          <span className="text-xs uppercase font-bold tracking-widest">File Manager Access</span>
         </div>
         <div className="space-y-2 text-[10px] md:text-xs">
           {lines.map((l, i) => (
-            <p key={i} className="text-green-400 animate-in fade-in slide-in-from-left-2">> {l}</p>
+            <p key={i} className="text-green-400 animate-in fade-in slide-in-from-left-2">&gt; {l}</p>
           ))}
           <div className="pt-4 flex items-center gap-2">
             <Loader2 className="animate-spin text-yellow-500" size={14} />
@@ -61,14 +61,14 @@ export const ClassroomTransition: React.FC<{ onComplete: () => void }> = ({ onCo
   return (
     <div className="fixed inset-0 bg-black z-[200] flex items-center justify-center overflow-hidden">
       {/* CRT Turn Off Effect */}
-      <motion.div 
+      <motion.div
         initial={{ height: "100%", width: "100%" }}
         animate={{ height: "2px", width: "100%", opacity: [1, 1, 0] }}
         transition={{ duration: 0.5, times: [0, 0.8, 1] }}
         className="bg-white z-50 absolute"
       />
-      
-      <motion.div 
+
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8, duration: 2 }}

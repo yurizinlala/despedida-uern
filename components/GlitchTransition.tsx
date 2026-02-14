@@ -34,7 +34,7 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
   const [isRegressing, setIsRegressing] = useState(false);
   const [konamiIdx, setKonamiIdx] = useState(0);
   const skipTriggered = useRef(false);
-  
+
   const messagesRef = useRef<string[]>([]);
 
   useEffect(() => {
@@ -76,10 +76,10 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
       const updateProgress = () => {
         setProgress((prev) => {
           if (prev >= 100) {
-             if (!skipTriggered.current) unlockAchievement('paciencia_jo');
-             setPhase('error');
-             playGlitchSound();
-             return 100;
+            if (!skipTriggered.current) unlockAchievement('paciencia_jo');
+            setPhase('error');
+            playGlitchSound();
+            return 100;
           }
           const chaos = Math.random();
           if (chaos < 0.12 && prev > 30) {
@@ -91,12 +91,12 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
           setIsRegressing(false);
           const increment = Math.random() * 6 + 1;
           if (Math.random() < 0.25) {
-             const lines = messagesRef.current;
-             if (lines.length) setCurrentLine(lines[Math.floor(Math.random() * lines.length)]);
+            const lines = messagesRef.current;
+            if (lines.length) setCurrentLine(lines[Math.floor(Math.random() * lines.length)]);
           }
           return Math.min(100, prev + increment);
         });
-        const nextSpeed = Math.random() * 500 + 100; 
+        const nextSpeed = Math.random() * 500 + 100;
         if (phase === 'loading') timerRef.current = setTimeout(updateProgress, nextSpeed);
       };
       let timerRef = { current: setTimeout(updateProgress, 500) };
@@ -119,16 +119,16 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
   }, [phase, onComplete, isFirstTry, unlockAchievement]);
 
   const handleSkip = () => {
-      skipTriggered.current = true;
-      setHasSkippedIntro(true);
-      setPhase('error');
+    skipTriggered.current = true;
+    setHasSkippedIntro(true);
+    setPhase('error');
   };
 
   if (phase === 'loading') {
     return (
       <div className="min-h-screen bg-[#dcdcdc] flex items-center justify-center flex-col p-12 font-sans border-8 border-white overflow-hidden">
         <button onClick={handleSkip} className="absolute top-6 right-6 text-[10px] text-gray-500 hover:text-blue-700 flex items-center gap-2 uppercase font-black border-2 border-gray-400 px-3 py-1 shadow-sm">
-            <FastForward size={14}/> Ignorar Troll Loading
+          <FastForward size={14} /> Ignorar Troll Loading
         </button>
         <div className="w-full max-w-lg space-y-4">
           <div className="flex justify-between text-xs text-gray-700 font-black uppercase tracking-tighter">
@@ -136,9 +136,9 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
             <span className="font-mono">{Math.floor(progress)}%</span>
           </div>
           <div className="h-10 bg-white border-4 border-gray-500 p-1 shadow-inner">
-            <motion.div 
-                className={`h-full transition-all duration-300 ${isRegressing ? 'bg-red-600' : 'bg-blue-700'}`} 
-                style={{ width: `${progress}%` }} 
+            <motion.div
+              className={`h-full transition-all duration-300 ${isRegressing ? 'bg-red-600' : 'bg-blue-700'}`}
+              style={{ width: `${progress}%` }}
             />
           </div>
           <p className="text-center text-[9px] text-gray-400 font-bold uppercase">Aviso: Não desligue o seu cérebro durante este processo.</p>
@@ -153,30 +153,30 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
         <div className="max-w-4xl w-full space-y-8 relative z-10">
           <div className="bg-white text-[#0000AA] inline-block px-4 py-1 font-black text-2xl mb-8">UERN_HALT_RECOVERY</div>
           <p className="text-3xl font-bold leading-tight">
-            :( <br/>
+            :( <br />
             Ocorreu um erro fatal no seu semestre acadêmico e o sistema precisa ser reiniciado para evitar o trancamento compulsório.
           </p>
-          
+
           <div className="bg-white/5 border-2 border-white/20 p-8 space-y-4 font-mono text-sm md:text-base overflow-hidden">
-             <h3 className="text-yellow-400 font-bold uppercase">Relatório de Desastre:</h3>
-             <div className="h-40 overflow-hidden relative">
-                <motion.div animate={{ y: [0, -400] }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="space-y-1 opacity-80">
-                    {fakeErrorLogs.map((log, i) => <p key={i}>> {log}</p>)}
-                    {fakeErrorLogs.map((log, i) => <p key={i+100}>> {log}</p>)}
-                </motion.div>
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0000AA] via-transparent to-[#0000AA] pointer-events-none"></div>
-             </div>
+            <h3 className="text-yellow-400 font-bold uppercase">Relatório de Desastre:</h3>
+            <div className="h-40 overflow-hidden relative">
+              <motion.div animate={{ y: [0, -400] }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="space-y-1 opacity-80">
+                {fakeErrorLogs.map((log, i) => <p key={i}>&gt; {log}</p>)}
+                {fakeErrorLogs.map((log, i) => <p key={i + 100}>&gt; {log}</p>)}
+              </motion.div>
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0000AA] via-transparent to-[#0000AA] pointer-events-none"></div>
+            </div>
           </div>
 
           <div className="flex items-center gap-6 pt-10 border-t border-white/20">
-             <div className="w-24 h-24 bg-white p-2">
-                <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=UERN_LEGACY_SYSTEM&color=0000AA`} alt="QR" className="w-full h-full" />
-             </div>
-             <div className="text-xs space-y-2 opacity-70 uppercase tracking-widest font-bold">
-                <p>Para mais informações, procure por: "DIP_EXAUSTION_SYS_042"</p>
-                <p>O sistema será restaurado em breve... talvez.</p>
-                <p className="text-yellow-400 animate-pulse">DICA: Uma sequência de setas mística pode purificar o Kernel...</p>
-             </div>
+            <div className="w-24 h-24 bg-white p-2">
+              <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=UERN_LEGACY_SYSTEM&color=0000AA`} alt="QR" className="w-full h-full" />
+            </div>
+            <div className="text-xs space-y-2 opacity-70 uppercase tracking-widest font-bold">
+              <p>Para mais informações, procure por: "DIP_EXAUSTION_SYS_042"</p>
+              <p>O sistema será restaurado em breve... talvez.</p>
+              <p className="text-yellow-400 animate-pulse">DICA: Uma sequência de setas mística pode purificar o Kernel...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -186,20 +186,20 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
   return (
     <div className="min-h-screen bg-black flex items-center justify-center font-mono-tech overflow-hidden p-8">
       <div className="crt-container absolute inset-0 pointer-events-none z-50"></div>
-      <motion.div 
-        initial={{ scale: 0.5, opacity: 0 }} 
-        animate={{ scale: 1, opacity: 1 }} 
+      <motion.div
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
         className="relative z-10 w-full max-w-4xl p-12 border-4 border-cyan-500/50 bg-black/80 text-center shadow-[0_0_100px_rgba(6,182,212,0.3)]"
       >
         <Fingerprint size={100} className="mx-auto text-cyan-400 mb-8 animate-pulse" />
         <h1 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter uppercase italic">IDENTIDADE <span className="text-cyan-400">RESTABELECIDA</span></h1>
         <div className="h-2 w-full bg-cyan-900/30 mb-8">
-            <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 3 }} className="h-full bg-cyan-400 shadow-[0_0_15px_cyan]" />
+          <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 3 }} className="h-full bg-cyan-400 shadow-[0_0_15px_cyan]" />
         </div>
         {isFirstTry && (
-            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1 }} className="text-yellow-400 text-lg font-bold border-2 border-yellow-500 p-4 inline-flex items-center gap-3 bg-yellow-500/5">
-                <Trophy className="animate-bounce" /> CONQUISTA DESBLOQUEADA: HACKERMAN NATO
-            </motion.div>
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1 }} className="text-yellow-400 text-lg font-bold border-2 border-yellow-500 p-4 inline-flex items-center gap-3 bg-yellow-500/5">
+            <Trophy className="animate-bounce" /> CONQUISTA DESBLOQUEADA: HACKERMAN NATO
+          </motion.div>
         )}
       </motion.div>
     </div>
