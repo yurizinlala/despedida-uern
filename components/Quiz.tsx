@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
-import { playTone, playPaperSound, playBiosBeep, playProcessingNoise, playGlitchSound, playSuccessChime } from '../utils/audio';
+
 import { ArrowRight, RotateCcw, Loader2, AlertTriangle, Coffee, Skull, ClipboardCheck, Zap } from 'lucide-react';
 
 const quizQuestions = [
@@ -45,15 +45,12 @@ const Quiz: React.FC = () => {
     setSelected(idx);
     if (idx === quizQuestions[current].answer) {
       setScore(s => s + 1);
-      playTone(600, 'sine', 0.1);
     } else {
-      playTone(200, 'sawtooth', 0.2);
     }
     setTimeout(() => {
       if (current < 9) {
         setCurrent(current + 1);
         setSelected(null);
-        playPaperSound();
       } else {
         triggerGrading();
       }
@@ -62,17 +59,14 @@ const Quiz: React.FC = () => {
 
   const triggerGrading = () => {
     setIsGrading(true);
-    playProcessingNoise();
     // Drumroll suspense
     const interval = setInterval(() => {
-      playBiosBeep();
     }, 400);
 
     setTimeout(() => {
       clearInterval(interval);
       setIsGrading(false);
       setShowResult(true);
-      playSuccessChime();
 
       // achievement placeholders
     }, 5000);

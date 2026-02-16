@@ -4,13 +4,7 @@ import { useUser } from '../context/UserContext';
 import { professors, getAuthText } from '../data/professors';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, Lock, Server, Terminal, Calendar, Trophy, Info, UserCheck, MessageSquare, Newspaper, Bell, ExternalLink, Search } from 'lucide-react';
-import { playKeyClick } from '../utils/audio';
-
-const playSound = (src: string) => {
-  const audio = new Audio(src);
-  audio.play().catch(() => { });
-  return audio;
-};
+import { playSound } from '../utils/audio';
 
 interface FakeLoginProps {
   onSuccess: (isFirstTry: boolean) => void;
@@ -47,7 +41,7 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    playKeyClick();
+
     setError('');
     setEasterEgg(null);
   };
@@ -212,7 +206,7 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
                   setFailedAttempts(0);
                   setError('');
                   setEasterEgg(null);
-                  playKeyClick();
+
                 }}>
                   <option value="">-- SELECIONE O PERFIL PARA VALIDAR --</option>
                   {professors.map((p) => <option key={p.id} value={p.id}>{p.name.toUpperCase()}</option>)}
@@ -226,7 +220,7 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
 
               <div className="flex gap-4 pt-4">
                 <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} type="submit" className="flex-1 bg-blue-900 text-white font-black py-4 text-sm shadow-[4px_4px_0px_rgba(0,0,0,0.2)] hover:bg-blue-800 transition-all uppercase tracking-[0.2em]">AUTENTICAR</motion.button>
-                <button type="button" onClick={() => { setPassword(''); setError(''); playKeyClick(); }} className="px-8 bg-gray-100 text-gray-600 font-bold text-xs hover:bg-gray-200 transition-all uppercase border border-gray-300">LIMPAR</button>
+                <button type="button" onClick={() => { setPassword(''); setError(''); }} className="px-8 bg-gray-100 text-gray-600 font-bold text-xs hover:bg-gray-200 transition-all uppercase border border-gray-300">LIMPAR</button>
               </div>
             </form>
 

@@ -1,110 +1,58 @@
 
-// Audio Engine - Pure Web Audio API
-// No assets required, fully synthesized sound.
+// Global Audio Engine
+// Preloads all .mp3 sounds at app startup to eliminate first-play latency.
 
-let audioCtx: AudioContext | null = null;
+const audioCache: Record<string, HTMLAudioElement> = {};
 
-const getCtx = () => {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-  }
-  return audioCtx;
+// All sound files used across the project
+const ALL_SOUNDS = [
+    '/sounds/accept.mp3',
+    '/sounds/achviements-open.mp3',
+    '/sounds/bsod.mp3',
+    '/sounds/coin.mp3',
+    '/sounds/error.mp3',
+    '/sounds/glitch-transition-open.mp3',
+    '/sounds/glitch.mp3',
+    '/sounds/hit1.mp3',
+    '/sounds/hit2.mp3',
+    '/sounds/hit3.mp3',
+    '/sounds/kernel-init.mp3',
+    '/sounds/kernel-loading.mp3',
+    '/sounds/one-up.mp3',
+    '/sounds/postit.mp3',
+    '/sounds/sigaa-init.mp3',
+    '/sounds/wrong.mp3',
+];
+
+/** Preload all project sounds into memory. Call once at app startup. */
+export const preloadAllSounds = () => {
+    ALL_SOUNDS.forEach((src) => {
+        if (!audioCache[src]) {
+            const audio = new Audio(src);
+            audio.preload = 'auto';
+            audioCache[src] = audio;
+        }
+    });
 };
 
-// Generic Oscillator Helper
-export const playTone = (freq: number, type: OscillatorType, duration: number, vol: number = 0.1) => {
-  const ctx = getCtx();
-  if (ctx.state === 'suspended') ctx.resume();
-
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, ctx.currentTime);
-  
-  gain.gain.setValueAtTime(vol, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-
-  osc.start();
-  osc.stop(ctx.currentTime + duration);
+/** Play a sound by path. Uses preloaded cache for instant playback. */
+export const playSound = (src: string) => {
+    const cached = audioCache[src];
+    if (cached) {
+        const clone = cached.cloneNode() as HTMLAudioElement;
+        clone.play().catch(() => { });
+        return clone;
+    }
+    const audio = new Audio(src);
+    audio.play().catch(() => { });
+    return audio;
 };
 
-export const playKeyClick = () => {
-  playTone(800, 'triangle', 0.05, 0.05);
-};
-
-export const playBiosBeep = () => {
-  playTone(1000, 'square', 0.1, 0.1);
-};
-
-export const playProcessingNoise = () => {
-  const ctx = getCtx();
-  const bufferSize = ctx.sampleRate * 0.5;
-  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-  const noise = ctx.createBufferSource();
-  noise.buffer = buffer;
-  const gain = ctx.createGain();
-  gain.gain.value = 0.03;
-  const filter = ctx.createBiquadFilter();
-  filter.type = 'lowpass';
-  filter.frequency.value = 1000;
-  noise.connect(filter);
-  filter.connect(gain);
-  gain.connect(ctx.destination);
-  noise.start();
-};
-
-export const playGlitchSound = () => {
-  const ctx = getCtx();
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type = 'sawtooth';
-  osc.frequency.setValueAtTime(100, ctx.currentTime);
-  osc.frequency.linearRampToValueAtTime(800, ctx.currentTime + 0.1);
-  osc.frequency.linearRampToValueAtTime(50, ctx.currentTime + 0.3);
-  gain.gain.setValueAtTime(0.1, ctx.currentTime);
-  gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-  osc.start();
-  osc.stop(ctx.currentTime + 0.3);
-};
-
-export const playSuccessChime = () => {
-  [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-    setTimeout(() => playTone(freq, 'sine', 0.6, 0.05), i * 100);
-  });
-};
-
-export const playMeow = () => {
-  const ctx = getCtx();
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type = 'triangle';
-  osc.frequency.setValueAtTime(400, ctx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.1);
-  osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.4);
-  gain.gain.setValueAtTime(0.1, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-  osc.start();
-  osc.stop(ctx.currentTime + 0.4);
-};
-
-export const playXpStartup = () => {
-  const freqs = [392.00, 523.25, 659.25, 783.99]; // G4, C5, E5, G5
-  freqs.forEach((f, i) => {
-    setTimeout(() => playTone(f, 'sine', 1.5, 0.08), i * 200);
-  });
-};
-
-export const playPaperSound = () => playTone(200, 'triangle', 0.1, 0.02);
-export const playShimmer = () => {
-  for(let i=0; i<10; i++) setTimeout(() => playTone(2000 + (Math.random()*1000), 'sine', 0.4, 0.01), i * 50);
+/** Play a sound with custom playback rate (pitch). */
+export const playSoundPitched = (src: string, playbackRate: number) => {
+    const cached = audioCache[src];
+    const audio = (cached ? cached.cloneNode() : new Audio(src)) as HTMLAudioElement;
+    audio.playbackRate = Math.min(Math.max(playbackRate, 0.25), 4.0);
+    audio.play().catch(() => { });
+    return audio;
 };

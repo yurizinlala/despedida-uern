@@ -4,71 +4,110 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import {
-  Clock, Sun, Moon, Lock, ArrowRight, X
+  Clock, Sun, Moon, ArrowRight, X, MapPin, ChevronDown,
+  BookOpen, Trophy, GraduationCap, Star
 } from 'lucide-react';
-import { playKeyClick, playMeow, playBiosBeep } from '../utils/audio';
+
 import { MuralLoading, ClassroomTransition } from './Transitions';
 
-const ASSETS = {
-  uern_natal: "assets/uern_natal.png",
-  complexo: "assets/complexo.png",
-  secretaria: "assets/secretaria.png",
-  gato: "assets/gato.png",
-  arvore: "assets/arvore.png",
-  sol: "assets/sol.png",
-  lua: "assets/lua.png",
-  nuvem_dia: "assets/nuvem_dia.png",
-  nuvem_noite: "assets/nuvem_noite.png"
-};
+// Assets from public/assets/
+const imgCentro = 'assets/centroconvivencia.png';
+const imgComplexo = 'assets/complexouern.png';
+const imgSecretaria = 'assets/secretaria.png';
+const imgGato = 'assets/gato.png';
+const imgArvore = 'assets/arvore.png';
+const imgSol = 'assets/sol.png';
+const imgLua = 'assets/lua.png';
+const imgNuvemDia = 'assets/nuvem_dia.png';
+const imgNuvemNoite = 'assets/nuvem_noite.png';
 
-const Sky: React.FC<{ isDay: boolean }> = ({ isDay }) => {
+// --- Night Stars ---
+const NightStars: React.FC = () => {
+  const stars = useMemo(() =>
+    Array.from({ length: 40 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 45,
+      size: Math.random() * 3 + 1,
+      delay: Math.random() * 4,
+      duration: Math.random() * 2 + 1.5,
+    })), []
+  );
+
   return (
-    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-      <motion.div
-        animate={{
-          y: [20, -10, 20],
-          rotate: [0, 5, -5, 0]
-        }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute right-[15%] top-[10%] w-24 h-24 md:w-32 md:h-32"
-      >
-        <img src={isDay ? ASSETS.sol : ASSETS.lua} alt={isDay ? "Sol" : "Lua"} className="w-full h-full object-contain pixel-art" />
-      </motion.div>
-
-      {[...Array(6)].map((_, i) => (
+    <div className="absolute inset-0 pointer-events-none z-[1]">
+      {stars.map((s) => (
         <motion.div
-          key={i}
-          initial={{ x: -300 }}
-          animate={{ x: "110vw" }}
-          transition={{
-            duration: 50 + (i * 15),
-            repeat: Infinity,
-            delay: i * 8,
-            ease: "linear"
+          key={s.id}
+          className="absolute rounded-full bg-white"
+          style={{
+            left: `${s.x}%`,
+            top: `${s.y}%`,
+            width: s.size,
+            height: s.size,
           }}
-          style={{ top: `${8 + (i * 14)}%` }}
-          className="absolute w-32 h-20 md:w-56 md:h-32"
-        >
-          <img src={isDay ? ASSETS.nuvem_dia : ASSETS.nuvem_noite} alt="Nuvem" className="w-full h-full object-contain pixel-art" />
-        </motion.div>
+          animate={{ opacity: [0.2, 0.8, 0.2], scale: [0.8, 1.2, 0.8] }}
+          transition={{ duration: s.duration, delay: s.delay, repeat: Infinity, ease: "easeInOut" }}
+        />
       ))}
     </div>
   );
 };
 
-const Tree: React.FC<{ x: number, y: number }> = ({ x, y }) => (
-  <div
-    className="absolute z-10 w-24 h-28 pointer-events-none select-none"
-    style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -100%)' }}
-  >
-    <img src={ASSETS.arvore} alt="Árvore" className="w-full h-full object-contain pixel-art" />
+// --- Sky ---
+const CLOUD_SIZES = [1.0, 1.4, 0.9, 1.6, 1.2, 1.3];
+
+const Sky: React.FC<{ isDay: boolean }> = ({ isDay }) => (
+  <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+    <motion.div
+      animate={{ y: [20, -10, 20], rotate: [0, 5, -5, 0] }}
+      transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+      className="absolute right-[15%] top-[8%] w-20 h-20 md:w-28 md:h-28"
+    >
+      <img src={isDay ? imgSol : imgLua} alt="" className="w-full h-full object-contain pixel-art" />
+    </motion.div>
+
+    {CLOUD_SIZES.map((scale, i) => (
+      <motion.div
+        key={i}
+        initial={{ x: -300 * scale }}
+        animate={{ x: "110vw" }}
+        transition={{ duration: 50 + (i * 16), repeat: Infinity, delay: i * 9, ease: "linear" }}
+        style={{
+          top: `${5 + (i * 7)}%`,
+          width: `${scale * 14}rem`,
+          height: `${scale * 8}rem`,
+        }}
+        className="absolute"
+      >
+        <img src={isDay ? imgNuvemDia : imgNuvemNoite} alt="" className="w-full h-full object-contain pixel-art" />
+      </motion.div>
+    ))}
   </div>
 );
 
+// --- Tree with gentle sway ---
+const Tree: React.FC<{ x: number; y: number; delay: number; size?: number }> = ({ x, y, delay, size = 1 }) => (
+  <motion.div
+    className="absolute z-10 pointer-events-none select-none origin-bottom"
+    style={{
+      left: `${x}%`,
+      top: `${y}%`,
+      transform: 'translate(-50%, -100%)',
+      width: `${size * 7}rem`,
+      height: `${size * 8}rem`,
+    }}
+    animate={{ rotate: [-0.8, 1.2, -0.5, 0.8, -0.8] }}
+    transition={{ duration: 5 + delay * 2, repeat: Infinity, ease: "easeInOut", delay }}
+  >
+    <img src={imgArvore} alt="" className="w-full h-full object-contain pixel-art" />
+  </motion.div>
+);
+
+// --- Campus Cat (kept as-is per user request) ---
 const CampusCat: React.FC = () => {
-  const { selectedProfessor } = useUser();
   const [clicks, setClicks] = useState(0);
-  const [pos, setPos] = useState({ x: 30, y: 80 });
+  const [pos, setPos] = useState({ x: 40, y: 72 });
   const [bubble, setBubble] = useState<string | null>(null);
 
   const catQuotes = [
@@ -81,16 +120,14 @@ const CampusCat: React.FC = () => {
 
   useEffect(() => {
     const moveInterval = setInterval(() => {
-      setPos({ x: Math.random() * 70 + 15, y: Math.random() * 40 + 45 });
+      setPos({ x: Math.random() * 50 + 25, y: Math.random() * 20 + 60 });
     }, 15000);
     return () => clearInterval(moveInterval);
   }, []);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    playMeow();
-    const newClicks = clicks + 1;
-    setClicks(newClicks);
+    setClicks(clicks + 1);
     setBubble(catQuotes[Math.floor(Math.random() * catQuotes.length)]);
     setTimeout(() => setBubble(null), 3500);
   };
@@ -100,14 +137,14 @@ const CampusCat: React.FC = () => {
       animate={{ left: `${pos.x}%`, top: `${pos.y}%` }}
       transition={{ duration: 12, ease: "easeInOut" }}
       onClick={handleClick}
-      className="absolute z-30 cursor-pointer w-24 h-24 flex items-center justify-center select-none group"
+      className="absolute z-30 cursor-pointer w-16 h-16 md:w-20 md:h-20 flex items-center justify-center select-none group"
       style={{ transform: 'translate(-50%, -50%)' }}
     >
       <AnimatePresence>
         {bubble && (
           <motion.div
             initial={{ opacity: 0, scale: 0.5, y: 0 }}
-            animate={{ opacity: 1, scale: 1, y: -70 }}
+            animate={{ opacity: 1, scale: 1, y: -60 }}
             exit={{ opacity: 0 }}
             className="absolute whitespace-nowrap bg-white text-black text-[9px] font-pixel p-3 border-4 border-black rounded shadow-[6px_6px_0_rgba(0,0,0,0.2)] z-50 after:content-[''] after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-8 after:border-transparent after:border-t-black"
           >
@@ -116,50 +153,84 @@ const CampusCat: React.FC = () => {
         )}
       </AnimatePresence>
       <div className="w-full h-full group-hover:scale-110 transition-transform">
-        <img src={ASSETS.gato} alt="Gato do Campus" className="w-full h-full object-contain pixel-art" />
+        <img src={imgGato} alt="Gato do Campus" className="w-full h-full object-contain pixel-art" />
       </div>
     </motion.div>
   );
 };
 
-const MapBuilding: React.FC<{ id: string, label: string, x: number, y: number, onClick: (isLocked: boolean) => void, isLocked?: boolean }> = ({ id, label, x, y, onClick, isLocked = false }) => {
-  const assetUrl = id === 'mural' ? ASSETS.uern_natal : id === 'quiz' ? ASSETS.complexo : ASSETS.secretaria;
+// --- Map Building ---
+const MapBuilding: React.FC<{
+  id: string;
+  imgSrc: string;
+  label: string;
+  x: number;
+  y: number;
+  onClick: (isLocked: boolean) => void;
+  isLocked?: boolean;
+  isCurrentObjective?: boolean;
+}> = ({ id, imgSrc, label, x, y, onClick, isLocked = false, isCurrentObjective = false }) => (
+  <div
+    className="absolute flex flex-col items-center z-20 cursor-pointer group"
+    style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)' }}
+    onClick={(e) => { e.stopPropagation(); onClick(isLocked); }}
+  >
+    {/* Bouncing arrow indicator for current objective */}
+    {isCurrentObjective && !isLocked && (
+      <motion.div
+        className="absolute -top-4 z-50"
+        animate={{ y: [0, -8, 0] }}
+        transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <ChevronDown size={24} className="text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" />
+      </motion.div>
+    )}
 
-  return (
-    <motion.div
-      className="absolute flex flex-col items-center z-20 cursor-pointer group"
-      style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)' }}
-      whileHover={{ scale: 1.05, y: -15 }}
-      onClick={(e) => { e.stopPropagation(); onClick(isLocked); }}
+    <div className={`w-52 h-52 md:w-72 md:h-72 relative flex items-center justify-center transition-all duration-500 ${isLocked ? 'grayscale-[70%]' : ''}`}>
+      <img src={imgSrc} alt={label} className="w-full h-full object-contain pixel-art" />
+    </div>
+    {/* Label */}
+    <div className={`mt-0 text-[8px] px-2 py-1 font-pixel border-2 uppercase whitespace-nowrap shadow-[3px_3px_0_rgba(0,0,0,0.3)] transition-all
+      ${isLocked
+        ? 'bg-gray-800 text-gray-500 border-gray-600 opacity-0 group-hover:opacity-100'
+        : isCurrentObjective
+          ? 'bg-yellow-400 text-black border-yellow-600'
+          : 'bg-black text-white border-white opacity-0 group-hover:opacity-100'
+      }`}
     >
-      <div className="w-56 h-56 md:w-80 md:h-80 relative flex items-center justify-center transition-all">
-        <img src={assetUrl} alt={label} className="w-full h-full object-contain pixel-art" />
-        {isLocked && (
-          <div className="absolute top-0 right-0 bg-white border-4 border-black p-2">
-            <Lock size={24} className="text-black" />
-          </div>
-        )}
-      </div>
-      <div className="mt-2 bg-black text-white text-[9px] px-3 py-2 font-pixel border-2 border-white opacity-0 group-hover:opacity-100 transition-opacity uppercase whitespace-nowrap shadow-[4px_4px_0_rgba(0,0,0,0.3)]">
-        {label}
-      </div>
-    </motion.div>
-  );
-};
+      {isLocked ? `🔒 ${label}` : isCurrentObjective ? `📍 ${label}` : label}
+    </div>
+  </div>
+);
 
+// --- Stage config ---
+const STAGES = [
+  { label: "Mural", icon: BookOpen, desc: "Visite o campus" },
+  { label: "Quiz", icon: Trophy, desc: "Teste seus conhecimentos" },
+  { label: "Diploma", icon: GraduationCap, desc: "Receba seu diploma" },
+];
+
+// --- Main Component ---
 const Hub: React.FC = () => {
   const { selectedProfessor, gameStage } = useUser();
   const navigate = useNavigate();
   const [transitioningTo, setTransitioningTo] = useState<'mural' | 'quiz' | null>(null);
-  const [dialogue, setDialogue] = useState<{ open: boolean, text: string, targetRoute?: string, title?: string, type?: 'locked' | 'normal' } | null>(null);
+  const [dialogue, setDialogue] = useState<{ open: boolean; text: string; targetRoute?: string; title?: string; type?: 'locked' | 'normal' } | null>(null);
   const [typedText, setTypedText] = useState('');
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  // Trees only on the ground area (y >= 52%)
   const treePositions = useMemo(() => [
-    { x: 10, y: 20 }, { x: 85, y: 15 }, { x: 45, y: 10 },
-    { x: 15, y: 85 }, { x: 82, y: 90 }, { x: 55, y: 95 },
-    { x: 35, y: 35 }, { x: 65, y: 30 }, { x: 5, y: 55 },
-    { x: 92, y: 60 }, { x: 48, y: 28 }, { x: 22, y: 12 }
+    { x: 8, y: 55, d: 0 },
+    { x: 92, y: 58, d: 1.2 },
+    { x: 15, y: 88, d: 0.5 },
+    { x: 85, y: 90, d: 2 },
+    { x: 50, y: 92, d: 0.8 },
+    { x: 70, y: 56, d: 1.5 },
+    { x: 35, y: 55, d: 0.3 },
+    { x: 60, y: 93, d: 1.8 },
+    { x: 5, y: 70, d: 0.7 },
+    { x: 95, y: 75, d: 2.2 },
   ], []);
 
   useEffect(() => {
@@ -173,7 +244,6 @@ const Hub: React.FC = () => {
     if (dialogue?.open && typedText.length < dialogue.text.length) {
       const timeout = setTimeout(() => {
         setTypedText(dialogue.text.slice(0, typedText.length + 1));
-        if (typedText.length % 3 === 0) playKeyClick();
       }, 25);
       return () => clearTimeout(timeout);
     }
@@ -181,12 +251,7 @@ const Hub: React.FC = () => {
 
   const handleBuildingClick = (id: string, isLocked: boolean) => {
     if (isLocked) {
-      setDialogue({
-        open: true,
-        text: "ERRO DE PROTOCOLO: Este setor está sob manutenção acadêmica preventiva. Continue seu progresso para liberar o acesso.",
-        title: "SISTEMA UERN",
-        type: 'locked'
-      });
+      setDialogue({ open: true, text: "ERRO DE PROTOCOLO: Este setor está sob manutenção acadêmica preventiva. Continue seu progresso para liberar o acesso.", title: "SISTEMA UERN", type: 'locked' });
     } else {
       if (id === 'mural') setDialogue({ open: true, text: "Bem-vindo à UERN NATAL. Os registros da sua jornada estão armazenados aqui.", targetRoute: "/mural", title: "UERN CAMPUS NATAL" });
       if (id === 'quiz') setDialogue({ open: true, text: "O COMPLEXO está pronto para a sua avaliação final de sanidade. Pronto para os testes?", targetRoute: "/quiz", title: "O COMPLEXO" });
@@ -197,7 +262,6 @@ const Hub: React.FC = () => {
 
   const closeDialogue = () => {
     if (dialogue?.targetRoute) {
-      playBiosBeep();
       if (dialogue.targetRoute === '/mural') setTransitioningTo('mural');
       else if (dialogue.targetRoute === '/quiz') setTransitioningTo('quiz');
       else navigate(dialogue.targetRoute);
@@ -206,107 +270,133 @@ const Hub: React.FC = () => {
     setTypedText('');
   };
 
+  const currentObj = gameStage === 0 ? 'mural' : gameStage === 1 ? 'quiz' : gameStage === 2 ? 'certificado' : null;
+
   return (
-    <div className={`h-screen w-full relative overflow-hidden font-pixel transition-all duration-[3000ms] ease-in-out ${isDay ? 'bg-[#4da6ff]' : 'bg-[#001a33]'
-      }`}>
+    <div className={`h-screen w-full relative overflow-hidden font-pixel transition-all duration-[3000ms] ease-in-out ${isDay ? 'bg-[#4da6ff]' : 'bg-[#0a1628]'}`}>
       {transitioningTo === 'mural' && <MuralLoading onComplete={() => navigate('/mural')} />}
       {transitioningTo === 'quiz' && <ClassroomTransition onComplete={() => navigate('/quiz')} />}
 
-      <div className={`absolute inset-0 pointer-events-none z-[40] transition-opacity duration-[3000ms] ${isDay ? 'opacity-0' : 'opacity-30 bg-blue-950/10'
-        }`}></div>
+      {/* Night overlay */}
+      <div className={`absolute inset-0 pointer-events-none z-[40] transition-opacity duration-[3000ms] ${isDay ? 'opacity-0' : 'opacity-20 bg-blue-950/20'}`} />
+
+      {/* Stars at night */}
+      {!isDay && <NightStars />}
 
       <Sky isDay={isDay} />
 
-      <div className={`absolute bottom-0 left-0 right-0 h-1/2 z-0 transition-colors duration-[3000ms] ${isDay ? 'bg-[#56b356]' : 'bg-[#1a331a]'
-        }`}>
-        <div className="absolute inset-0 opacity-15 bg-[url('https://www.transparenttextures.com/patterns/pinstripe-dark.png')]"></div>
+      {/* Ground */}
+      <div className={`absolute bottom-0 left-0 right-0 h-1/2 z-0 transition-colors duration-[3000ms] ${isDay ? 'bg-[#56b356]' : 'bg-[#1a331a]'}`}>
+        <div className="absolute inset-0 opacity-15 bg-[url('https://www.transparenttextures.com/patterns/pinstripe-dark.png')]" />
       </div>
 
+      {/* Trees — all on ground */}
       {treePositions.map((p, i) => (
-        <Tree key={i} x={p.x} y={p.y} />
+        <Tree key={i} x={p.x} y={p.y} delay={p.d} size={0.8 + Math.random() * 0.4} />
       ))}
 
       <CampusCat />
 
+      {/* Buildings */}
       <MapBuilding
-        id="mural"
-        label="UERN NATAL"
-        x={22} y={50}
+        id="mural" imgSrc={imgCentro} label="UERN NATAL"
+        x={20} y={58}
         onClick={(locked) => handleBuildingClick('mural', locked)}
+        isCurrentObjective={currentObj === 'mural'}
       />
       <MapBuilding
-        id="quiz"
-        label="COMPLEXO"
-        x={78} y={45}
+        id="quiz" imgSrc={imgComplexo} label="COMPLEXO"
+        x={80} y={55}
         isLocked={gameStage < 1}
         onClick={(locked) => handleBuildingClick('quiz', locked)}
+        isCurrentObjective={currentObj === 'quiz'}
       />
       <MapBuilding
-        id="certificado"
-        label="SECRETARIA"
-        x={50} y={75}
+        id="certificado" imgSrc={imgSecretaria} label="SECRETARIA"
+        x={50} y={72}
         isLocked={gameStage < 2}
         onClick={(locked) => handleBuildingClick('certificado', locked)}
+        isCurrentObjective={currentObj === 'certificado'}
       />
 
-      <div className="absolute top-8 left-8 right-8 z-50 flex justify-between items-start pointer-events-none">
-        <div className="bg-black p-5 border-4 border-white shadow-[10px_10px_0_rgba(0,0,0,0.5)] pointer-events-auto">
-          <div className="flex items-center gap-4 text-white">
-            <div className="p-2 bg-blue-700 border-2 border-white rounded-sm">
-              <Clock size={24} />
-            </div>
-            <div>
-              <p className="text-[8px] opacity-60 uppercase tracking-tighter">Identificação Docente</p>
-              <h2 className="text-xs font-black uppercase tracking-widest leading-none mt-1">{selectedProfessor?.nickname}</h2>
-              <div className="flex items-center gap-2 mt-2">
-                <span className="text-[10px] text-yellow-400 font-bold">{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                <span className="w-1 h-1 bg-white/20 rounded-full"></span>
-                <span className="text-[8px] text-white/40 uppercase">{isDay ? 'Ciclo Diurno' : 'Ciclo Noturno'}</span>
-              </div>
+      {/* ===== HUD — compact top bar ===== */}
+      <div className="absolute top-4 left-4 right-4 z-50 flex justify-between items-start pointer-events-none gap-3">
+        {/* Left: Professor + time */}
+        <div className="bg-black/80 backdrop-blur-sm px-3 py-2 border-2 border-white/20 shadow-[4px_4px_0_rgba(0,0,0,0.4)] pointer-events-auto flex items-center gap-3">
+          <div className={`p-1.5 border border-white/20 rounded-sm ${isDay ? 'bg-blue-600' : 'bg-indigo-700'}`}>
+            {isDay ? <Sun size={16} /> : <Moon size={16} />}
+          </div>
+          <div className="text-white">
+            <h2 className="text-[10px] font-black uppercase tracking-wider leading-none">{selectedProfessor?.nickname}</h2>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="text-[9px] text-yellow-400 font-bold">{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+              <span className="text-[7px] text-white/30 uppercase">{isDay ? 'Dia' : 'Noite'}</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-black p-5 border-4 border-white shadow-[10px_10px_0_rgba(0,0,0,0.5)] text-white text-right pointer-events-auto min-w-[200px]">
-          <p className="text-[8px] opacity-40 uppercase mb-2">Protocolo Atual:</p>
-          <h3 className="text-[10px] font-black uppercase tracking-tighter text-cyan-400">
-            {gameStage === 0 ? "Acessar UERN NATAL" :
-              gameStage === 1 ? "Entrar no COMPLEXO" :
-                gameStage === 2 ? "Protocolo SECRETARIA" : "Status: Graduado(a)"}
-          </h3>
-          <div className="mt-2 h-1 bg-white/10 w-full overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${(gameStage / 3) * 100}%` }}
-              className="h-full bg-cyan-400"
-            />
+        {/* Right: Mission progress */}
+        <div className="bg-black/80 backdrop-blur-sm px-3 py-2 border-2 border-white/20 shadow-[4px_4px_0_rgba(0,0,0,0.4)] pointer-events-auto">
+          <div className="flex items-center gap-2 text-white">
+            {/* Stage dots */}
+            {STAGES.map((stage, i) => {
+              const StageIcon = stage.icon;
+              const done = i < gameStage;
+              const active = i === gameStage;
+              return (
+                <React.Fragment key={i}>
+                  <div className={`flex items-center gap-1 px-1.5 py-1 rounded-sm text-[7px] font-bold uppercase ${done ? 'bg-emerald-600/40 text-emerald-400 border border-emerald-500/30'
+                    : active ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                      : 'bg-white/5 text-white/20 border border-white/10'
+                    }`}>
+                    <StageIcon size={10} />
+                    <span className="hidden md:inline">{stage.label}</span>
+                  </div>
+                  {i < 2 && <div className={`w-2 h-[2px] ${done ? 'bg-emerald-500/50' : 'bg-white/10'}`} />}
+                </React.Fragment>
+              );
+            })}
           </div>
+          {/* Current objective */}
+          {gameStage < 3 && (
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <MapPin size={10} className="text-yellow-400 shrink-0" />
+              <p className="text-[8px] text-yellow-400 font-bold uppercase tracking-tight">{STAGES[gameStage].desc}</p>
+            </div>
+          )}
+          {gameStage >= 3 && (
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <Star size={10} className="text-emerald-400" />
+              <p className="text-[8px] text-emerald-400 font-bold uppercase">Completo!</p>
+            </div>
+          )}
         </div>
       </div>
 
+      {/* ===== Dialogue ===== */}
       <AnimatePresence>
         {dialogue?.open && (
-          <div className="fixed inset-0 z-[100] flex items-end justify-center p-10 bg-black/50 backdrop-blur-md" onClick={closeDialogue}>
+          <div className="fixed inset-0 z-[100] flex items-end justify-center p-8 bg-black/50 backdrop-blur-md" onClick={closeDialogue}>
             <motion.div
               initial={{ y: 200, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 200, opacity: 0 }}
-              className="w-full max-w-5xl bg-black border-[8px] border-white p-10 relative shadow-[20px_20px_0_rgba(0,0,0,0.6)]"
+              className="w-full max-w-4xl bg-black border-[6px] border-white p-8 relative shadow-[16px_16px_0_rgba(0,0,0,0.6)]"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="absolute -top-8 left-10 bg-white text-black px-6 py-2 font-black uppercase text-xs border-4 border-black">
+              <div className="absolute -top-7 left-8 bg-white text-black px-5 py-1.5 font-black uppercase text-[10px] border-4 border-black">
                 {dialogue.title || "TERMINAL ACADÊMICO"}
               </div>
-              <button onClick={closeDialogue} className="absolute top-4 right-4 text-white/30 hover:text-white"><X size={32} /></button>
+              <button onClick={closeDialogue} className="absolute top-3 right-3 text-white/30 hover:text-white"><X size={28} /></button>
 
-              <div className={`text-xl md:text-3xl leading-relaxed min-h-[100px] flex items-center ${dialogue.type === 'locked' ? 'text-red-500' : 'text-white'}`}>
-                {typedText}<span className="inline-block w-4 h-8 bg-white ml-3 animate-pulse"></span>
+              <div className={`text-lg md:text-2xl leading-relaxed min-h-[80px] flex items-center ${dialogue.type === 'locked' ? 'text-red-500' : 'text-white'}`}>
+                {typedText}<span className="inline-block w-3 h-6 bg-white ml-2 animate-pulse" />
               </div>
 
               {typedText === dialogue.text && (
-                <div className="mt-10 flex justify-end">
-                  <button onClick={closeDialogue} className="flex items-center gap-4 text-yellow-400 animate-bounce text-xs uppercase font-black tracking-widest">
-                    [ Pressione para Avançar ] <ArrowRight size={24} />
+                <div className="mt-8 flex justify-end">
+                  <button onClick={closeDialogue} className="flex items-center gap-3 text-yellow-400 animate-bounce text-[10px] uppercase font-black tracking-widest">
+                    [ Avançar ] <ArrowRight size={20} />
                   </button>
                 </div>
               )}

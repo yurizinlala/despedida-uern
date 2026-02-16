@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
-import { playTone, playBiosBeep, playProcessingNoise, playShimmer, playSuccessChime } from '../utils/audio';
+
 import { Download, LogOut, Printer, ShieldCheck, Fingerprint, FileSearch, CheckCircle, Star } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
@@ -35,23 +35,18 @@ const Certificate: React.FC = () => {
 
   const startProcess = () => {
     setStep('biometric');
-    playProcessingNoise();
     setTimeout(() => {
       setStep('signatures');
-      playBiosBeep();
       let p = 0;
       const interval = setInterval(() => {
         p += 2;
         setProgress(p);
-        if (p % 20 === 0) playBiosBeep();
         if (p >= 100) {
           clearInterval(interval);
           setTimeout(() => {
             setStep('issuance');
-            playShimmer();
             setTimeout(() => {
               setStep('ready');
-              playSuccessChime();
               advanceStage(3);
             }, 3000);
           }, 1000);

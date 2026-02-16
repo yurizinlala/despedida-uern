@@ -2,17 +2,16 @@ import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Gamepad2 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
-import { playSuccessChime } from '../utils/audio';
+
 
 const AchievementToast: React.FC = () => {
   const { lastUnlocked, setLastUnlocked } = useUser();
 
   useEffect(() => {
     if (lastUnlocked) {
-      playSuccessChime();
       const timer = setTimeout(() => {
         setLastUnlocked(null);
-      }, 5000); 
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [lastUnlocked, setLastUnlocked]);
@@ -42,7 +41,7 @@ const AchievementToast: React.FC = () => {
               <span className="text-yellow-400 font-bold whitespace-nowrap animate-bounce">+50G</span>
             </div>
           </div>
-          
+
           {/* Decorative Corner Pixel */}
           <div className="absolute top-1 right-1 w-1 h-1 bg-white/50"></div>
           <div className="absolute bottom-1 left-1 w-1 h-1 bg-white/50"></div>

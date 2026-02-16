@@ -2,15 +2,8 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Cpu, Terminal, AlertTriangle } from 'lucide-react';
-import { playKeyClick } from '../utils/audio';
+import { playSound } from '../utils/audio';
 import { useUser } from '../context/UserContext';
-
-// Custom MP3 sound helpers
-const playSound = (src: string) => {
-  const audio = new Audio(src);
-  audio.play().catch(() => { });
-  return audio;
-};
 
 interface BootSequenceProps {
   onComplete: () => void;
@@ -27,7 +20,6 @@ const TypedLine: React.FC<{ text: string; time: string; delay: number; onComplet
     const timeout = setTimeout(() => {
       const interval = setInterval(() => {
         setDisplayedText(text.slice(0, i + 1));
-        if (i % 3 === 0) playKeyClick();
         i++;
         if (i >= text.length) {
           clearInterval(interval);
@@ -157,6 +149,7 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
   }, [visibleLinesCount]);
 
   const handleSkip = () => {
+    requestFullscreen();
     setHasSkippedIntro(true);
     onComplete();
   };

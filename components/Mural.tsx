@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { X, FileText, Folder, Trash2, ArrowLeft, Clock, Monitor, HelpCircle, HardDrive, Star, Trophy } from 'lucide-react';
-import { playKeyClick, playPaperSound, playBiosBeep, playGlitchSound } from '../utils/audio';
+
 
 const Win95Window: React.FC<{ title: string, children: React.ReactNode, onClose: () => void, z: number, onFocus: () => void }> = ({ title, children, onClose, z, onFocus }) => (
     <motion.div
@@ -54,11 +54,9 @@ const Mural: React.FC = () => {
     const handleOpen = (id: string) => {
         if (!openWindows.includes(id)) {
             setOpenWindows([...openWindows, id]);
-            playPaperSound();
         }
         setFocusedWindow(id);
         setZIndices(prev => ({ ...prev, [id]: Math.max(...(Object.values(prev) as number[]), 10) + 1 }));
-        playKeyClick();
 
         const newSet = new Set(clickCount).add(id);
         setClickCount(newSet);
@@ -66,7 +64,6 @@ const Mural: React.FC = () => {
     };
 
     const handleTrashClick = () => {
-        playGlitchSound();
     };
 
     if (!selectedProfessor) return null;
@@ -167,7 +164,7 @@ const Mural: React.FC = () => {
             {/* Taskbar */}
             <div className="absolute bottom-0 left-0 right-0 h-14 bg-[#c0c0c0] border-t-2 border-white flex items-center p-2 gap-3 z-[1000] shadow-[0_-4px_15px_rgba(0,0,0,0.4)]">
                 <button
-                    onClick={() => { playBiosBeep(); advanceStage(1); navigate('/hub'); }}
+                    onClick={() => { advanceStage(1); navigate('/hub'); }}
                     className="bg-[#c0c0c0] border-t-2 border-l-2 border-white border-b-2 border-r-2 border-black flex items-center gap-3 px-5 h-full font-black text-sm active:border-inset shadow-md hover:bg-gray-200 transition-colors group"
                 >
                     <div className="bg-blue-800 p-1.5 rounded-sm group-hover:scale-110 transition-transform"><ArrowLeft size={16} className="text-white" /></div>

@@ -15,6 +15,7 @@ import RetroTransition from './components/RetroTransition';
 import Quiz from './components/Quiz';
 import Certificate from './components/Certificate';
 import Credits from './components/Credits';
+import { preloadAllSounds, playSound } from './utils/audio';
 
 const AppLayout: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -29,6 +30,11 @@ const AppLayout: React.FC = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Preload all sounds globally on first mount
+  useEffect(() => {
+    preloadAllSounds();
+  }, []);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Shortcut "9" for Achievements - works globally
@@ -41,8 +47,7 @@ const AppLayout: React.FC = () => {
           setIsMenuOpen(prev => {
             const next = !prev;
             if (next) {
-              const audio = new Audio('/sounds/achviements-open.mp3');
-              audio.play().catch(() => { });
+              playSound('/sounds/achviements-open.mp3');
             }
             return next;
           });

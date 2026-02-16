@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { playBiosBeep, playProcessingNoise, playGlitchSound } from '../utils/audio';
+
 import { Folder, Loader2, Monitor } from 'lucide-react';
 
 export const MuralLoading: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
@@ -16,11 +16,9 @@ export const MuralLoading: React.FC<{ onComplete: () => void }> = ({ onComplete 
   ];
 
   useEffect(() => {
-    playProcessingNoise();
     let i = 0;
     const interval = setInterval(() => {
       setLines(prev => [...prev, logLines[i]]);
-      playBiosBeep();
       i++;
       if (i >= logLines.length) {
         clearInterval(interval);
@@ -53,7 +51,6 @@ export const MuralLoading: React.FC<{ onComplete: () => void }> = ({ onComplete 
 
 export const ClassroomTransition: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   useEffect(() => {
-    playGlitchSound();
     const t = setTimeout(onComplete, 3000);
     return () => clearTimeout(t);
   }, [onComplete]);
