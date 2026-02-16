@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
@@ -9,10 +9,12 @@ import {
 } from 'lucide-react';
 
 import { MuralLoading, ClassroomTransition } from './Transitions';
+import { playSound } from '../utils/audio';
 
 // Assets from public/assets/
-const imgCentro = 'assets/centroconvivencia.png';
-const imgComplexo = 'assets/complexouern.png';
+// complexouern.png = UERN NATAL (mural), centroconvivencia.png = COMPLEXO (quiz)
+const imgUernNatal = 'assets/complexouern.png';
+const imgComplexo = 'assets/centroconvivencia.png';
 const imgSecretaria = 'assets/secretaria.png';
 const imgGato = 'assets/gato.png';
 const imgArvore = 'assets/arvore.png';
@@ -59,6 +61,12 @@ const CLOUD_SIZES = [1.0, 1.4, 0.9, 1.6, 1.2, 1.3];
 
 const Sky: React.FC<{ isDay: boolean }> = ({ isDay }) => (
   <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+    {/* Sky gradient */}
+    <div className={`absolute inset-0 transition-all duration-[3000ms] ${isDay
+      ? 'bg-gradient-to-b from-[#0066cc] via-[#3399ff] via-60% to-[#99ccff]'
+      : 'bg-gradient-to-b from-[#000510] via-[#061428] via-60% to-[#152238]'
+      }`} />
+
     <motion.div
       animate={{ y: [20, -10, 20], rotate: [0, 5, -5, 0] }}
       transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
@@ -89,7 +97,7 @@ const Sky: React.FC<{ isDay: boolean }> = ({ isDay }) => (
 // --- Tree with gentle sway ---
 const Tree: React.FC<{ x: number; y: number; delay: number; size?: number }> = ({ x, y, delay, size = 1 }) => (
   <motion.div
-    className="absolute z-10 pointer-events-none select-none origin-bottom"
+    className="absolute z-30 pointer-events-none select-none origin-bottom"
     style={{
       left: `${x}%`,
       top: `${y}%`,
@@ -129,33 +137,41 @@ const CampusCat: React.FC = () => {
     e.stopPropagation();
     setClicks(clicks + 1);
     setBubble(catQuotes[Math.floor(Math.random() * catQuotes.length)]);
+    // Random meow sound
+    const meowIdx = Math.floor(Math.random() * 3) + 1;
+    playSound(`/sounds/meow${meowIdx}.mp3`);
     setTimeout(() => setBubble(null), 3500);
   };
 
   return (
-    <motion.div
-      animate={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-      transition={{ duration: 12, ease: "easeInOut" }}
-      onClick={handleClick}
-      className="absolute z-30 cursor-pointer w-16 h-16 md:w-20 md:h-20 flex items-center justify-center select-none group"
-      style={{ transform: 'translate(-50%, -50%)' }}
-    >
+    <>
+      {/* Cat bubble — rendered outside cat container for z-index to work */}
       <AnimatePresence>
         {bubble && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.5, y: 0 }}
-            animate={{ opacity: 1, scale: 1, y: -60 }}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute whitespace-nowrap bg-white text-black text-[9px] font-pixel p-3 border-4 border-black rounded shadow-[6px_6px_0_rgba(0,0,0,0.2)] z-50 after:content-[''] after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-8 after:border-transparent after:border-t-black"
+            className="absolute z-[200] whitespace-nowrap bg-white text-black text-[9px] font-pixel p-3 border-4 border-black rounded shadow-[6px_6px_0_rgba(0,0,0,0.2)] pointer-events-none after:content-[''] after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-8 after:border-transparent after:border-t-black"
+            style={{ left: `${pos.x}%`, top: `${pos.y}%`, transform: 'translate(-50%, calc(-100% - 40px))' }}
           >
             {bubble}
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="w-full h-full group-hover:scale-110 transition-transform">
-        <img src={imgGato} alt="Gato do Campus" className="w-full h-full object-contain pixel-art" />
-      </div>
-    </motion.div>
+      {/* Cat image */}
+      <motion.div
+        animate={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+        transition={{ duration: 12, ease: "easeInOut" }}
+        onClick={handleClick}
+        className="absolute z-[5] cursor-pointer w-16 h-16 md:w-20 md:h-20 flex items-center justify-center select-none group"
+        style={{ transform: 'translate(-50%, -50%)' }}
+      >
+        <div className="w-full h-full group-hover:scale-110 transition-transform">
+          <img src={imgGato} alt="Gato do Campus" className="w-full h-full object-contain pixel-art" />
+        </div>
+      </motion.div>
+    </>
   );
 };
 
@@ -169,7 +185,8 @@ const MapBuilding: React.FC<{
   onClick: (isLocked: boolean) => void;
   isLocked?: boolean;
   isCurrentObjective?: boolean;
-}> = ({ id, imgSrc, label, x, y, onClick, isLocked = false, isCurrentObjective = false }) => (
+  buildingSize?: string;
+}> = ({ id, imgSrc, label, x, y, onClick, isLocked = false, isCurrentObjective = false, buildingSize = 'w-52 h-52 md:w-72 md:h-72' }) => (
   <div
     className="absolute flex flex-col items-center z-20 cursor-pointer group"
     style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)' }}
@@ -186,7 +203,7 @@ const MapBuilding: React.FC<{
       </motion.div>
     )}
 
-    <div className={`w-52 h-52 md:w-72 md:h-72 relative flex items-center justify-center transition-all duration-500 ${isLocked ? 'grayscale-[70%]' : ''}`}>
+    <div className={`${buildingSize} relative flex items-center justify-center transition-all duration-500 ${isLocked ? 'grayscale-[70%]' : ''}`}>
       <img src={imgSrc} alt={label} className="w-full h-full object-contain pixel-art" />
     </div>
     {/* Label */}
@@ -219,18 +236,17 @@ const Hub: React.FC = () => {
   const [typedText, setTypedText] = useState('');
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Trees only on the ground area (y >= 52%)
   const treePositions = useMemo(() => [
-    { x: 8, y: 55, d: 0 },
-    { x: 92, y: 58, d: 1.2 },
-    { x: 15, y: 88, d: 0.5 },
-    { x: 85, y: 90, d: 2 },
-    { x: 50, y: 92, d: 0.8 },
-    { x: 70, y: 56, d: 1.5 },
-    { x: 35, y: 55, d: 0.3 },
-    { x: 60, y: 93, d: 1.8 },
-    { x: 5, y: 70, d: 0.7 },
-    { x: 95, y: 75, d: 2.2 },
+    { x: 8, y: 55, d: 0, s: 1.0 },
+    { x: 92, y: 58, d: 1.2, s: 0.85 },
+    { x: 15, y: 82, d: 0.5, s: 1.1 },
+    { x: 85, y: 80, d: 2, s: 0.9 },
+    { x: 50, y: 85, d: 0.8, s: 1.05 },
+    { x: 70, y: 56, d: 1.5, s: 0.8 },
+    { x: 35, y: 55, d: 0.3, s: 0.95 },
+    { x: 60, y: 83, d: 1.8, s: 1.15 },
+    { x: 5, y: 68, d: 0.7, s: 0.9 },
+    { x: 95, y: 72, d: 2.2, s: 1.0 },
   ], []);
 
   useEffect(() => {
@@ -240,10 +256,18 @@ const Hub: React.FC = () => {
 
   const isDay = currentTime.getHours() >= 6 && currentTime.getHours() < 18;
 
+  // Ambient hub sound on mount
+  useEffect(() => {
+    const src = isDay ? '/sounds/hub-day.mp3' : '/sounds/hub-night.mp3';
+    const audio = playSound(src);
+    return () => { if (audio) { audio.pause(); audio.currentTime = 0; } };
+  }, []);
+
   useEffect(() => {
     if (dialogue?.open && typedText.length < dialogue.text.length) {
       const timeout = setTimeout(() => {
         setTypedText(dialogue.text.slice(0, typedText.length + 1));
+        playSound('/sounds/dot.mp3');
       }, 25);
       return () => clearTimeout(timeout);
     }
@@ -260,6 +284,11 @@ const Hub: React.FC = () => {
     setTypedText('');
   };
 
+  const dismissDialogue = () => {
+    setDialogue(null);
+    setTypedText('');
+  };
+
   const closeDialogue = () => {
     if (dialogue?.targetRoute) {
       if (dialogue.targetRoute === '/mural') setTransitioningTo('mural');
@@ -273,7 +302,7 @@ const Hub: React.FC = () => {
   const currentObj = gameStage === 0 ? 'mural' : gameStage === 1 ? 'quiz' : gameStage === 2 ? 'certificado' : null;
 
   return (
-    <div className={`h-screen w-full relative overflow-hidden font-pixel transition-all duration-[3000ms] ease-in-out ${isDay ? 'bg-[#4da6ff]' : 'bg-[#0a1628]'}`}>
+    <div className={`h-screen w-full relative overflow-hidden font-pixel transition-all duration-[3000ms] ease-in-out`}>
       {transitioningTo === 'mural' && <MuralLoading onComplete={() => navigate('/mural')} />}
       {transitioningTo === 'quiz' && <ClassroomTransition onComplete={() => navigate('/quiz')} />}
 
@@ -286,27 +315,32 @@ const Hub: React.FC = () => {
       <Sky isDay={isDay} />
 
       {/* Ground */}
-      <div className={`absolute bottom-0 left-0 right-0 h-1/2 z-0 transition-colors duration-[3000ms] ${isDay ? 'bg-[#56b356]' : 'bg-[#1a331a]'}`}>
+      <div className={`absolute bottom-0 left-0 right-0 h-1/2 z-0 transition-colors duration-[3000ms]`}>
+        <div className={`absolute inset-0 transition-all duration-[3000ms] ${isDay
+          ? 'bg-gradient-to-b from-[#4ca64c] via-[#56b356] via-40% to-[#3d8c3d]'
+          : 'bg-gradient-to-b from-[#1a3a1a] via-[#1a331a] via-40% to-[#122812]'
+          }`} />
         <div className="absolute inset-0 opacity-15 bg-[url('https://www.transparenttextures.com/patterns/pinstripe-dark.png')]" />
       </div>
 
-      {/* Trees — all on ground */}
+      {/* Trees — in front of buildings */}
       {treePositions.map((p, i) => (
-        <Tree key={i} x={p.x} y={p.y} delay={p.d} size={0.8 + Math.random() * 0.4} />
+        <Tree key={i} x={p.x} y={p.y} delay={p.d} size={p.s} />
       ))}
 
       <CampusCat />
 
       {/* Buildings */}
       <MapBuilding
-        id="mural" imgSrc={imgCentro} label="UERN NATAL"
-        x={20} y={58}
+        id="mural" imgSrc={imgUernNatal} label="UERN NATAL"
+        x={22} y={55}
         onClick={(locked) => handleBuildingClick('mural', locked)}
         isCurrentObjective={currentObj === 'mural'}
+        buildingSize="w-60 h-60 md:w-80 md:h-80"
       />
       <MapBuilding
         id="quiz" imgSrc={imgComplexo} label="COMPLEXO"
-        x={80} y={55}
+        x={78} y={58}
         isLocked={gameStage < 1}
         onClick={(locked) => handleBuildingClick('quiz', locked)}
         isCurrentObjective={currentObj === 'quiz'}
@@ -317,6 +351,7 @@ const Hub: React.FC = () => {
         isLocked={gameStage < 2}
         onClick={(locked) => handleBuildingClick('certificado', locked)}
         isCurrentObjective={currentObj === 'certificado'}
+        buildingSize="w-44 h-44 md:w-60 md:h-60"
       />
 
       {/* ===== HUD — compact top bar ===== */}
@@ -376,7 +411,7 @@ const Hub: React.FC = () => {
       {/* ===== Dialogue ===== */}
       <AnimatePresence>
         {dialogue?.open && (
-          <div className="fixed inset-0 z-[100] flex items-end justify-center p-8 bg-black/50 backdrop-blur-md" onClick={closeDialogue}>
+          <div className="fixed inset-0 z-[100] flex items-end justify-center p-8 bg-black/50 backdrop-blur-md" onClick={dismissDialogue}>
             <motion.div
               initial={{ y: 200, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -384,16 +419,16 @@ const Hub: React.FC = () => {
               className="w-full max-w-4xl bg-black border-[6px] border-white p-8 relative shadow-[16px_16px_0_rgba(0,0,0,0.6)]"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="absolute -top-7 left-8 bg-white text-black px-5 py-1.5 font-black uppercase text-[10px] border-4 border-black">
+              <div className="absolute -top-7 left-8 bg-white text-black px-5 py-1.5 font-black uppercase text-sm border-4 border-black">
                 {dialogue.title || "TERMINAL ACADÊMICO"}
               </div>
-              <button onClick={closeDialogue} className="absolute top-3 right-3 text-white/30 hover:text-white"><X size={28} /></button>
+              <button onClick={dismissDialogue} className="absolute top-3 right-3 text-white/30 hover:text-white"><X size={28} /></button>
 
-              <div className={`text-lg md:text-2xl leading-relaxed min-h-[80px] flex items-center ${dialogue.type === 'locked' ? 'text-red-500' : 'text-white'}`}>
-                {typedText}<span className="inline-block w-3 h-6 bg-white ml-2 animate-pulse" />
+              <div className={`text-sm md:text-base leading-relaxed min-h-[60px] flex items-center ${dialogue.type === 'locked' ? 'text-red-500' : 'text-white'}`}>
+                {typedText}<span className="inline-block w-3 h-5 bg-white ml-2 animate-pulse" />
               </div>
 
-              {typedText === dialogue.text && (
+              {typedText === dialogue.text && dialogue.targetRoute && (
                 <div className="mt-8 flex justify-end">
                   <button onClick={closeDialogue} className="flex items-center gap-3 text-yellow-400 animate-bounce text-[10px] uppercase font-black tracking-widest">
                     [ Avançar ] <ArrowRight size={20} />

@@ -128,6 +128,7 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
     }
 
     if (phase === 'hack') {
+      playSound('/sounds/identity-established.mp3');
       const delay = isFirstTry ? 6000 : 4000;
       setTimeout(onComplete, delay);
     }

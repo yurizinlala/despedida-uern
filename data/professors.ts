@@ -38,7 +38,7 @@ export const professors: Professor[] = [
     password: 'afeto',
     hint: 'Tem que ter a__to na computação...',
     theme: 'web',
-    subjects: ['Introdução à Programação', 'Interação Homem Computador', 'Desenvolvimento Web', 'Computação Afetiva'],
+    subjects: ['Introdução à Programação', 'Interação Homem-Computador', 'Desenvolvimento Para Web', 'Computação Afetiva'],
     muralItems: [
       ...createMural('web', 'Raul'),
       {
@@ -57,81 +57,80 @@ export const professors: Professor[] = [
     ],
     wrapped: {
       // Slide 2: Carga Horária
-      totalHours: 420,
-      timeStudying: 320,
-      timeUnderstanding: 95,
+      totalHours: 270,
+      timeStudying: 60,
+      timeUnderstanding: 210,
 
       // Slide 3: Extrato da Disciplina
       receiptItems: [
-        { name: "Divs Centralizadas", cost: "50 horas" },
-        { name: "Testes de Usabilidade", cost: "30 cobaias" },
-        { name: "Wireframes Descartados", cost: "47 folhas" },
-        { name: "Análise de Sentimento", cost: "200 emoções" },
-        { name: "Acessibilidade W3C", cost: "100 pontos" },
-        { name: "CSS que Funcionou de Primeira", cost: "0 vezes" },
-        { name: "Cafés com Leite", cost: "Incalculável" }
+        { name: "Loops infinitos usando for", cost: "32 horas" },
+        { name: "Esquecendo ponto e virgula", cost: "1.276 erros de compilação" },
+        { name: "Achar usuários de teste em IHC", cost: "7 amigos coagidos" },
+        { name: "Heurísticas de Nielsen violadas", cost: "10 mandamentos" },
+        { name: "Tentativas de centralizar div", cost: "3.934 vezes" },
+        { name: "Vezes que eu entendi Rosalind Picard", cost: "0 vezes" },
+        { name: "Quantidade de afeto bugado", cost: "Incalculável" }
       ],
 
       // Slide 4: Ranking de Grupos
       groupRanking: [
-        { name: "Lucas", emoji: "🏆", count: 6 },
-        { name: "Ana", emoji: "🥈", count: 5 },
-        { name: "Pedro", emoji: "🥉", count: 4 },
-        { name: "Maria", emoji: "4️⃣", count: 3 },
-        { name: "João", emoji: "5️⃣", count: 2 }
+        { name: "Jefferson", emoji: "🏆", count: 11 },
+        { name: "Rafael", emoji: "🥈", count: 7 },
+        { name: "Inácio", emoji: "🥉", count: 6 },
+        { name: "Maria Klara", emoji: "4️⃣", count: 5 },
+        { name: "Emilly", emoji: "5️⃣", count: 5 }
       ],
 
       // Slide 5: Métricas de Estresse
       stressBars: [
-        { discipline: "Intro Programação", topic: "Ponteiros em C", level: 40 },
-        { discipline: "IHC", topic: "Avaliação Heurística", level: 55 },
-        { discipline: "Web Dev", topic: "CSS Grid Layout", level: 70 },
-        { discipline: "Comp. Afetiva", topic: "Reconhecimento Facial", level: 85 },
-        { discipline: "IHC", topic: "Projeto Final", level: 100 },
-        { discipline: "Web Dev", topic: "API REST", level: 60 },
-        { discipline: "Intro Programação", topic: "Recursão", level: 75 },
-        { discipline: "Comp. Afetiva", topic: "Análise de Emoções", level: 45 },
-        { discipline: "Web Dev", topic: "Deploy Final", level: 95 }
+        { discipline: "Introdução à Programação", topic: "Entender ponteiros em C", level: 89 },
+        { discipline: "Introdução à Programação", topic: "Esquecer ponto e vírgula", level: 53 },
+        { discipline: "Interação Homem-Computador", topic: "Seguir Nielsen a risca", level: 38 },
+        { discipline: "Interação Homem-Computador", topic: "Saber qual cor escolher", level: 47 },
+        { discipline: "Desenvolvimento Para Web", topic: "Centralizar <div>", level: 95 },
+        { discipline: "Desenvolvimento Para Web", topic: "Trabalhar com Figma", level: 2 },
+        { discipline: "Computação Afetiva", topic: "Fazer o PC entender sarcasmo", level: 22 },
+        { discipline: "Computação Afetiva", topic: "Suportar os anúncios", level: 79 },
       ],
-      peakSeason: { event: "Projeto Final de Web", intensity: "Caos no CSS" },
+      peakSeason: { event: "Projeto de Web", intensity: "Centralizar div é infernal" },
 
       // Slide 6: Aura Docente
       aura: {
         color: "#EC4899",
-        vibe: "Empática e Front-end",
+        vibe: "Lógico e empático",
         attributes: [
           { name: "Paciência", value: 95 },
-          { name: "Didática", value: 90 },
-          { name: "Criatividade", value: 85 },
-          { name: "Humor", value: 80 },
-          { name: "Acessibilidade", value: 100 }
+          { name: "Design", value: 90 },
+          { name: "Humanidade", value: 92 },
+          { name: "Futurismo", value: 80 },
+          { name: "Didática", value: 100 }
         ]
       },
 
       // Slide 7: Sobrevivência
-      survivalRate: 85,
-      bestSubject: { name: "Web Development", grade: 9.5 },
-      worstSubject: { name: "Computação Afetiva", grade: 6.8 },
+      survivalRate: 89,
+      bestSubject: { name: "Desenvolvimento para Web", grade: 10 },
+      worstSubject: { name: "Interação Homem-Computador", grade: 7.9 },
 
       // Slide 8: Arquétipo Tech
-      techArchetype: { name: "Mago do Frontend", description: "Domina as artes visuais do CSS e transforma wireframes em realidade. Seus feitiços de flexbox são lendários.", icon: "Wand2" },
+      techArchetype: { name: "O Terapeuta de Algoritmos", description: "Ele te ensina a lógica do if/else no primeiro ano, a deixar o site bonito no segundo, e a fazer a máquina chorar com seu código ruim no último. Mestre em conectar neurônios humanos e artificiais.", icon: "Wand2" },
 
       // Slide 9: Frases Mais Faladas
       wordCloud: [
-        { word: "Centraliza essa div", count: 127 },
-        { word: "Pensa no usuário", count: 98 },
-        { word: "Responsivo", count: 84 },
-        { word: "Usabilidade", count: 76 },
-        { word: "Acessibilidade", count: 65 },
-        { word: "Bootstrap é muleta", count: 43 },
-        { word: "Empatia", count: 38 }
+        { word: "O código não está identado bonito", count: 127 },
+        { word: "O usuário é idiota?", count: 98 },
+        { word: "Como assim não centralizou?", count: 84 },
+        { word: "CADÊ A VARIÁVEL NÃO DECLARADA?", count: 76 },
+        { word: "Não é só o pc que tem sentimentos...", count: 65 },
+        { word: "Bootstrap é fácil demais", count: 43 },
+        { word: "O que é valência e alerta?", count: 38 }
       ],
 
       // Slide 10: Trilha Sonora
-      soundtrack: { song: "Feelings", artist: "Morris Albert", reason: "Porque computadores também precisam de afeto.", coverColor: "from-pink-500 to-purple-500" },
+      soundtrack: { song: "Harder, Better, Faster, Stronger", artist: "Daft Punk", reason: "Porque programar é um loop infinito de melhorar, compilar, debugar, repetir.", coverColor: "from-pink-500 to-purple-500", spotifyUrl: "https://open.spotify.com/track/5W3cjX2J3tjhG8zb6u0qHn" },
 
       // Slide 11: Badge Final
-      finalBadge: "O Empata Digital",
+      finalBadge: "Mestre dos Ponteiros e Emoções",
 
       achievements: []
     }

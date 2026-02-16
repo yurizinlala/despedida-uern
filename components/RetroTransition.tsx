@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { playSound } from '../utils/audio';
 
 
 interface RetroTransitionProps {
@@ -14,6 +15,7 @@ const RetroTransition: React.FC<RetroTransitionProps> = ({ onComplete }) => {
     // Stage 1: Absolute Silence/Black
     setTimeout(() => {
       setPhase('boot');
+      playSound('/sounds/uern-xp.mp3');
     }, 1000);
 
     // Stage 2: Finish after progress bar runs

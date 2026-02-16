@@ -107,13 +107,13 @@ const slideCaptions = [
   'Toque nas laterais para navegar • Use ▶/⏸ para controlar',
   'A diferença? Chama-se "olhar o celular durante a aula".',
   'Nenhum reembolso disponível para neurônios perdidos.',
-  'Se não apareceu aqui, era pq não respondia no grupo do WhatsApp.',
-  'Passe o mouse nas barras para sofrer de novo.',
+  'Se algum nome não apareceu aqui, foi porque não respondia no grupo do WhatsApp.',
+  'Passe o mouse em cima das barras para ver o motivo do meu sofrimento.',
   'Se a barra de paciência está alta, agradeça ao café.',
-  'A nota mínima não é 7. É o suficiente pra não chorar.',
+  'A média é 7, né? É o suficiente pra não ficar maluco.',
   'Classe rara. Poucos sobrevivem à fase de evolução.',
   'Se a frase mais repetida fosse "Entendi", estaríamos mentindo.',
-  'Essa música tocou infinitamente enquanto o código não compilava.',
+  'Essa música tocou infinitamente em minha cabeça.',
   'Agora é oficial. Não tem como voltar atrás.'
 ];
 
@@ -150,20 +150,33 @@ const WrappedSequence: React.FC = () => {
   // Aura reveal animation
   useEffect(() => {
     if (currentSlide === 5) {
+      playSound('/sounds/aura.mp3');
       setAuraRevealed(false);
-      const texts = ["Verificando sua aura...", "Calculando potência...", "Analisando energia...", "Medindo paciência...", "Resultado encontrado!"];
+      const texts = ["Verificando sua aura...", "Calculando seus títulos...", "Anotando seu IR...", "Medindo sua paciência...", "Resultado encontrado!"];
       let i = 0;
       const step = () => {
         setAuraText(texts[i]);
         i++;
         if (i < texts.length) {
-          auraTimerRef.current = setTimeout(step, 800);
+          auraTimerRef.current = setTimeout(step, 1600);
         } else {
           setTimeout(() => setAuraRevealed(true), 400);
         }
       };
       step();
       return () => { if (auraTimerRef.current) clearTimeout(auraTimerRef.current); };
+    }
+  }, [currentSlide]);
+
+  // Sound: wrapped-init on mount
+  useEffect(() => {
+    playSound('/sounds/wrapped-init.mp3');
+  }, []);
+
+  // Sound: wrapped-complete on final slide
+  useEffect(() => {
+    if (currentSlide === TOTAL_SLIDES - 1) {
+      playSound('/sounds/wrapped-complete.mp3');
     }
   }, [currentSlide]);
 
@@ -214,7 +227,7 @@ const WrappedSequence: React.FC = () => {
       <motion.div variants={itemVariants} className="mb-4"><Clock size={36} className="mx-auto text-white/40" /></motion.div>
       <motion.h2 variants={itemVariants} className="text-[10px] uppercase tracking-[0.4em] mb-2 opacity-50">Carga Horária de Sofrimento</motion.h2>
       <motion.div variants={itemVariants} className="font-display text-[8rem] md:text-[12rem] leading-none tracking-tighter text-white"><Counter value={wrapped.totalHours} /></motion.div>
-      <motion.div variants={itemVariants} className="text-xl font-bold tracking-widest text-white/80 mb-8">HORAS NO SIGAA</motion.div>
+      <motion.div variants={itemVariants} className="text-xl font-bold tracking-widest text-white/80 mb-8">HORAS NAS SUAS DISCIPLINAS</motion.div>
       <motion.div variants={itemVariants} className="flex justify-center gap-12 mt-4">
         <div className="text-center">
           <div className="text-3xl md:text-4xl font-display text-emerald-400"><Counter value={wrapped.timeStudying} /></div>
@@ -231,16 +244,16 @@ const WrappedSequence: React.FC = () => {
   );
 
   const renderSlide2 = () => (
-    <motion.div variants={itemVariants} className="bg-[#f0f0f0] text-black p-8 max-w-xs w-full font-mono text-xs shadow-[15px_15px_0px_rgba(255,255,255,0.05)] rotate-3 relative border-t-[10px] border-blue-600">
+    <motion.div variants={itemVariants} className="bg-[#f0f0f0] text-black p-8 max-w-sm w-full font-mono text-xs shadow-[15px_15px_0px_rgba(255,255,255,0.05)] rotate-3 relative border-t-[10px] border-blue-600">
       <div className="absolute -top-3 -left-3 w-8 h-8 bg-yellow-400 border-2 border-black rotate-[-15deg] flex items-center justify-center font-bold text-sm">!</div>
-      <div className="flex justify-between items-end border-b-2 border-black pb-3 mb-6"><div><h1 className="text-xl font-black italic">EXTRATO DA DISCIPLINA</h1><p className="text-[8px] opacity-60">REF: {selectedProfessor.subjects[0]?.toUpperCase()}</p></div></div>
+      <div className="flex justify-between items-end border-b-2 border-black pb-3 mb-6"><div><h1 className="text-xl font-black italic">EXTRATO DAS DISCIPLINAS</h1><p className="text-[8px] opacity-60">REF: {selectedProfessor.subjects[0]?.toUpperCase()}</p></div></div>
       <div className="space-y-2.5 mb-8">
         {wrapped.receiptItems.map((item, i) => (
           <div key={i} className="flex justify-between items-baseline text-[11px]"><span className="uppercase font-bold tracking-tighter">{item.name}</span><span className="dots flex-1 border-b border-dotted border-black/20 mx-2"></span><span className="font-mono">{item.cost}</span></div>
         ))}
       </div>
       <div className="border-t-2 border-black border-dashed pt-3 flex justify-between text-base font-black"><span>TOTAL</span><span>1 ALMA (USADA)</span></div>
-      <div className="mt-4 text-[7px] opacity-40 text-center uppercase tracking-widest italic">Obrigado por não desistir (ainda).</div>
+      <div className="mt-4 text-[7px] opacity-40 text-center uppercase tracking-widest italic">Obrigado por não desistir de mim.</div>
     </motion.div>
   );
 
@@ -248,7 +261,7 @@ const WrappedSequence: React.FC = () => {
     <div className="w-full max-w-lg px-8 text-center">
       <motion.div variants={itemVariants} className="mb-4"><Users size={36} className="mx-auto text-white/40" /></motion.div>
       <motion.h2 variants={itemVariants} className="text-[10px] uppercase tracking-[0.5em] mb-2 opacity-50">Parceiros de Sofrimento</motion.h2>
-      <motion.p variants={itemVariants} className="text-xs opacity-40 mb-8 italic">Ranking de quem mais fez grupo com você nas matérias {selectedProfessor.gender === 'male' ? 'do' : 'da'} {nickname.split(' ')[0]}</motion.p>
+      <motion.p variants={itemVariants} className="text-xs opacity-40 mb-8 italic">Ranking de quem mais fez grupo com Yuri nas matérias {selectedProfessor.gender === 'male' ? 'do' : 'da'} {nickname.split(' ')[0]}</motion.p>
       <div className="space-y-3">
         {wrapped.groupRanking.map((person, i) => (
           <motion.div
@@ -292,7 +305,11 @@ const WrappedSequence: React.FC = () => {
           ))}
         </div>
       </motion.div>
-      <motion.div variants={itemVariants} className="text-center mt-8"><h1 className="font-display text-4xl md:text-5xl tracking-tight leading-none text-white/90">{wrapped.peakSeason.intensity}</h1></motion.div>
+      <motion.div variants={itemVariants} className="text-center mt-8">
+        <p className="text-[10px] uppercase tracking-[0.4em] opacity-40 mb-2">Maior Estresse</p>
+        <h1 className="font-display text-3xl md:text-4xl tracking-tight leading-none text-white/90">{wrapped.peakSeason.intensity}</h1>
+        <p className="text-xs text-white/40 mt-2 italic">{wrapped.peakSeason.event}</p>
+      </motion.div>
     </div>
   );
 
@@ -305,7 +322,7 @@ const WrappedSequence: React.FC = () => {
             <motion.p key={auraText} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-sm uppercase tracking-[0.3em] text-white/50">{auraText}</motion.p>
           </motion.div>
         ) : (
-          <motion.div key="revealed" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: "spring", duration: 0.8 }} className="z-10 bg-white/[0.03] backdrop-blur-3xl p-6 md:p-8 rounded-3xl border border-white/10 shadow-2xl text-center max-w-sm w-full">
+          <motion.div key="revealed" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: "spring", duration: 0.8 }} className="z-10 bg-white/[0.03] backdrop-blur-3xl p-8 md:p-10 rounded-3xl border border-white/10 shadow-2xl text-center max-w-md w-full">
             <h3 className="text-[9px] uppercase tracking-[0.5em] mb-4 opacity-40 italic">Aura Docente Detectada</h3>
             <div className="mb-4 inline-block p-5 rounded-full bg-white/5 border border-white/10"><Zap size={40} style={{ color: wrapped.aura.color }} /></div>
             <h1 className="font-display text-3xl md:text-4xl uppercase leading-none tracking-tighter mb-5" style={{ color: wrapped.aura.color }}>{wrapped.aura.vibe}</h1>
@@ -337,7 +354,7 @@ const WrappedSequence: React.FC = () => {
       <motion.div variants={itemVariants} className="mb-4"><Skull size={36} className="mx-auto text-white/40" /></motion.div>
       <motion.h2 variants={itemVariants} className="text-[10px] uppercase tracking-[0.5em] mb-2 opacity-50">Taxa de Sobrevivência</motion.h2>
       <motion.div variants={itemVariants} className="font-display text-7xl md:text-8xl leading-none tracking-tighter text-white my-6"><Counter value={wrapped.survivalRate} suffix="%" /></motion.div>
-      <motion.p variants={itemVariants} className="text-xs opacity-40 mb-8">dos calouros chegaram à prova final com sanidade</motion.p>
+      <motion.p variants={itemVariants} className="text-xs opacity-40 mb-8">de chance de Yuri chegar as provas finais com sanidade</motion.p>
       <motion.div variants={itemVariants} className="flex flex-col md:flex-row gap-4 mt-4">
         <div className="flex-1 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-center">
           <TrendingUp size={24} className="mx-auto text-emerald-400 mb-2" />
@@ -388,12 +405,12 @@ const WrappedSequence: React.FC = () => {
     const others = sorted.slice(1);
     // Nearby positions around center (offsets in px from center)
     const nearbyOffsets = [
-      { x: -160, y: -80 },
-      { x: 140, y: -70 },
-      { x: -130, y: 60 },
-      { x: 150, y: 70 },
-      { x: -40, y: -110 },
-      { x: 50, y: 100 },
+      { x: -320, y: -90 },
+      { x: 180, y: -70 },
+      { x: -370, y: 110 },
+      { x: 180, y: 110 },
+      { x: -70, y: -140 },
+      { x: -90, y: 180 },
     ];
 
     return (
@@ -421,7 +438,7 @@ const WrappedSequence: React.FC = () => {
             <motion.div
               key={i}
               className="absolute cursor-pointer z-20"
-              style={{ left: `calc(50% + ${offset.x}px)`, top: `calc(50% + ${offset.y}px)`, transform: 'translate(-50%, -50%)' }}
+              style={{ left: `calc(50% + ${offset.x}px)`, top: `calc(50% + ${offset.y}px)`, transform: 'translate(-50%, -50%)', textAlign: 'center' }}
               animate={{
                 y: [0, Math.sin(i * 1.3) * 8, 0],
                 x: [0, Math.cos(i * 0.9) * 6, 0],
@@ -441,52 +458,39 @@ const WrappedSequence: React.FC = () => {
     );
   };
 
-  const renderSlide9 = () => (
-    <div className="text-center flex flex-col items-center max-w-md px-8">
-      <motion.div variants={itemVariants} className="mb-3"><Music size={36} className="mx-auto text-white/40" /></motion.div>
-      <motion.h2 variants={itemVariants} className="text-xs uppercase tracking-[0.4em] mb-6 opacity-50">Trilha Sonora Oficial</motion.h2>
-      <motion.div variants={itemVariants} className="relative mb-6">
-        {/* Vinyl disc */}
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-          className="w-40 h-40 md:w-48 md:h-48 rounded-full border-[6px] border-white/10 relative mx-auto"
-          style={{ background: `radial-gradient(circle at center, #111 35%, ${currentColor} 36%, ${currentColor} 42%, #222 43%, #111 60%, #333 61%, #111 80%)` }}
-        >
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-8 h-8 rounded-full bg-white/90 border-4 border-white" />
-          </div>
-        </motion.div>
-      </motion.div>
+  const renderSlide9 = () => {
+    const trackId = wrapped.soundtrack.spotifyUrl?.split('/track/')[1]?.split('?')[0];
+    return (
+      <div className="text-center flex flex-col items-center max-w-md px-8 pointer-events-auto">
+        <motion.div variants={itemVariants} className="mb-3"><Music size={36} className="mx-auto text-white/40" /></motion.div>
+        <motion.h2 variants={itemVariants} className="text-xs uppercase tracking-[0.4em] mb-6 opacity-50">Nossa Trilha Sonora</motion.h2>
 
-      {/* Spotify-style player */}
-      <motion.div variants={itemVariants} className={`w-full max-w-xs bg-gradient-to-br ${wrapped.soundtrack.coverColor} rounded-2xl p-5 text-left relative overflow-hidden`}>
-        <div className="absolute inset-0 bg-black/30" />
-        <div className="relative z-10">
-          <div className="text-[8px] uppercase tracking-widest text-white/50 mb-2">♪ Tocando agora</div>
-          <h3 className="text-lg font-black text-white leading-tight">{wrapped.soundtrack.song}</h3>
-          <p className="text-xs text-white/60 mt-1">{wrapped.soundtrack.artist}</p>
-          <div className="mt-4 h-1 bg-white/20 rounded-full overflow-hidden">
-            <motion.div initial={{ width: "0%" }} animate={{ width: "65%" }} transition={{ duration: 6, ease: "linear" }} className="h-full bg-white/80 rounded-full" />
-          </div>
-          <div className="flex justify-between mt-2 text-[9px] text-white/40 font-mono">
-            <span>2:14</span>
-            <span>3:28</span>
-          </div>
-          <div className="flex items-center justify-center gap-6 mt-3">
-            <SkipForward size={14} className="rotate-180 text-white/50" />
-            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-              <Play size={14} className="text-black ml-0.5" />
-            </div>
-            <SkipForward size={14} className="text-white/50" />
-          </div>
-        </div>
-      </motion.div>
+        {/* Spotify embed */}
+        {trackId ? (
+          <motion.div variants={itemVariants} className="w-full max-w-sm">
+            <iframe
+              style={{ borderRadius: 12 }}
+              src={`https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0`}
+              width="100%"
+              height="352"
+              frameBorder="0"
+              allowFullScreen
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+            />
+          </motion.div>
+        ) : (
+          <motion.div variants={itemVariants} className="text-white/50 text-sm">
+            <p className="font-bold text-lg text-white">{wrapped.soundtrack.song}</p>
+            <p className="text-xs mt-1">{wrapped.soundtrack.artist}</p>
+          </motion.div>
+        )}
 
-      <motion.p variants={itemVariants} className="text-xs opacity-40 mt-4 italic max-w-xs">{wrapped.soundtrack.reason}</motion.p>
+        <motion.p variants={itemVariants} className="text-xs opacity-40 mt-6 italic max-w-xs">{wrapped.soundtrack.reason}</motion.p>
 
-    </div>
-  );
+      </div>
+    );
+  };
 
   const renderSlide10 = () => (
     <div className="text-center pointer-events-auto">
@@ -499,7 +503,7 @@ const WrappedSequence: React.FC = () => {
         <h1 className="font-display text-6xl md:text-8xl uppercase leading-none text-transparent bg-clip-text bg-gradient-to-b from-yellow-100 via-yellow-400 to-yellow-800">{wrapped.finalBadge}</h1>
       </motion.div>
       <motion.div variants={itemVariants} className="mt-4 text-xs text-white/40 italic max-w-sm mx-auto">
-        Você sobreviveu a {wrapped.totalHours} horas de aula, {wrapped.stressBars.length} picos de estresse e {wrapped.receiptItems.length} cobranças emocionais. Parabéns.
+        Você sobreviveu a {wrapped.totalHours} horas de aula, {wrapped.stressBars.length} picos de estresse de Yuri e {wrapped.receiptItems.length} cobranças no extrato. Parabéns.
       </motion.div>
       <motion.div variants={itemVariants} className="mt-10">
         <button onClick={handleManualFinish} className="group relative inline-flex items-center justify-center px-10 py-4 font-black text-white transition-all duration-300 bg-transparent font-display text-xl tracking-[0.15em] uppercase overflow-hidden">
