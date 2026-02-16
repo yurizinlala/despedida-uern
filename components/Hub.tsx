@@ -119,11 +119,11 @@ const CampusCat: React.FC = () => {
   const [bubble, setBubble] = useState<string | null>(null);
 
   const catQuotes = [
-    "Miau. O TCC está pronto?",
+    "Miau. O TCC já está pronto?",
     "O reitor me deve um sachê.",
-    "Prrru? Ah, é só um bug no seu código.",
+    "Miau? Ah, é só um bug no seu código.",
     "O campus é meu, vocês só visitam.",
-    "A pauta está aberta, mas minha fome também."
+    "Salgado não é comida, tá?"
   ];
 
   useEffect(() => {
@@ -222,9 +222,9 @@ const MapBuilding: React.FC<{
 
 // --- Stage config ---
 const STAGES = [
-  { label: "Mural", icon: BookOpen, desc: "Visite o campus" },
-  { label: "Quiz", icon: Trophy, desc: "Teste seus conhecimentos" },
-  { label: "Diploma", icon: GraduationCap, desc: "Receba seu diploma" },
+  { label: "Mural", icon: BookOpen, desc: "Visite o campus para ver seu mural" },
+  { label: "Quiz", icon: Trophy, desc: "Teste seus conhecimentos acerca do seu aluno" },
+  { label: "Diploma", icon: GraduationCap, desc: "Receba seu diploma de despedida" },
 ];
 
 // --- Main Component ---
