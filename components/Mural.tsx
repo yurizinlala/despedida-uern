@@ -41,7 +41,7 @@ const Win95Window: React.FC<{
                     <button className="w-[16px] h-[14px] bg-[#c0c0c0] border border-t-white border-l-white border-b-[#404040] border-r-[#404040] text-black text-[9px] flex items-center justify-center leading-none active:border-t-[#404040] active:border-l-[#404040] active:border-b-white active:border-r-white">_</button>
                     <button className="w-[16px] h-[14px] bg-[#c0c0c0] border border-t-white border-l-white border-b-[#404040] border-r-[#404040] text-black text-[9px] flex items-center justify-center leading-none active:border-t-[#404040] active:border-l-[#404040] active:border-b-white active:border-r-white">□</button>
                     <button
-                        onClick={(e) => { e.stopPropagation(); playSound('/sounds/error.mp3'); onClose(); }}
+                        onClick={(e) => { e.stopPropagation(); playSound('/sounds/close-folder.mp3'); onClose(); }}
                         className="w-[16px] h-[14px] bg-[#c0c0c0] border border-t-white border-l-white border-b-[#404040] border-r-[#404040] text-black text-[10px] flex items-center justify-center font-bold leading-none hover:bg-red-600 hover:text-white active:border-t-[#404040] active:border-l-[#404040] active:border-b-white active:border-r-white"
                     >×</button>
                 </div>
@@ -49,7 +49,7 @@ const Win95Window: React.FC<{
             {/* Menu bar */}
             <div className="bg-[#c0c0c0] border-b border-[#808080] px-1 py-[2px] flex gap-1">
                 {['Arquivo', 'Editar', 'Exibir'].map(m => (
-                    <span key={m} className="text-[11px] px-2 py-[1px] hover:bg-[#000080] hover:text-white cursor-default">{m}</span>
+                    <span key={m} className="text-[11px] px-2 py-[1px] hover:bg-[#000080] hover:text-white cursor-default font-w95">{m}</span>
                 ))}
             </div>
             {/* Content area with inset border */}
@@ -150,7 +150,7 @@ const StartMenu: React.FC<{
                             </div>
                             <div className="h-[1px] bg-[#808080] mx-2 my-1 shadow-[0_1px_0_white]" />
                             <div
-                                onClick={() => { playSound('/sounds/accept.mp3'); onExit(); }}
+                                onClick={() => { playSound('/sounds/uern95-logout.mp3'); onExit(); }}
                                 className="px-3 py-2 flex items-center gap-3 hover:bg-[#000080] hover:text-white cursor-pointer text-[12px] group"
                             >
                                 <Power size={16} className="text-red-600 group-hover:text-white" />
@@ -181,7 +181,7 @@ const Mural: React.FC = () => {
 
     // Boot animation
     useEffect(() => {
-        playSound('/sounds/sigaa-init.mp3');
+        playSound('/sounds/uern95-startup.mp3');
         const t = setTimeout(() => setBooted(true), 400);
         return () => clearTimeout(t);
     }, []);
@@ -199,7 +199,7 @@ const Mural: React.FC = () => {
     );
 
     const handleOpen = (id: string) => {
-        playSound('/sounds/accept.mp3');
+        playSound('/sounds/open-folder.mp3');
         if (!openWindows.includes(id)) {
             setOpenWindows(prev => [...prev, id]);
         }
@@ -223,7 +223,7 @@ const Mural: React.FC = () => {
     };
 
     const handleEmptyTrash = () => {
-        playSound('/sounds/coin.mp3');
+        playSound('/sounds/erase-recycle-bin.mp3');
         setTrashEmpty(true);
     };
 

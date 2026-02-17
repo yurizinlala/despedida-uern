@@ -4,15 +4,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import { Folder, Loader2, Monitor } from 'lucide-react';
 
+import { playSound } from '../utils/audio';
+
 export const MuralLoading: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const [lines, setLines] = useState<string[]>([]);
+
+  useEffect(() => {
+    playSound('/sounds/uern-boot.mp3');
+  }, []);
   const logLines = [
     "C:\> ATTRIB -R -S -H G:\SECRET_DATA\*.*",
-    "Acessando setor de armazenamento legado...",
-    "Montando imagem de disco: MURAL_DOCENTE_V1.ISO",
+    "Acessando unidade de armazenamento antigíssima...",
+    "Montando imagem de disco: MURAL_PROFESSOR_V2.ISO",
     "Descomprimindo memórias acadêmicas...",
-    "Ignorando erros de CRC (Dados corrompidos por café)...",
-    "Abrindo Explorer.exe..."
+    "Ignorando erros e bugs de código...",
+    "Carregando cartinha de despedida..."
   ];
 
   useEffect(() => {
@@ -33,7 +39,7 @@ export const MuralLoading: React.FC<{ onComplete: () => void }> = ({ onComplete 
       <div className="w-full max-w-md bg-black border-2 border-gray-400 p-6 shadow-[10px_10px_0_rgba(0,0,0,0.5)]">
         <div className="flex items-center gap-3 mb-6 text-green-500">
           <Folder size={24} />
-          <span className="text-xs uppercase font-bold tracking-widest">File Manager Access</span>
+          <span className="text-xs uppercase font-bold tracking-widest">Acessando gerenciamento de arquivos...</span>
         </div>
         <div className="space-y-2 text-[10px] md:text-xs">
           {lines.map((l, i) => (
