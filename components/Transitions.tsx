@@ -57,8 +57,10 @@ export const MuralLoading: React.FC<{ onComplete: () => void }> = ({ onComplete 
 
 export const ClassroomTransition: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   useEffect(() => {
+    playSound('/sounds/crt-off.mp3');
+    const f = setTimeout(() => playSound('/sounds/footsteps.mp3'), 1000);
     const t = setTimeout(onComplete, 3000);
-    return () => clearTimeout(t);
+    return () => { clearTimeout(t); clearTimeout(f); };
   }, [onComplete]);
 
   return (

@@ -1,94 +1,170 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { ArrowRight, RotateCcw, Loader2, Coffee, Skull, Zap, FileSearch } from 'lucide-react';
+import { playSound } from '../utils/audio';
 
-import { ArrowRight, RotateCcw, Loader2, AlertTriangle, Coffee, Skull, ClipboardCheck, Zap } from 'lucide-react';
+interface RandomizedOption {
+  text: string;
+  isCorrect: boolean;
+  originalIndex: number;
+}
 
-const quizQuestions = [
-  { id: 1, question: "O que significa a sigla P.O.G.?", options: ["Processamento Gráfico", "Programação Orientada a Gambiarra", "Protocolo Global", "Pequenos Objetos"], answer: 1 },
-  { id: 2, question: "Desculpa padrão nº 1 para atrasos?", options: ["Cachorro comeu SSD", "GitHub caiu", "Pneu do ônibus", "Windows atualizando"], answer: 2 },
-  { id: 3, question: "Em qual semestre o aluno perde o brilho?", options: ["1º Dia (Cálculo)", "3º (ED)", "5º (SO)", "TCC"], answer: 0 },
-  { id: 4, question: "Atalho salvador da graduação?", options: ["Alt+F4", "Ctrl+Z", "Ctrl+C/V", "Del"], answer: 2 },
-  { id: 5, question: "O que acontece se compilar de primeira?", options: ["Premio Turing", "Servidor explode", "Não salvou arquivo", "Aprovado no TCC"], answer: 2 },
-  { id: 6, question: "Combustível biológico da prova?", options: ["Água", "Café e Energético", "Lágrimas", "Sono"], answer: 1 },
-  { id: 7, question: "Onde o aluno aprende a programar?", options: ["Documentação", "Livros", "Indianos no Youtube", "StackOverflow"], answer: 2 },
-  { id: 8, question: "Sensação ao ver o slide de revisão?", options: ["Alívio", "Medo", "Vontade de trancar", "Desistência"], answer: 1 },
-  { id: 9, question: "Nome do arquivo final do TCC?", options: ["tcc.pdf", "tcc_final.pdf", "tcc_final_agora_vai_PELOAMOR.pdf", "projeto.pdf"], answer: 2 },
-  { id: 10, question: "Reação à prova com consulta?", options: ["Felicidade", "Desespero", "Indiferença", "Dúvida"], answer: 1 }
-];
+interface RandomizedQuestion {
+  id: number;
+  question: string;
+  options: RandomizedOption[];
+  userAnswerIndex: number | null; // index inside the randomized options array
+}
 
-const PenMark: React.FC<{ type: 'circle' | 'cross'; color: string }> = ({ type, color }) => (
-  <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 0.8 }} className="absolute -left-12 -top-2 z-20 pointer-events-none">
+const PenMark: React.FC<{ type: 'circle' | 'cross'; color: string; delay?: number }> = ({ type, color, delay = 0 }) => (
+  <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 0.8 }} transition={{ delay }} className="absolute -left-12 -top-2 z-20 pointer-events-none">
     <svg className="w-16 h-16" viewBox="0 0 100 100">
       {type === 'circle' ? (
-        <motion.path d="M 50, 50 m -45, 0 a 45,45 0 1,0 90,0 a 45,45 0 1,0 -90,0" fill="none" stroke={color} strokeWidth="6" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} />
+        <motion.path d="M 50, 50 m -45, 0 a 45,45 0 1,0 90,0 a 45,45 0 1,0 -90,0" fill="none" stroke={color} strokeWidth="6" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay }} />
       ) : (
-        <><motion.path d="M 20,20 L 80,80" stroke={color} strokeWidth="8" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} /><motion.path d="M 80,20 L 20,80" stroke={color} strokeWidth="8" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.2 }} /></>
+        <><motion.path d="M 20,20 L 80,80" stroke={color} strokeWidth="8" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay }} /><motion.path d="M 80,20 L 20,80" stroke={color} strokeWidth="8" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: delay + 0.2 }} /></>
       )}
     </svg>
   </motion.div>
 );
 
 const Quiz: React.FC = () => {
-  const { selectedProfessor, advanceStage, gameStage } = useUser();
+  const { selectedProfessor, advanceStage } = useUser();
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
-  const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [isGrading, setIsGrading] = useState(false);
-  const [selected, setSelected] = useState<number | null>(null);
+  const [isReviewing, setIsReviewing] = useState(false);
+  const paperRef = useRef<HTMLDivElement>(null);
 
-  const handleOption = (idx: number) => {
-    if (selected !== null) return;
-    setSelected(idx);
-    if (idx === quizQuestions[current].answer) {
-      setScore(s => s + 1);
-    } else {
+  // Initialize randomized quiz
+  const [quizData, setQuizData] = useState<RandomizedQuestion[]>([]);
+
+  useEffect(() => {
+    if (selectedProfessor?.quiz) {
+      playSound('/sounds/postit.mp3');
+      const shuffledQuestions = [...selectedProfessor.quiz].sort(() => Math.random() - 0.5).map(q => {
+        const ops: RandomizedOption[] = q.options.map((opt, i) => ({
+          text: opt,
+          isCorrect: i === q.answer,
+          originalIndex: i
+        }));
+        return {
+          ...q,
+          options: ops.sort(() => Math.random() - 0.5),
+          userAnswerIndex: null
+        };
+      });
+      setQuizData(shuffledQuestions);
     }
+  }, [selectedProfessor]);
+
+  const handleOptionSelect = (idx: number) => {
+    if (isReviewing) return;
+    if (quizData[current].userAnswerIndex !== null) return; // Wait, allow changing!
+
+    // User wants to change answer before confirming
+    setQuizData(prev => {
+      const copy = [...prev];
+      copy[current].userAnswerIndex = idx;
+      return copy;
+    });
+  };
+
+  const handleConfirm = () => {
+    if (quizData[current].userAnswerIndex === null) return;
+
+    const isCorrect = quizData[current].options[quizData[current].userAnswerIndex!].isCorrect;
+    if (isCorrect) {
+      playSound('/sounds/right-pen.mp3');
+    } else {
+      playSound('/sounds/wrong-pen.mp3');
+    }
+
     setTimeout(() => {
-      if (current < 9) {
+      if (current < quizData.length - 1) {
+        playSound('/sounds/postit.mp3');
         setCurrent(current + 1);
-        setSelected(null);
+        // Scroll paper to top slightly
+        if (paperRef.current) paperRef.current.scrollTop = 0;
       } else {
         triggerGrading();
       }
-    }, 1000);
+    }, 1200);
   };
 
   const triggerGrading = () => {
     setIsGrading(true);
-    // Drumroll suspense
-    const interval = setInterval(() => {
-    }, 400);
+    playSound('/sounds/drum-suspense.mp3');
 
     setTimeout(() => {
-      clearInterval(interval);
       setIsGrading(false);
       setShowResult(true);
 
-      // achievement placeholders
+      const rScore = quizData.filter(q => q.userAnswerIndex !== null && q.options[q.userAnswerIndex].isCorrect).length;
+      if (rScore >= 5) {
+        playSound('/sounds/aproved.mp3');
+      } else {
+        playSound('/sounds/reproved.mp3');
+      }
     }, 5000);
   };
 
-  if (!selectedProfessor) return null;
+  if (!selectedProfessor || quizData.length === 0) return null;
+
+  const score = quizData.filter(q => q.userAnswerIndex !== null && q.options[q.userAnswerIndex].isCorrect).length;
+  const isAproved = score >= 5;
 
   return (
-    <div className="h-screen w-full bg-[#3d2b1f] overflow-hidden flex items-center justify-center p-4 cursor-auto relative font-sans">
-      <div className="absolute inset-0 opacity-60 bg-[url('https://www.transparenttextures.com/patterns/dark-wood.png')]"></div>
+    <div className="h-screen w-full overflow-hidden flex items-center justify-center p-4 relative font-sans">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('/assets/quiz-background.png')" }}
+      />
+
+      {/* Stationery decorations */}
+      {(!isGrading && !showResult || isReviewing) && (
+        <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
+          <div className="relative w-full max-w-4xl h-[95vh]">
+            <img src="/assets/black-pen.png" className="absolute top-[10%] -left-[10%] md:-left-[15%] w-32 md:w-48 rotate-[-15deg] drop-shadow-2xl" />
+            <img src="/assets/pencil.png" className="absolute bottom-[20%] -left-[5%] md:-left-[12%] w-24 md:w-32 rotate-[25deg] drop-shadow-2xl" />
+            <img src="/assets/eraser.png" className="absolute top-[5%] -right-[5%] md:-right-[10%] w-16 md:w-24 rotate-[45deg] drop-shadow-xl" />
+            <img src="/assets/blue-pen.png" className="absolute bottom-[10%] -right-[10%] md:-right-[15%] w-32 md:w-48 rotate-[-35deg] drop-shadow-2xl" />
+          </div>
+        </div>
+      )}
+
+      {/* Screen Shake effect for grading result via global animation in React */}
+      <style>{`
+        @keyframes shake {
+          0% { transform: translate(1px, 1px) rotate(0deg); }
+          10% { transform: translate(-1px, -2px) rotate(-1deg); }
+          20% { transform: translate(-3px, 0px) rotate(1deg); }
+          30% { transform: translate(3px, 2px) rotate(0deg); }
+          40% { transform: translate(1px, -1px) rotate(1deg); }
+          50% { transform: translate(-1px, 2px) rotate(-1deg); }
+          60% { transform: translate(-3px, 1px) rotate(0deg); }
+          70% { transform: translate(3px, 1px) rotate(-1deg); }
+          80% { transform: translate(-1px, -1px) rotate(1deg); }
+          90% { transform: translate(1px, 2px) rotate(0deg); }
+          100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .stamp-shake {
+          animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+      `}</style>
 
       <AnimatePresence>
         {isGrading && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center text-white text-center p-8 backdrop-blur-xl"
+            className="fixed inset-0 z-[100] bg-black/80 flex flex-col items-center justify-center text-white text-center p-8 backdrop-blur-md"
           >
-            <motion.div
-              animate={{ scale: [1, 1.1, 1], rotate: [0, 2, -2, 0] }}
-              transition={{ repeat: Infinity, duration: 0.5 }}
-            >
+            <motion.div animate={{ scale: [1, 1.1, 1], rotate: [0, 2, -2, 0] }} transition={{ repeat: Infinity, duration: 0.5 }}>
               <Loader2 size={100} className="animate-spin text-yellow-500 mb-8" />
             </motion.div>
             <h2 className="text-3xl font-pixel mb-6 uppercase tracking-tighter text-yellow-500">Protocolo de Correção Ativo</h2>
@@ -101,25 +177,27 @@ const Quiz: React.FC = () => {
               />
             </div>
             <p className="font-mono text-cyan-400 text-lg italic max-w-md">
-              "O sistema está verificando se você realmente aprendeu algo ou se foi apenas o café que respondeu por você..."
+              "Computando erros lógicos e acertos acidentais..."
             </p>
           </motion.div>
         )}
       </AnimatePresence>
 
       <AnimatePresence mode="wait">
-        {!showResult && !isGrading ? (
-          <div className="perspective-1000 w-full max-w-2xl h-[95vh] mt-4">
+        {(!showResult || isReviewing) && !isGrading ? (
+          <div className="perspective-1000 w-full max-w-2xl h-[95vh] mt-4 z-20">
             <motion.div
-              initial={{ rotateX: 20, y: 100, opacity: 0 }}
-              animate={{ rotateX: 5, y: 0, opacity: 1 }}
-              className="w-full h-full bg-[#fdfbf7] shadow-2xl p-8 md:p-12 relative font-serif border-t-[12px] border-blue-900 flex flex-col overflow-y-auto"
+              ref={paperRef}
+              initial={{ rotateX: 20, y: 100, opacity: 0, rotateZ: -2 }}
+              animate={{ rotateX: 5, y: 0, opacity: 1, rotateZ: isReviewing ? 0 : -2 }}
+              className="w-full h-full bg-[#fdfbf7] shadow-[20px_20px_40px_rgba(0,0,0,0.5)] p-8 md:p-12 relative font-serif border-t-[12px] border-blue-900 flex flex-col overflow-y-auto"
+              style={{ transformStyle: 'preserve-3d' }}
             >
               <div className="absolute top-0 right-0 p-8">
                 <div className="w-24 h-24 border-4 border-gray-200 flex items-center justify-center text-gray-200 font-bold text-xs uppercase text-center italic rotate-12">FOTO<br />MATRÍCULA</div>
               </div>
 
-              {/* Cabeçalho Realista Aprimorado */}
+              {/* Cabeçalho */}
               <div className="border-2 border-black p-6 mb-8 space-y-2 text-[10px] md:text-xs">
                 <div className="flex justify-between font-black text-sm">
                   <span>UERN - CAMPUS NATAL - SETOR IV (INFORMÁTICA)</span>
@@ -134,36 +212,112 @@ const Quiz: React.FC = () => {
                   <span>DURAÇÃO: 4 ANOS (OU ATÉ ONDE O CAFÉ DURAR)</span>
                 </div>
                 <div className="bg-blue-900 text-white p-2 text-center font-black mt-3 text-sm tracking-widest uppercase">
-                  PROVA FINAL DE INTEGRALIZAÇÃO DE SANIDADE ACADÊMICA
+                  {isReviewing ? "GABARITO E RESULTADO DA AVALIAÇÃO" : "PROVA FINAL DE INTEGRALIZAÇÃO DE SANIDADE ACADÊMICA"}
                 </div>
               </div>
 
-              <div className="flex-1">
-                <h2 className="text-xl md:text-2xl font-black mb-10 leading-tight border-b-2 border-black pb-4">QUESTÃO {current + 1}: {quizQuestions[current].question}</h2>
-                <div className="space-y-6">
-                  {quizQuestions[current].options.map((opt, i) => (
-                    <div key={i} className="relative flex items-center cursor-pointer group" onClick={() => handleOption(i)}>
-                      {selected === i && (selected === quizQuestions[current].answer ? <PenMark type="circle" color="#1e40af" /> : <PenMark type="cross" color="#dc2626" />)}
-                      <div className="w-10 h-10 border-2 border-black mr-4 flex items-center justify-center font-black font-sans group-hover:bg-gray-100 transition-colors">{String.fromCharCode(65 + i)}</div>
-                      <span className="text-base md:text-lg group-hover:font-bold transition-all">{opt}</span>
+              {/* Content */}
+              {!isReviewing ? (
+                <div className="flex-1 flex flex-col">
+                  <h2 className="text-xl md:text-2xl font-black mb-10 leading-tight border-b-2 border-black pb-4">
+                    QUESTÃO {current + 1}: {quizData[current].question}
+                  </h2>
+                  <div className="space-y-6 flex-1">
+                    {quizData[current].options.map((opt, i) => (
+                      <div key={i} className="relative flex items-center cursor-pointer group" onClick={() => handleOptionSelect(i)}>
+                        {quizData[current].userAnswerIndex === i && (
+                          <div className="absolute -left-12 -top-2 z-20 pointer-events-none opacity-50">
+                            <svg className="w-16 h-16" viewBox="0 0 100 100">
+                              <circle cx="50" cy="50" r="45" fill="none" stroke="#6b7280" strokeWidth="4" strokeDasharray="5,5" />
+                            </svg>
+                          </div>
+                        )}
+                        <div className={`w-10 h-10 border-2 border-black mr-4 flex items-center justify-center font-black font-sans transition-colors ${quizData[current].userAnswerIndex === i ? 'bg-gray-200' : 'group-hover:bg-gray-100'}`}>
+                          {String.fromCharCode(65 + i)}
+                        </div>
+                        <span className={`text-base md:text-lg transition-all ${quizData[current].userAnswerIndex === i ? 'font-bold' : 'group-hover:font-bold'}`}>{opt.text}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-8 flex justify-end">
+                    <button
+                      onClick={handleConfirm}
+                      disabled={quizData[current].userAnswerIndex === null}
+                      className="px-6 py-3 bg-blue-900 text-white font-bold uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed hover:bg-black transition-colors"
+                    >
+                      {current === quizData.length - 1 ? "Finalizar Avaliação" : "Confirmar Resposta"}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex-1 space-y-12 pb-8">
+                  {/* Review Mode View */}
+                  {quizData.map((q, qIndex) => (
+                    <div key={qIndex} className="border-b-2 border-black pb-8 last:border-0 relative">
+                      {/* Result Stamp per question */}
+                      <div className="absolute top-0 right-0 z-10 opacity-70 pointer-events-none">
+                        {q.userAnswerIndex !== null && q.options[q.userAnswerIndex].isCorrect ? (
+                          <div className="text-green-600 font-black text-2xl uppercase border-4 border-green-600 px-4 py-1 rotate-[-15deg] font-mono tracking-widest inline-block skew-x-12">
+                            CORRETO
+                          </div>
+                        ) : (
+                          <div className="text-red-600 font-black text-2xl uppercase border-4 border-red-600 px-4 py-1 rotate-[10deg] font-mono tracking-widest inline-block -skew-x-12">
+                            ERRADO
+                          </div>
+                        )}
+                      </div>
+
+                      <h2 className="text-lg font-black mb-6 leading-tight pr-32">
+                        {qIndex + 1}. {q.question}
+                      </h2>
+                      <div className="space-y-4">
+                        {q.options.map((opt, i) => {
+                          const isSelected = q.userAnswerIndex === i;
+                          const isCorrect = opt.isCorrect;
+
+                          return (
+                            <div key={i} className="relative flex items-center">
+                              {/* Render pen marks */}
+                              {isSelected && isCorrect && <PenMark type="circle" color="#1e40af" />}
+                              {isSelected && !isCorrect && <PenMark type="cross" color="#dc2626" />}
+                              {!isSelected && isCorrect && <PenMark type="circle" color="#16a34a" delay={0.2} />}
+
+                              <div className="w-8 h-8 border-2 border-black mr-4 flex items-center justify-center font-bold font-sans">
+                                {String.fromCharCode(65 + i)}
+                              </div>
+                              <span className={`text-sm ${isSelected ? 'font-bold' : ''} ${isCorrect ? 'text-green-800' : ''}`}>
+                                {opt.text}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   ))}
+
+                  <div className="flex justify-center mt-8 pt-4">
+                    <button onClick={() => setIsReviewing(false)} className="px-8 py-4 bg-gray-900 text-white font-black uppercase tracking-widest hover:bg-black transition-colors shadow-lg">
+                      Voltar ao Resultado
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="mt-8 pt-4 border-t border-dotted border-gray-400 text-center text-[10px] opacity-40 uppercase font-bold tracking-widest">
                 Esta avaliação é propriedade intelectual da UERN. Reprodução proibida (mesmo por prints).
               </div>
             </motion.div>
           </div>
-        ) : showResult ? (
+        ) : showResult && !isReviewing ? (
           <motion.div
             initial={{ scale: 0.5, opacity: 0, rotate: -5 }}
             animate={{ scale: 1, opacity: 1, rotate: 0 }}
-            className="w-full max-w-xl bg-white p-12 shadow-[30px_30px_0_rgba(0,0,0,0.8)] text-center font-serif relative z-50 border-[10px] border-black"
+            className={`w-full max-w-xl bg-white p-12 shadow-[30px_30px_0_rgba(0,0,0,0.8)] text-center font-serif relative z-50 border-[10px] border-black ${showResult ? 'stamp-shake' : ''}`}
+            onAnimationStart={() => playSound('/sounds/stamp.mp3')}
           >
-            <div className="absolute -top-12 -left-12 bg-yellow-500 text-black p-8 rounded-full font-black text-3xl rotate-[-15deg] shadow-2xl border-4 border-white animate-pulse">
-              STATUS:<br />{score >= 5 ? "APROVADO" : "REPROVADO"}
+            <div className={`absolute -top-12 -left-12 text-black p-8 rounded-full font-black text-3xl rotate-[-15deg] shadow-2xl border-4 border-white ${isAproved ? 'bg-green-500' : 'bg-red-500'} bg-opacity-90`}>
+              STATUS:<br />{isAproved ? "APROVADO" : "REPROVADO"}
             </div>
 
             <h1 className="text-5xl font-black mb-8 underline tracking-tighter uppercase italic leading-none">Resultado do Diagnóstico</h1>
@@ -174,7 +328,8 @@ const Quiz: React.FC = () => {
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: [0, 1.8, 1] }}
-                  className={`text-[9rem] leading-none font-black ${score >= 5 ? 'text-blue-800' : 'text-red-600'}`}
+                  transition={{ delay: 0.3 }}
+                  className={`text-[9rem] leading-none font-black ${isAproved ? 'text-blue-800' : 'text-red-600'}`}
                 >
                   {score.toFixed(1)}
                 </motion.div>
@@ -188,20 +343,25 @@ const Quiz: React.FC = () => {
 
             <div className="bg-black text-white p-8 mb-10 italic text-lg font-serif border-l-[12px] border-yellow-500 shadow-inner">
               "{score >= 8 ? "Impressionante. Você claramente hackeou o sistema ou é um gênio incompreendido." :
-                score >= 5 ? "Passou raspando. O conselho de classe decidiu não te reprovar só para não ter que te ver no próximo semestre." :
+                isAproved ? "Passou raspando. O conselho de classe decidiu não te reprovar só para não ter que te ver no próximo semestre." :
                   "O sistema sugere que você troque de curso para algo menos estressante, como 'Doma de Dragões' ou 'Vendedor de Picolé na Antártida'."}"
             </div>
 
             <div className="flex flex-col gap-5">
-              {score >= 5 ? (
-                <button onClick={() => { advanceStage(2); navigate('/hub'); }} className="w-full bg-blue-900 text-white py-5 font-black flex items-center justify-center gap-4 hover:bg-black transition-all shadow-[8px_8px_0_rgba(0,0,0,0.3)] uppercase tracking-[0.2em] italic text-xl">
-                  PROSEGUIR PARA A SECRETARIA <ArrowRight size={24} />
+              <div className="flex gap-4">
+                {isAproved ? (
+                  <button onClick={() => { advanceStage(2); navigate('/hub'); }} className="flex-1 bg-blue-900 text-white py-5 font-black flex items-center justify-center gap-2 hover:bg-black transition-all shadow-[8px_8px_0_rgba(0,0,0,0.3)] uppercase tracking-[0.1em] italic text-sm md:text-base">
+                    PROSSEGUIR <ArrowRight size={20} />
+                  </button>
+                ) : (
+                  <button onClick={() => window.location.reload()} className="flex-1 bg-red-600 text-white py-5 font-black flex items-center justify-center gap-2 hover:bg-black transition-all shadow-[8px_8px_0_rgba(0,0,0,0.3)] uppercase tracking-widest text-sm md:text-base">
+                    <RotateCcw size={20} /> TENTAR NOVAMENTE
+                  </button>
+                )}
+                <button onClick={() => { playSound('/sounds/postit.mp3'); setIsReviewing(true); }} className="bg-gray-200 text-black border-4 border-gray-400 py-5 px-4 font-black flex items-center justify-center gap-2 hover:bg-gray-300 transition-all shadow-[8px_8px_0_rgba(0,0,0,0.3)] uppercase tracking-widest text-sm md:text-base">
+                  <FileSearch size={20} /> REVISAR
                 </button>
-              ) : (
-                <button onClick={() => window.location.reload()} className="w-full bg-red-600 text-white py-5 font-black flex items-center justify-center gap-3 hover:bg-black transition-all shadow-[8px_8px_0_rgba(0,0,0,0.3)] uppercase tracking-widest text-xl">
-                  <RotateCcw size={24} /> TENTAR NOVAMENTE (O EXAUSTO É REAL)
-                </button>
-              )}
+              </div>
               <div className="flex justify-between items-center text-[10px] text-gray-400 font-black uppercase italic mt-4">
                 <span>Cód: UERN_2025_RES_{score}</span>
                 <span className="animate-pulse">Sincronizando com SIGAA...</span>

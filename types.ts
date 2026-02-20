@@ -73,6 +73,7 @@ export interface Professor {
   hint: string; // Dica do post-it
   theme: ProfessorTheme;
   subjects: string[]; // Matérias lecionadas (Nomes Reais)
+  quiz: { id: number, question: string, options: string[], answer: number }[]; // Questões da prova final
   wrapped: WrappedData;
   muralItems: MuralItem[]; // Items for the corkboard
 }

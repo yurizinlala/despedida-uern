@@ -39,6 +39,18 @@ export const professors: Professor[] = [
     hint: 'Tem que ter a__to na computação...',
     theme: 'web',
     subjects: ['Introdução à Programação', 'Interação Homem-Computador', 'Desenvolvimento Para Web', 'Computação Afetiva'],
+    quiz: [
+      { id: 1, question: "O que significa a sigla P.O.G.?", options: ["Processamento Gráfico", "Programação Orientada a Gambiarra", "Protocolo Global", "Pequenos Objetos"], answer: 1 },
+      { id: 2, question: "Desculpa padrão nº 1 para atrasos?", options: ["Cachorro comeu SSD", "GitHub caiu", "Pneu do ônibus", "Windows atualizando"], answer: 2 },
+      { id: 3, question: "Em qual semestre o aluno perde o brilho?", options: ["1º Dia (Cálculo)", "3º (ED)", "5º (SO)", "TCC"], answer: 0 },
+      { id: 4, question: "Atalho salvador da graduação?", options: ["Alt+F4", "Ctrl+Z", "Ctrl+C/V", "Del"], answer: 2 },
+      { id: 5, question: "O que acontece se compilar de primeira?", options: ["Premio Turing", "Servidor explode", "Não salvou arquivo", "Aprovado no TCC"], answer: 2 },
+      { id: 6, question: "Combustível biológico da prova?", options: ["Água", "Café e Energético", "Lágrimas", "Sono"], answer: 1 },
+      { id: 7, question: "Onde o aluno aprende a programar?", options: ["Documentação", "Livros", "Indianos no Youtube", "StackOverflow"], answer: 2 },
+      { id: 8, question: "Sensação ao ver o slide de revisão?", options: ["Alívio", "Medo", "Vontade de trancar", "Desistência"], answer: 1 },
+      { id: 9, question: "Nome do arquivo final do TCC?", options: ["tcc.pdf", "tcc_final.pdf", "tcc_final_agora_vai_PELOAMOR.pdf", "projeto.pdf"], answer: 2 },
+      { id: 10, question: "Reação à prova com consulta?", options: ["Felicidade", "Desespero", "Indiferença", "Dúvida"], answer: 1 }
+    ],
     muralItems: [
       ...createMural('web', 'Raul'),
       {
@@ -144,6 +156,18 @@ export const professors: Professor[] = [
     hint: 'Vértices e Arestas...',
     theme: 'logic',
     subjects: ['Lógica Matemática', 'Estrutura de Dados', 'Grafos', 'Compiladores'],
+    quiz: [
+      { id: 1, question: "Qual estrutura de dados usa política FIFO?", options: ["Fila", "Pilha", "Árvore Binária", "Grafo Direcionado"], answer: 0 },
+      { id: 2, question: "Como se chama um grafo conexo e sem ciclos?", options: ["Árvore", "Grafo Completo", "Clique", "Matriz Esparsa"], answer: 0 },
+      { id: 3, question: "Qual a estrutura de um dicionário (chave-valor)?", options: ["Tabela Hash", "Vetor Ordenado", "Árvore B", "Fila de Prioridade"], answer: 0 },
+      { id: 4, question: "Qual a complexidade de tempo da Busca Binária?", options: ["O(log n)", "O(n)", "O(n^2)", "O(1)"], answer: 0 },
+      { id: 5, question: "Qual famoso problema NP-Difícil envolve cidades?", options: ["Caixeiro Viajante", "Torre de Hanói", "Bolsa de Valores", "N-Rainhas"], answer: 0 },
+      { id: 6, question: "O que o algoritmo de Dijkstra encontra?", options: ["Caminho Mais Curto", "Árvore Geradora Mínima", "Ciclos Negativos", "Fluxo Máximo"], answer: 0 },
+      { id: 7, question: "Qual é o pior caso de complexidade do QuickSort?", options: ["O(n^2)", "O(n log n)", "O(n)", "O(1)"], answer: 0 },
+      { id: 8, question: "O que significa 'NullPointerException' em Java?", options: ["Acessar ponteiro vazio", "Estouro de array", "Erro de sintaxe", "Loop infinito"], answer: 0 },
+      { id: 9, question: "Se A e B são VERDADEIROS, 'A XOR B' é:", options: ["FALSO", "VERDADEIRO", "NULO", "INDEFINIDO"], answer: 0 },
+      { id: 10, question: "Para verificar balanceamento de parênteses, usa-se:", options: ["Pilha", "Fila", "Grafo Bipartido", "Lista Duplamente Encadeada"], answer: 0 }
+    ],
     muralItems: [
       ...createMural('logic', 'Camila'),
       {
