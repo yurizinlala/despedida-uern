@@ -1,22 +1,17 @@
 
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Trophy, Lock, Star, Gamepad2, Cat, AlertTriangle, Terminal, ShieldAlert, Clock, Crown, Search, Skull, RotateCcw, Play, Trash2 } from 'lucide-react';
-import { useUser } from '../context/UserContext';
+import { X, Lock, Star } from 'lucide-react';
+import { useAchievements } from '../context/AchievementsContext';
+import { achievements, MAX_GAMERSCORE } from '../data/achievements';
 
 interface AchievementMenuProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const IconMap: Record<string, any> = {
-  Trophy, Lock, Star, Gamepad2, Cat, AlertTriangle, Terminal, ShieldAlert, Clock, Crown, Search,
-  Skull, RotateCcw, Play, Trash2,
-  Heart: Star, Layout: Star, GitGraph: Star, Binary: Star // Prof icons fallback
-};
-
 const AchievementMenu: React.FC<AchievementMenuProps> = ({ isOpen, onClose }) => {
-  const { unlockedAchievements, masterAchievementsList } = useUser();
+  const { isUnlocked, unlockedIds } = useAchievements();
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -26,9 +21,11 @@ const AchievementMenu: React.FC<AchievementMenuProps> = ({ isOpen, onClose }) =>
     return () => window.removeEventListener('keydown', handleEsc);
   }, [onClose]);
 
-  const totalPossible = masterAchievementsList.length;
-  const currentUnlocked = unlockedAchievements.length;
-  const totalGamerscore = currentUnlocked * 50;
+  const currentUnlocked = unlockedIds.length;
+  const totalPossible = achievements.length;
+  const currentGamerscore = achievements
+    .filter(a => isUnlocked(a.id))
+    .reduce((sum, a) => sum + a.points, 0);
 
   return (
     <AnimatePresence>
@@ -48,7 +45,7 @@ const AchievementMenu: React.FC<AchievementMenuProps> = ({ isOpen, onClose }) =>
                 </h2>
                 <div className="flex items-center gap-4">
                   <p className="text-xs text-yellow-500 font-bold flex items-center gap-2 bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20">
-                    <Star size={14} fill="currentColor" /> {totalGamerscore}G ACUMULADOS
+                    <Star size={14} fill="currentColor" /> {currentGamerscore}G / {MAX_GAMERSCORE}G
                   </p>
                   <p className="text-[10px] text-gray-500 font-mono">PROGRESSO: {currentUnlocked} / {totalPossible}</p>
                 </div>
@@ -60,40 +57,40 @@ const AchievementMenu: React.FC<AchievementMenuProps> = ({ isOpen, onClose }) =>
 
             {/* List */}
             <div className="p-6 overflow-y-auto space-y-3 custom-scrollbar scrollbar-retro bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
-              {masterAchievementsList.map((ach) => {
-                const isUnlocked = unlockedAchievements.includes(ach.id);
-                const Icon = IconMap[ach.icon] || Star;
+              {achievements.map((ach) => {
+                const unlocked = isUnlocked(ach.id);
+                const Icon = ach.icon;
 
                 return (
                   <motion.div
                     key={ach.id}
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    className={`flex items-center gap-5 p-4 rounded-xl border-2 transition-all relative overflow-hidden group ${isUnlocked
+                    className={`flex items-center gap-5 p-4 rounded-xl border-2 transition-all relative overflow-hidden group ${unlocked
                       ? 'bg-gradient-to-r from-green-950/40 to-black border-green-500/40'
                       : 'bg-black/40 border-white/5 grayscale opacity-60'
                       }`}
                   >
-                    {isUnlocked && (
+                    {unlocked && (
                       <div className="absolute top-0 right-0 p-2">
                         <Star size={12} className="text-yellow-500 animate-pulse" fill="currentColor" />
                       </div>
                     )}
 
-                    <div className={`w-14 h-14 rounded-full flex items-center justify-center shrink-0 border-2 transition-transform group-hover:scale-110 ${isUnlocked ? 'bg-green-500 border-white/20 text-black shadow-[0_0_15px_rgba(34,197,94,0.3)]' : 'bg-gray-800 border-gray-700 text-gray-600'
+                    <div className={`w-14 h-14 rounded-full flex items-center justify-center shrink-0 border-2 transition-transform group-hover:scale-110 ${unlocked ? 'bg-green-500 border-white/20 text-black shadow-[0_0_15px_rgba(34,197,94,0.3)]' : 'bg-gray-800 border-gray-700 text-gray-600'
                       }`}>
-                      {isUnlocked ? <Icon size={28} /> : <Lock size={24} />}
+                      {unlocked ? <Icon size={28} /> : <Lock size={24} />}
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-center mb-1">
-                        <h3 className={`font-black text-sm uppercase tracking-wider truncate ${isUnlocked ? 'text-white' : 'text-gray-600'}`}>
-                          {isUnlocked ? ach.title : 'BLOQUEADO'}
+                        <h3 className={`font-black text-sm uppercase tracking-wider truncate ${unlocked ? 'text-white' : 'text-gray-600'}`}>
+                          {unlocked ? ach.title : 'BLOQUEADO'}
                         </h3>
-                        <span className={`text-[10px] font-bold font-mono ${isUnlocked ? 'text-yellow-500' : 'text-gray-800'}`}>+50G</span>
+                        <span className={`text-[10px] font-bold font-mono ${unlocked ? 'text-yellow-500' : 'text-gray-800'}`}>+{ach.points}G</span>
                       </div>
-                      <p className={`text-[11px] leading-tight line-clamp-2 ${isUnlocked ? 'text-gray-400' : 'text-gray-800 font-mono italic'}`}>
-                        {isUnlocked ? ach.description : 'Ainda não habilitado neste semestre...'}
+                      <p className={`text-[11px] leading-tight line-clamp-2 ${unlocked ? 'text-gray-400' : 'text-gray-800 font-mono italic'}`}>
+                        {unlocked ? ach.description : 'Ainda não habilitado neste semestre...'}
                       </p>
                     </div>
                   </motion.div>
