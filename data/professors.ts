@@ -38,6 +38,7 @@ export const professors: Professor[] = [
     password: 'afeto',
     hint: 'Tem que ter a__to na computação...',
     theme: 'web',
+    codeName: 'cara pálida',
     subjects: ['Introdução à Programação', 'Interação Homem-Computador', 'Desenvolvimento Para Web', 'Computação Afetiva'],
     quiz: [
       { id: 1, question: "O que significa a sigla P.O.G.?", options: ["Processamento Gráfico", "Programação Orientada a Gambiarra", "Protocolo Global", "Pequenos Objetos"], answer: 1 },
@@ -155,6 +156,7 @@ export const professors: Professor[] = [
     password: 'grafo',
     hint: 'Vértices e Arestas...',
     theme: 'logic',
+    codeName: 'rainha dos grafos',
     subjects: ['Lógica Matemática', 'Estrutura de Dados', 'Grafos', 'Compiladores'],
     quiz: [
       { id: 1, question: "Qual estrutura de dados usa política FIFO?", options: ["Fila", "Pilha", "Árvore Binária", "Grafo Direcionado"], answer: 0 },
