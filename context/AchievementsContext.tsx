@@ -48,7 +48,7 @@ export const AchievementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
             // Show toast
             setLastUnlocked(id);
-            playSound('/sounds/one-up.mp3');
+            playSound('/sounds/achiviment.mp3');
 
             // Auto-dismiss after 5s
             if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
