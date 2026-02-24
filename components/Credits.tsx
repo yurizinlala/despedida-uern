@@ -5,6 +5,8 @@ import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { Heart, Code, GraduationCap, SkipForward, Trophy, Star, Award, Zap, Coffee, Skull, Medal, RotateCcw } from 'lucide-react';
 import { playSound } from '../utils/audio';
+import { useAchievements } from '../context/AchievementsContext';
+import { achievements as allAchievements } from '../data/achievements';
 
 // ═══════════════════════════════════
 // ─── STAR FIELD BACKGROUND ────────
@@ -54,6 +56,7 @@ const Credits: React.FC = () => {
     const [phase, setPhase] = useState<'crawl' | 'video' | 'achievements'>('crawl');
     const [crawlDone, setCrawlDone] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const { unlock, isUnlocked } = useAchievements();
 
     // Crawl duration
     const CRAWL_DURATION = 80; // seconds
@@ -69,10 +72,12 @@ const Credits: React.FC = () => {
 
     const skipToVideo = () => {
         setCrawlDone(true);
+        unlock('no_time');
         setTimeout(() => setPhase('video'), 500);
     };
 
     const skipVideo = () => {
+        unlock('heartless');
         setPhase('achievements');
         playSound('/sounds/achviements-open.mp3');
     };
@@ -83,23 +88,20 @@ const Credits: React.FC = () => {
     };
 
     const handleRestart = () => {
+        unlock('here_we_go');
         resetGame();
         navigate('/');
     };
 
     if (!selectedProfessor) return null;
 
-    // Placeholder achievements (will be implemented later)
-    const achievements = [
-        { icon: <Trophy size={24} />, title: 'Sobrevivente Acadêmico', desc: 'Completou toda a experiência', unlocked: true },
-        { icon: <Star size={24} />, title: 'Nota Máxima', desc: 'Tirou 10 na prova final', unlocked: false },
-        { icon: <Zap size={24} />, title: 'Raio Veloz', desc: 'Terminou a prova em menos de 2 minutos', unlocked: false },
-        { icon: <Coffee size={24} />, title: 'Cafeínado', desc: 'Visitou todas as áreas do campus', unlocked: false },
-        { icon: <Award size={24} />, title: 'Diplomata', desc: 'Emitiu o diploma de sobrevivência', unlocked: true },
-        { icon: <Medal size={24} />, title: 'Explorador', desc: 'Descobriu todos os easter eggs', unlocked: false },
-        { icon: <Skull size={24} />, title: 'DP Escapada', desc: 'Passou raspando com nota 5', unlocked: false },
-        { icon: <Heart size={24} />, title: 'Sentimental', desc: 'Escreveu uma dedicatória no diploma', unlocked: false },
-    ];
+    // Real achievements from data + context
+    const achievementsList = allAchievements.map(a => ({
+        icon: <a.icon size={24} />,
+        title: a.title,
+        desc: a.description,
+        unlocked: isUnlocked(a.id),
+    }));
 
     return (
         <div className="h-screen w-full overflow-hidden relative font-body">
@@ -280,13 +282,13 @@ const Credits: React.FC = () => {
                                 <Trophy size={48} className="mx-auto text-yellow-400 mb-3" />
                                 <h1 className="text-2xl font-cinzel text-white uppercase tracking-widest mb-1">Conquistas</h1>
                                 <p className="text-xs text-gray-500 font-body">
-                                    {achievements.filter(a => a.unlocked).length}/{achievements.length} desbloqueadas
+                                    {achievementsList.filter(a => a.unlocked).length}/{achievementsList.length} desbloqueadas
                                 </p>
                             </motion.div>
 
                             {/* Achievement list */}
                             <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-2 mb-8">
-                                {achievements.map((ach, i) => (
+                                {achievementsList.map((ach, i) => (
                                     <motion.div
                                         key={i}
                                         initial={{ x: -30, opacity: 0 }}

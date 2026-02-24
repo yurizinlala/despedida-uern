@@ -4,6 +4,7 @@ import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, RotateCcw, Coffee, Skull, Zap, FileSearch, CheckCircle2, XCircle } from 'lucide-react';
 import { playSound } from '../utils/audio';
+import { useAchievements } from '../context/AchievementsContext';
 
 interface RandomizedOption {
   text: string;
@@ -42,6 +43,7 @@ const PenMark: React.FC<{ type: 'circle' | 'cross'; color: string }> = ({ type, 
 
 const Quiz: React.FC = () => {
   const { selectedProfessor, advanceStage } = useUser();
+  const { unlock } = useAchievements();
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
   const [showResult, setShowResult] = useState(false);
@@ -133,10 +135,15 @@ const Quiz: React.FC = () => {
       setShowResult(true);
       const rScore = quizData.filter(q => q.confirmed && q.userAnswerIndex !== null && q.options[q.userAnswerIndex].isCorrect).length;
       playSound(rScore >= 5 ? '/sounds/aproved.mp3' : '/sounds/reproved.mp3');
+      // Score-based achievements
+      if (rScore === 10) unlock('top_student');
+      if (rScore === 0) unlock('ask_chatgpt');
+      if (rScore === 5) unlock('barely_passed');
     }, 5000);
   };
 
   const handleRetry = () => {
+    unlock('reviewer');
     // Reset state instead of reloading
     setCurrent(0);
     setShowResult(false);

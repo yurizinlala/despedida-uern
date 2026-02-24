@@ -5,6 +5,7 @@ import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { Download, Printer, Fingerprint, CheckCircle, Star, Shield, Stamp, type LucideIcon } from 'lucide-react';
 import { playSound } from '../utils/audio';
+import { useAchievements } from '../context/AchievementsContext';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
@@ -12,6 +13,7 @@ import { jsPDF } from 'jspdf';
 // ─── MINIGAME 1: BIOMETRIC HOLD ───
 // ═══════════════════════════════════
 const BiometricGame: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+  const { unlock } = useAchievements();
   const [progress, setProgress] = useState(0);
   const [holding, setHolding] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -40,6 +42,7 @@ const BiometricGame: React.FC<{ onComplete: () => void }> = ({ onComplete }) => 
   const stopHold = () => {
     setHolding(false);
     if (intervalRef.current) clearInterval(intervalRef.current);
+    if (progress > 0 && progress < 100) unlock('anxious');
   };
 
   return (
@@ -185,6 +188,7 @@ const StampGame: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 // ═══════════════════════════════════
 const Certificate: React.FC = () => {
   const { selectedProfessor, advanceStage } = useUser();
+  const { unlock } = useAchievements();
   const navigate = useNavigate();
   const [customName, setCustomName] = useState(selectedProfessor?.name || '');
   const [dedicatoria, setDedicatoria] = useState('');
@@ -210,12 +214,14 @@ const Certificate: React.FC = () => {
   const startProcess = () => {
     if (!customName.trim()) return;
     playSound('/sounds/accept.mp3');
+    if (dedicatoria.trim()) unlock('sentimental');
     setStep('biometric');
   };
 
   const downloadPDF = async () => {
     if (!certificateRef.current) return;
     setIsExporting(true);
+    unlock('collector');
     try {
       // Wait for all fonts to be loaded
       await document.fonts.ready;

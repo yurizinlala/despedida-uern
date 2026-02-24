@@ -5,6 +5,7 @@ import { professors, getAuthText } from '../data/professors';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, Lock, Server, Terminal, Calendar, Trophy, Info, UserCheck, MessageSquare, Newspaper, Bell, ExternalLink, Search } from 'lucide-react';
 import { playSound } from '../utils/audio';
+import { useAchievements } from '../context/AchievementsContext';
 
 interface FakeLoginProps {
   onSuccess: (isFirstTry: boolean) => void;
@@ -12,6 +13,7 @@ interface FakeLoginProps {
 
 const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
   const { selectedProfessor, setSelectedProfessor, unlockedAchievements, masterAchievementsList } = useUser();
+  const { unlock } = useAchievements();
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [easterEgg, setEasterEgg] = useState<string | null>(null);
@@ -28,6 +30,7 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
   // Play sigaa-init on mount
   useEffect(() => {
     playSound('/sounds/sigaa-init.mp3');
+    unlock('i_know_this');
   }, []);
 
   // Play postit sound when post-it first appears
@@ -52,7 +55,7 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
       const next = [...clickedErrors, action];
       setClickedErrors(next);
       if (next.length >= 4) {
-        // achievement placeholder
+        unlock('curious');
       }
     }
     const jokes: Record<string, string> = {
@@ -78,11 +81,13 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
     if (lowerPass === 'admin' || lowerPass === 'root') {
       setEasterEgg('Acesso negado. O admin está de férias (desde 2012).');
       playSound('/sounds/wrong.mp3');
+      unlock('router_admin');
       return;
     }
 
     if (lowerPass === selectedProfessor.password.toLowerCase()) {
       const isFirstTry = failedAttempts === 0;
+      if (isFirstTry) unlock('hackerman');
       playSound('/sounds/accept.mp3');
       onSuccess(isFirstTry);
     } else {
@@ -114,7 +119,9 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
               hitIndexRef.current++;
               setLogoRotated(true);
               setTimeout(() => setLogoRotated(false), 300);
-            }} className={`w-20 h-20 bg-white p-2 shadow-[4px_4px_0px_rgba(0,0,0,0.3)] cursor-pointer transition-transform active:scale-90 ${logoRotated ? 'rotate-12' : ''}`}>
+            }} className={`w-20 h-20 bg-white p-2 shadow-[4px_4px_0px_rgba(0,0,0,0.3)] cursor-pointer transition-transform active:scale-90 ${logoRotated ? 'rotate-12' : ''}`}
+              onDoubleClick={() => unlock('academic_pride')}
+            >
               <div className="w-full h-full border-2 border-blue-900 flex items-center justify-center font-serif font-black text-4xl text-blue-900 italic">U</div>
             </div>
             <div>

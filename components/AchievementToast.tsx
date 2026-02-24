@@ -1,50 +1,54 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Gamepad2 } from 'lucide-react';
-import { useUser } from '../context/UserContext';
-
+import { useAchievements } from '../context/AchievementsContext';
+import { achievements } from '../data/achievements';
+import { Trophy } from 'lucide-react';
 
 const AchievementToast: React.FC = () => {
-  const { lastUnlocked, setLastUnlocked } = useUser();
-
-  useEffect(() => {
-    if (lastUnlocked) {
-      const timer = setTimeout(() => {
-        setLastUnlocked(null);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [lastUnlocked, setLastUnlocked]);
+  const { lastUnlocked, dismissToast } = useAchievements();
+  const achievement = lastUnlocked ? achievements.find(a => a.id === lastUnlocked) : null;
 
   return (
     <AnimatePresence>
-      {lastUnlocked && (
+      {achievement && (
         <motion.div
-          initial={{ y: -100, x: "-50%", opacity: 0 }}
-          animate={{ y: 20, x: "-50%", opacity: 1 }}
-          exit={{ y: -100, x: "-50%", opacity: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className="fixed top-0 left-1/2 z-[9999] flex items-center gap-4 bg-gray-900 border-2 border-white text-white px-6 py-4 shadow-[0_10px_0_rgba(0,0,0,0.5)] font-pixel min-w-[350px] max-w-[90vw]"
-          style={{ transform: 'translateX(-50%)' }} // Backup CSS transform
+          key={achievement.id}
+          initial={{ x: 400, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: 400, opacity: 0 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+          onClick={dismissToast}
+          className="fixed top-6 right-6 z-[9999] cursor-pointer"
         >
-          <div className="bg-yellow-500 p-2 border-2 border-white shadow-inner animate-pulse shrink-0">
-            <Trophy size={24} className="text-black" />
-          </div>
-          <div className="flex flex-col flex-1 min-w-0">
-            <span className="text-[10px] uppercase tracking-widest text-yellow-400 mb-1 flex items-center gap-2 font-bold">
-              <Gamepad2 size={12} /> Conquista Desbloqueada
-            </span>
-            <span className="text-sm text-white leading-tight mb-2 font-bold truncate">{lastUnlocked.title}</span>
-            <div className="h-px w-full bg-white/20 mb-2"></div>
-            <div className="text-[10px] text-gray-300 flex justify-between items-center w-full gap-4">
-              <span className="truncate flex-1">{lastUnlocked.description}</span>
-              <span className="text-yellow-400 font-bold whitespace-nowrap animate-bounce">+50G</span>
+          {/* Xbox 360-style achievement popup */}
+          <div className="flex items-center gap-3 bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#0f3460] border border-yellow-500/40 px-5 py-3 shadow-[0_0_30px_rgba(234,179,8,0.3)] min-w-[320px] max-w-[420px] relative overflow-hidden"
+            style={{ backdropFilter: 'blur(10px)' }}
+          >
+            {/* Gold icon circle */}
+            <div className="shrink-0 w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg">
+              <achievement.icon size={22} className="text-black" />
             </div>
-          </div>
 
-          {/* Decorative Corner Pixel */}
-          <div className="absolute top-1 right-1 w-1 h-1 bg-white/50"></div>
-          <div className="absolute bottom-1 left-1 w-1 h-1 bg-white/50"></div>
+            <div className="flex-1 min-w-0">
+              {/* Top bar */}
+              <div className="flex items-center gap-2 mb-0.5">
+                <Trophy size={10} className="text-yellow-500 shrink-0" />
+                <span className="text-[9px] text-yellow-500 uppercase tracking-[0.3em] font-bold">Conquista Desbloqueada</span>
+              </div>
+              {/* Title */}
+              <p className="text-white text-sm font-bold truncate">{achievement.title}</p>
+              {/* Description */}
+              <p className="text-gray-400 text-[10px] truncate">{achievement.description}</p>
+            </div>
+
+            {/* Animated glow bar at bottom */}
+            <motion.div
+              className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-yellow-400 to-yellow-600"
+              initial={{ width: '100%' }}
+              animate={{ width: '0%' }}
+              transition={{ duration: 5, ease: 'linear' }}
+            />
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

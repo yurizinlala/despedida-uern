@@ -7,6 +7,7 @@ import {
   Clock, Sun, Moon, ArrowRight, X, MapPin, ChevronDown,
   BookOpen, Trophy, GraduationCap, Star
 } from 'lucide-react';
+import { useAchievements } from '../context/AchievementsContext';
 
 import { MuralLoading, ClassroomTransition } from './Transitions';
 import { playSound } from '../utils/audio';
@@ -114,6 +115,7 @@ const Tree: React.FC<{ x: number; y: number; delay: number; size?: number }> = (
 
 // --- Campus Cat (kept as-is per user request) ---
 const CampusCat: React.FC = () => {
+  const { unlock } = useAchievements();
   const [clicks, setClicks] = useState(0);
   const [pos, setPos] = useState({ x: 40, y: 72 });
   const [bubble, setBubble] = useState<string | null>(null);
@@ -135,11 +137,13 @@ const CampusCat: React.FC = () => {
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setClicks(clicks + 1);
+    const newClicks = clicks + 1;
+    setClicks(newClicks);
     setBubble(catQuotes[Math.floor(Math.random() * catQuotes.length)]);
     // Random meow sound
     const meowIdx = Math.floor(Math.random() * 3) + 1;
     playSound(`/sounds/meow${meowIdx}.mp3`);
+    if (newClicks === 7) unlock('cat_lover');
     setTimeout(() => setBubble(null), 3500);
   };
 

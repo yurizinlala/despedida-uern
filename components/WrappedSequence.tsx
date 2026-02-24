@@ -10,6 +10,7 @@ import {
 import { playSound } from '../utils/audio';
 import Counter from './Counter';
 import { useNavigate } from 'react-router-dom';
+import { useAchievements } from '../context/AchievementsContext';
 
 const TOTAL_SLIDES = 11;
 const AUTO_PLAY_DELAY = 8000;
@@ -129,6 +130,7 @@ const WrappedSequence: React.FC = () => {
   const [auraText, setAuraText] = useState("Iniciando scan...");
   const auraTimerRef = useRef<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
+  const { unlock } = useAchievements();
 
   if (!selectedProfessor) return null;
 
@@ -207,7 +209,14 @@ const WrappedSequence: React.FC = () => {
     return () => clearInterval(interval);
   }, [currentSlide, isPaused, nextSlide]);
 
+  // Slide-based achievements
+  useEffect(() => {
+    if (currentSlide === 6) unlock('rpg_mode');
+    if (currentSlide === 10) unlock('dj_mode');
+  }, [currentSlide]);
+
   const handleManualFinish = () => {
+    if (currentSlide === TOTAL_SLIDES - 1) unlock('spotify_sorry');
     setHasSkippedIntro(true);
     navigate('/transition');
   };

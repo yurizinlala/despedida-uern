@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useUser } from '../context/UserContext';
 import { getLoadingMessages } from '../data/professors';
 import { playSound, playSoundPitched } from '../utils/audio';
+import { useAchievements } from '../context/AchievementsContext';
 
 import { Scan, Fingerprint, Activity, Wifi, Battery, Database, Trophy, FastForward, Terminal, Ghost } from 'lucide-react';
 
@@ -36,6 +37,7 @@ const playCoinSound = (konamiStep: number) => {
 // --- Component ---
 const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirstTry = false }) => {
   const { selectedProfessor, setHasSkippedIntro } = useUser();
+  const { unlock } = useAchievements();
   const [progress, setProgress] = useState(0);
   const [currentLine, setCurrentLine] = useState("Iniciando processamento de despedida...");
   const [phase, setPhase] = useState<'loading' | 'error' | 'hack'>('loading');
@@ -74,6 +76,7 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
         if (nextIdx === KONAMI_CODE.length) {
           // Konami complete!
           playSound('/sounds/one-up.mp3');
+          unlock('80s_nerd');
           setKonamiIdx(0);
         } else {
           playCoinSound(nextIdx);
@@ -201,7 +204,7 @@ const GlitchTransition: React.FC<GlitchTransitionProps> = ({ onComplete, isFirst
           {/* Bottom info bar */}
           <div className="flex items-center gap-4 pt-3 border-t border-white/20">
             <div className="w-16 h-16 md:w-20 md:h-20 bg-white p-1.5 shrink-0">
-              <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=UERN_LEGACY_SYSTEM&color=0000AA`} alt="QR" className="w-full h-full" />
+              <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TENTA_PESQUSIAR_POR_CÓDIGO_KONAMI_NO_GOOGLE&color=0000AA`} alt="QR" className="w-full h-full" />
             </div>
             <div className="text-[9px] md:text-[10px] space-y-1 opacity-70 uppercase tracking-wider font-bold">
               <p>Para mais informações, procure por: "QUERO_TRANCAR_ELETRICIDADE_E_MAGNETISMO.log"</p>

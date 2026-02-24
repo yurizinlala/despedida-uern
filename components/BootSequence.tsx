@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Cpu, Terminal, AlertTriangle } from 'lucide-react';
 import { playSound } from '../utils/audio';
 import { useUser } from '../context/UserContext';
+import { useAchievements } from '../context/AchievementsContext';
 
 interface BootSequenceProps {
   onComplete: () => void;
@@ -60,6 +61,7 @@ const bootLines = [
 
 const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
   const { setHasSkippedIntro } = useUser();
+  const { unlock } = useAchievements();
   const [hasInteracted, setHasInteracted] = useState(false);
   const [phase, setPhase] = useState<'prompt' | 'joke' | 'booting'>('prompt');
   const [visibleLinesCount, setVisibleLinesCount] = useState(0);
@@ -100,6 +102,8 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
       setNoClicks(newNoClicks);
       setPhase('joke');
       playSound('/sounds/error.mp3');
+      if (newNoClicks === 1) unlock('funny_guy');
+      if (newNoClicks >= 3) unlock('pedro_is_you');
     }
   };
 

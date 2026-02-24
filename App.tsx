@@ -80,12 +80,16 @@ const AppLayout: React.FC = () => {
   );
 };
 
+import { AchievementsProvider } from './context/AchievementsContext';
+
 const App: React.FC = () => (
-  <UserProvider>
-    <HashRouter>
-      <AppLayout />
-    </HashRouter>
-  </UserProvider>
+  <AchievementsProvider>
+    <UserProvider>
+      <HashRouter>
+        <AppLayout />
+      </HashRouter>
+    </UserProvider>
+  </AchievementsProvider>
 );
 
 export default App;

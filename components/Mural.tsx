@@ -8,6 +8,7 @@ import {
     HardDrive, Star, ChevronRight, Power
 } from 'lucide-react';
 import { playSound } from '../utils/audio';
+import { useAchievements } from '../context/AchievementsContext';
 
 // ─── Win95 Window ───
 const Win95Window: React.FC<{
@@ -169,6 +170,7 @@ const StartMenu: React.FC<{
 // ═══════════════════════════════════
 const Mural: React.FC = () => {
     const { selectedProfessor, advanceStage } = useUser();
+    const { unlock } = useAchievements();
     const navigate = useNavigate();
     const [openWindows, setOpenWindows] = useState<string[]>([]);
     const [focusedWindow, setFocusedWindow] = useState('');
@@ -182,7 +184,10 @@ const Mural: React.FC = () => {
     // Boot animation
     useEffect(() => {
         playSound('/sounds/uern95-startup.mp3');
-        const t = setTimeout(() => setBooted(true), 400);
+        const t = setTimeout(() => {
+            setBooted(true);
+            unlock('time_machine');
+        }, 400);
         return () => clearTimeout(t);
     }, []);
 
@@ -201,7 +206,13 @@ const Mural: React.FC = () => {
     const handleOpen = (id: string) => {
         playSound('/sounds/open-folder.mp3');
         if (!openWindows.includes(id)) {
-            setOpenWindows(prev => [...prev, id]);
+            const nextWindows = [...openWindows, id];
+            setOpenWindows(nextWindows);
+            // Check if all 5 windows are now open
+            const allIds = ['note', 'photo', 'trash', 'pc', 'help'];
+            if (allIds.every(wid => nextWindows.includes(wid))) {
+                unlock('ram_torturer');
+            }
         }
         bringToFront(id);
         setClickCount(prev => new Set(prev).add(id));
@@ -225,6 +236,7 @@ const Mural: React.FC = () => {
     const handleEmptyTrash = () => {
         playSound('/sounds/erase-recycle-bin.mp3');
         setTrashEmpty(true);
+        unlock('trash_cleaner');
     };
 
     if (!selectedProfessor) return null;
