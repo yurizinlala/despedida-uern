@@ -12,7 +12,7 @@ interface FakeLoginProps {
 }
 
 const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
-  const { selectedProfessor, setSelectedProfessor, unlockedAchievements, masterAchievementsList } = useUser();
+  const { selectedProfessor, setSelectedProfessor } = useUser();
   const { unlock } = useAchievements();
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,7 +24,6 @@ const FakeLogin: React.FC<FakeLoginProps> = ({ onSuccess }) => {
   const [showPostit, setShowPostit] = useState(false);
   const postitSoundPlayed = useRef(false);
 
-  const totalPossibleAchievements = masterAchievementsList.length;
   const MAX_ATTEMPTS_FOR_HINT = 6;
 
   // Play sigaa-init on mount

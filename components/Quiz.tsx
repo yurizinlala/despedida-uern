@@ -135,15 +135,10 @@ const Quiz: React.FC = () => {
       setShowResult(true);
       const rScore = quizData.filter(q => q.confirmed && q.userAnswerIndex !== null && q.options[q.userAnswerIndex].isCorrect).length;
       playSound(rScore >= 5 ? '/sounds/aproved.mp3' : '/sounds/reproved.mp3');
-      // Score-based achievements
-      if (rScore === 10) unlock('top_student');
-      if (rScore === 0) unlock('ask_chatgpt');
-      if (rScore === 5) unlock('barely_passed');
     }, 5000);
   };
 
   const handleRetry = () => {
-    unlock('reviewer');
     // Reset state instead of reloading
     setCurrent(0);
     setShowResult(false);
@@ -169,8 +164,17 @@ const Quiz: React.FC = () => {
   if (!selectedProfessor || quizData.length === 0) return null;
 
   const score = quizData.filter(q => q.confirmed && q.userAnswerIndex !== null && q.options[q.userAnswerIndex].isCorrect).length;
+  const totalQuestions = quizData.length;
   const isAproved = score >= 5;
   const profPhoto = professorPhotos[selectedProfessor.id];
+
+  // Score-based achievements — fires once when result screen appears
+  useEffect(() => {
+    if (!showResult) return;
+    if (score === totalQuestions) unlock('top_student');
+    if (score === 0) unlock('ask_chatgpt');
+    if (score === 5) unlock('barely_passed');
+  }, [showResult]);
 
   return (
     <div className="h-screen w-full overflow-hidden flex items-center justify-center p-2 relative font-sans">
@@ -516,7 +520,7 @@ const Quiz: React.FC = () => {
                     <RotateCcw size={18} /> TENTAR NOVAMENTE
                   </button>
                 )}
-                <button onClick={() => { playSound('/sounds/postit.mp3'); setIsReviewing(true); }} className="bg-gray-200 text-black border-2 border-gray-400 py-4 px-4 font-black flex items-center justify-center gap-2 hover:bg-gray-300 transition-all shadow-[6px_6px_0_rgba(0,0,0,0.3)] uppercase tracking-wider text-sm">
+                <button onClick={() => { playSound('/sounds/postit.mp3'); unlock('reviewer'); setIsReviewing(true); }} className="bg-gray-200 text-black border-2 border-gray-400 py-4 px-4 font-black flex items-center justify-center gap-2 hover:bg-gray-300 transition-all shadow-[6px_6px_0_rgba(0,0,0,0.3)] uppercase tracking-wider text-sm">
                   <FileSearch size={18} /> REVISAR
                 </button>
               </div>

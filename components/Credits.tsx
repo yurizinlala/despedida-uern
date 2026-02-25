@@ -56,10 +56,35 @@ const Credits: React.FC = () => {
     const [phase, setPhase] = useState<'crawl' | 'video' | 'achievements'>('crawl');
     const [crawlDone, setCrawlDone] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const crawlAudioRef = useRef<HTMLAudioElement | null>(null);
     const { unlock, isUnlocked } = useAchievements();
 
     // Crawl duration
     const CRAWL_DURATION = 80; // seconds
+
+    // Play / stop crawl music
+    useEffect(() => {
+        const audio = new Audio('/sounds/starwars-credits.mp3');
+        audio.loop = true;
+        audio.volume = 0.5;
+        crawlAudioRef.current = audio;
+        audio.play().catch(() => { });
+        return () => { audio.pause(); audio.src = ''; };
+    }, []);
+
+    useEffect(() => {
+        if (phase !== 'crawl' && crawlAudioRef.current) {
+            // Fade out over 1s
+            const audio = crawlAudioRef.current;
+            let vol = audio.volume;
+            const fade = setInterval(() => {
+                vol = Math.max(0, vol - 0.05);
+                audio.volume = vol;
+                if (vol <= 0) { clearInterval(fade); audio.pause(); }
+            }, 50);
+            return () => clearInterval(fade);
+        }
+    }, [phase]);
 
     useEffect(() => {
         // Auto-advance after crawl finishes

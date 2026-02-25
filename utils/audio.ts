@@ -7,6 +7,7 @@ const audioCache: Record<string, HTMLAudioElement> = {};
 // All sound files used across the project
 const ALL_SOUNDS = [
     '/sounds/accept.mp3',
+    '/sounds/achiviment.mp3',
     '/sounds/achviements-open.mp3',
     '/sounds/aproved.mp3',
     '/sounds/aura.mp3',
