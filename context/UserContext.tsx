@@ -36,6 +36,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setGameStage(0);
     setSelectedProfessor(null);
     setHasSkippedIntro(false);
+    // Keep restart behavior consistent by clearing achievement progress too
+    // (current + legacy storage keys).
+    localStorage.removeItem('despedida_achievements');
+    localStorage.removeItem('grad_adventure_achievements');
     localStorage.removeItem('grad_adventure_stage');
   };
 
