@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, useNavigate } from 'react-router-dom';
-import { UserProvider, useUser } from './context/UserContext';
+import { UserProvider } from './context/UserContext';
 import MobileBlock from './components/MobileBlock';
 import BootSequence from './components/BootSequence';
 import FakeLogin from './components/FakeLogin';
