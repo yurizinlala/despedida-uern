@@ -48,7 +48,7 @@ const RetroTransition: React.FC<RetroTransitionProps> = ({ onComplete }) => {
               />
             </div>
             <p className="mt-8 text-[10px] text-gray-500 uppercase tracking-widest font-mono">Iniciando ambiente de trabalho docente...</p>
-            <p className="mt-2 text-[8px] text-gray-700 uppercase tracking-[0.2em] font-mono">Copyright (C) 2001-2025 Microsoft / UERN</p>
+            <p className="mt-2 text-[8px] text-gray-700 uppercase tracking-[0.2em] font-mono">Copyright (C) 2001-2026 Microsoft / UERN</p>
           </motion.div>
         )}
       </AnimatePresence>

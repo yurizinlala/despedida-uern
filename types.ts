@@ -1,4 +1,4 @@
-export type ProfessorTheme = 'logic' | 'hardware' | 'math' | 'web' | 'db' | 'manager' | 'sysop';
+export type ProfessorTheme = 'logic' | 'hardware' | 'math' | 'web' | 'db' | 'manager' | 'sysop' | 'network' | 'parallel' | 'distributed';
 
 export type MuralItemType = 'note' | 'postit' | 'polaroid' | 'tape' | 'sticker';
 
@@ -14,14 +14,6 @@ export interface MuralItem {
     width?: string;
   };
   meta?: string; // Caption for polaroids, or youtube ID for tapes
-}
-
-export interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  icon: string; // Lucide icon name
-  unlocked: boolean;
 }
 
 export interface WrappedData {
@@ -46,7 +38,7 @@ export interface WrappedData {
   // Slide 7: Sobrevivência
   survivalRate: number;
   bestSubject: { name: string; grade: number };
-  worstSubject: { name: string; grade: number };
+  worstSubject?: { name: string; grade: number };
 
   // Slide 8: Arquétipo Tech / Classe RPG
   techArchetype: { name: string; description: string; icon: string };
@@ -59,9 +51,6 @@ export interface WrappedData {
 
   // Slide 11: Badge Final
   finalBadge: string;
-
-  // Achievements
-  achievements: Achievement[];
 }
 
 export interface Professor {

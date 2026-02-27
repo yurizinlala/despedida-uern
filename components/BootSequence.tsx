@@ -110,9 +110,8 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
   useEffect(() => {
     if (phase === 'booting') {
       // Play kernel-loading and keep reference to stop it later
-      const audio = new Audio('/sounds/kernel-loading.mp3');
+      const audio = playSound('/sounds/kernel-loading.mp3');
       audio.loop = true;
-      audio.play().catch(() => { });
       loadingAudioRef.current = audio;
 
       const timer = setInterval(() => {

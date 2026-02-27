@@ -7,6 +7,7 @@ import {
     X, FileText, Folder, Trash2, Clock, Monitor, HelpCircle,
     HardDrive, Star, ChevronRight, Power
 } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 import { playSound } from '../utils/audio';
 import { useAchievements } from '../context/AchievementsContext';
 
@@ -91,25 +92,30 @@ const DesktopIcon: React.FC<{
     </motion.div>
 );
 
-// ─── Sticker Widget (themed emojis from createMural) ───
-const StickerWidget: React.FC<{ emoji: string; x: number; y: number; delay: number }> = ({ emoji, x, y, delay }) => (
-    <motion.div
-        drag
-        dragMomentum={false}
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: delay + 1.5, duration: 0.3 }}
-        className="absolute cursor-grab active:cursor-grabbing z-[8] select-none"
-        style={{ left: `${x}%`, top: `${y}%` }}
-    >
-        <div className="bg-[#c0c0c0] border border-t-white border-l-white border-b-[#404040] border-r-[#404040] shadow-[3px_3px_0px_rgba(0,0,0,0.3)]">
-            <div className="bg-gradient-to-r from-[#000080] to-[#1084d0] px-1 py-[1px] flex justify-between items-center">
-                <span className="text-white text-[7px] font-bold">Widget</span>
+// ─── Sticker Widget (themed Lucide icons from createMural) ───
+const StickerWidget: React.FC<{ iconName: string; x: number; y: number; delay: number }> = ({ iconName, x, y, delay }) => {
+    const IconComponent = (LucideIcons as any)[iconName] || LucideIcons.Star;
+    return (
+        <motion.div
+            drag
+            dragMomentum={false}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: delay + 1.5, duration: 0.3 }}
+            className="absolute cursor-grab active:cursor-grabbing z-[8] select-none"
+            style={{ left: `${x}%`, top: `${y}%` }}
+        >
+            <div className="bg-[#c0c0c0] border border-t-white border-l-white border-b-[#404040] border-r-[#404040] shadow-[3px_3px_0px_rgba(0,0,0,0.3)]">
+                <div className="bg-gradient-to-r from-[#000080] to-[#1084d0] px-1 py-[1px] flex justify-between items-center">
+                    <span className="text-white text-[7px] font-bold">Widget</span>
+                </div>
+                <div className="px-3 py-2 flex items-center justify-center">
+                    <IconComponent size={24} className="text-[#000080]" />
+                </div>
             </div>
-            <div className="px-3 py-2 text-2xl">{emoji}</div>
-        </div>
-    </motion.div>
-);
+        </motion.div>
+    );
+};
 
 // ─── Start Menu ───
 const StartMenu: React.FC<{
@@ -350,7 +356,7 @@ const Mural: React.FC = () => {
             <div className="space-y-2 text-[12px]">
                 <div className="flex items-center gap-2 p-2 hover:bg-[#000080] hover:text-white cursor-default group">
                     <img src="/assets/small-folder.png" className="w-4 h-4" />
-                    <span>C:\Semestres\2024-2025</span>
+                    <span>C:\Semestres\2022-2025</span>
                 </div>
                 <div className="flex items-center gap-2 p-2 hover:bg-[#000080] hover:text-white cursor-default group">
                     <img src="/assets/small-folder.png" className="w-4 h-4" />
@@ -427,7 +433,7 @@ const Mural: React.FC = () => {
             {booted && stickers.map((s, i) => (
                 <StickerWidget
                     key={s.id}
-                    emoji={s.content}
+                    iconName={s.content}
                     x={s.style?.x ?? 50 + i * 10}
                     y={s.style?.y ?? 20 + i * 8}
                     delay={i * 0.1}

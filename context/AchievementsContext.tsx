@@ -41,22 +41,20 @@ export const AchievementsProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const unlock = useCallback((id: string) => {
-        setUnlockedIds(prev => {
-            if (prev.includes(id)) return prev; // Already unlocked
-            const next = [...prev, id];
-            saveToStorage(next);
+        if (unlockedIds.includes(id)) return;
 
-            // Show toast
-            setLastUnlocked(id);
-            playSound('/sounds/achiviment.mp3');
+        const next = [...unlockedIds, id];
+        setUnlockedIds(next);
+        saveToStorage(next);
 
-            // Auto-dismiss after 5s
-            if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
-            toastTimeoutRef.current = setTimeout(() => setLastUnlocked(null), 5000);
+        // Show toast
+        setLastUnlocked(id);
+        playSound('/sounds/achiviment.mp3');
 
-            return next;
-        });
-    }, []);
+        // Auto-dismiss after 5s
+        if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+        toastTimeoutRef.current = setTimeout(() => setLastUnlocked(null), 5000);
+    }, [unlockedIds]);
 
     const isUnlocked = useCallback((id: string) => unlockedIds.includes(id), [unlockedIds]);
 

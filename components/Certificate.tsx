@@ -173,7 +173,7 @@ const StampGame: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
           >
             <div className="text-[7px] font-bold">APROVADO</div>
             <div className="text-xl font-black">UERN</div>
-            <div className="text-[6px] border-t border-white/50 pt-0.5 mt-0.5">2025</div>
+            <div className="text-[6px] border-t border-white/50 pt-0.5 mt-0.5">2026</div>
           </motion.div>
         )}
       </div>
@@ -347,7 +347,7 @@ const Certificate: React.FC = () => {
                   <p style={{ fontFamily: 'Playfair Display, serif', fontSize: '16px', color: '#6b7280', fontStyle: 'italic' }}>Certificamos com honras que o(a) ilustre docente:</p>
                   <h2 style={{ fontFamily: 'Cinzel, serif', fontSize: '28px', color: '#1a1a1a', fontWeight: 700, padding: '10px 0', borderTop: '2px solid rgba(212,175,55,0.3)', borderBottom: '2px solid rgba(212,175,55,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{customName}</h2>
                   <p style={{ fontFamily: 'Playfair Display, serif', fontSize: '15px', color: '#4b5563', lineHeight: 1.7, maxWidth: '600px', margin: '0 auto', fontStyle: 'italic' }}>
-                    Finalizou com maestria o ciclo acadêmico de 2025, superando instabilidades de pauta, cafés insossos e provas impossíveis, sob a tutela direta da turma de Ciência da Computação.
+                    Finalizou com maestria o ciclo acadêmico de 2022 até 2025, superando instabilidades de assuntos, alguns cafés insossos e provas de resistências quase impossíveis, sob a guarda da turma de Ciência da Computação e principalemente do aluno Yuri Dantas da Silva.
                   </p>
                   {dedicatoria && (
                     <p style={{ fontFamily: 'Great Vibes, cursive', fontSize: '20px', color: '#6b7280', maxWidth: '480px', margin: '4px auto 0', lineHeight: 1.5 }}>
@@ -367,12 +367,12 @@ const Certificate: React.FC = () => {
                   <div style={{ width: '112px', height: '112px', background: '#c62828', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'white', transform: 'rotate(-12deg)', boxShadow: '0 10px 25px rgba(0,0,0,0.3)', border: '4px solid #b71c1c' }}>
                     <div style={{ fontSize: '6px', fontWeight: 'bold', letterSpacing: '0.1em' }}>QUALIDADE</div>
                     <div style={{ fontSize: '20px', fontWeight: 900, fontFamily: 'Cinzel, serif' }}>UERN</div>
-                    <div style={{ fontSize: '5px', borderTop: '1px solid rgba(255,255,255,0.4)', paddingTop: '2px', marginTop: '2px', letterSpacing: '0.1em' }}>APROVADO 2025</div>
+                    <div style={{ fontSize: '5px', borderTop: '1px solid rgba(255,255,255,0.4)', paddingTop: '2px', marginTop: '2px', letterSpacing: '0.1em' }}>APROVADO 2026</div>
                   </div>
 
                   <div className="text-right flex flex-col items-center">
                     <div style={{ width: '160px', borderTop: '2px solid #9ca3af' }} />
-                    <p style={{ fontFamily: 'Playfair Display, serif', fontSize: '14px', color: '#374151', marginTop: '8px', fontStyle: 'italic' }}>A Coordenação</p>
+                    <p style={{ fontFamily: 'Playfair Display, serif', fontSize: '14px', color: '#374151', marginTop: '8px', fontStyle: 'italic' }}>A Coordenação (ou Yuri)</p>
                     <p style={{ fontFamily: 'monospace', fontSize: '7px', textTransform: 'uppercase', letterSpacing: '0.2em', color: '#9ca3af', marginTop: '4px' }}>Selo de Autenticidade Digital</p>
                   </div>
                 </div>

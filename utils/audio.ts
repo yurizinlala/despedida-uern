@@ -40,6 +40,7 @@ const ALL_SOUNDS = [
     '/sounds/right-pen.mp3',
     '/sounds/sigaa-init.mp3',
     '/sounds/stamp.mp3',
+    '/sounds/starwars-credits.mp3',
     '/sounds/uern-boot.mp3',
     '/sounds/uern95-logout.mp3',
     '/sounds/uern95-startup.mp3',

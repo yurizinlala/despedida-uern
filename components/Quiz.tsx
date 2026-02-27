@@ -24,6 +24,16 @@ interface RandomizedQuestion {
 const professorPhotos: Record<string, string> = {
   raul: '/assets/raul_photo.png',
   camila: '/assets/camila_photo.png',
+  adriana: '/assets/takahashi_photo.png',
+  glaucia: '/assets/glaucia_photo.png',
+  rosiery: '/assets/rosiery_photo.png',
+  bartira: '/assets/bartira_photo.png',
+  'andre-gustavo': '/assets/andre_photo.png',
+  'anderson-abner': '/assets/abner_photo.png',
+  'felipe-denis': '/assets/denis_photo.png',
+  'carlos-andre': '/assets/carlos_photo.png',
+  'bruno-cruz': '/assets/bruno_photo.png',
+  wilfredo: '/assets/wilfredo_photo.png',
 };
 
 const PenMark: React.FC<{ type: 'circle' | 'cross'; color: string }> = ({ type, color }) => (
@@ -161,20 +171,21 @@ const Quiz: React.FC = () => {
     }
   };
 
-  if (!selectedProfessor || quizData.length === 0) return null;
-
+  // Score-based achievements — fires once when result screen appears
   const score = quizData.filter(q => q.confirmed && q.userAnswerIndex !== null && q.options[q.userAnswerIndex].isCorrect).length;
   const totalQuestions = quizData.length;
+
+  useEffect(() => {
+    if (!showResult || totalQuestions === 0) return;
+    if (score === totalQuestions) unlock('top_student');
+    else if (score === 0) unlock('ask_chatgpt');
+    else if (score === 5) unlock('barely_passed');
+  }, [showResult, score, totalQuestions, unlock]);
+
+  if (!selectedProfessor || quizData.length === 0) return null;
+
   const isAproved = score >= 5;
   const profPhoto = professorPhotos[selectedProfessor.id];
-
-  // Score-based achievements — fires once when result screen appears
-  useEffect(() => {
-    if (!showResult) return;
-    if (score === totalQuestions) unlock('top_student');
-    if (score === 0) unlock('ask_chatgpt');
-    if (score === 5) unlock('barely_passed');
-  }, [showResult]);
 
   return (
     <div className="h-screen w-full overflow-hidden flex items-center justify-center p-2 relative font-sans">
@@ -526,7 +537,7 @@ const Quiz: React.FC = () => {
               </div>
 
               <div className="flex justify-between items-center text-[8px] text-gray-400 font-bold uppercase italic mt-4 pt-2 border-t border-dotted border-gray-300">
-                <span>UERN_2025_RES_{score}</span>
+                <span>UERN_2026_RES_{score}</span>
                 <span className="animate-pulse">Sincronizando com SIGAA...</span>
               </div>
             </motion.div>

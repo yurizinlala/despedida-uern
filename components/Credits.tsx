@@ -62,13 +62,11 @@ const Credits: React.FC = () => {
     // Crawl duration
     const CRAWL_DURATION = 80; // seconds
 
-    // Play / stop crawl music
     useEffect(() => {
-        const audio = new Audio('/sounds/starwars-credits.mp3');
+        const audio = playSound('/sounds/starwars-credits.mp3');
         audio.loop = true;
         audio.volume = 0.5;
         crawlAudioRef.current = audio;
-        audio.play().catch(() => { });
         return () => { audio.pause(); audio.src = ''; };
     }, []);
 
@@ -165,11 +163,11 @@ const Credits: React.FC = () => {
                         >
                             {/* Opening */}
                             <div className="space-y-4">
-                                <p className="text-lg tracking-[0.5em] uppercase text-blue-300/60">Uma produção Yurizinlala</p>
+                                <p className="text-lg tracking-[0.5em] uppercase text-blue-300/60">Uma produção de yurizinlala</p>
                                 <h1 className="font-cinzel text-6xl md:text-7xl text-yellow-400 leading-tight">
                                     DESPEDIDA<br />ACADÊMICA
                                 </h1>
-                                <p className="text-base tracking-[0.3em] text-yellow-500/50">GRADUATION ADVENTURE 2025</p>
+                                <p className="text-base tracking-[0.3em] text-yellow-500/50">GRADUATION ADVENTURE 2026</p>
                             </div>
 
                             {/* Dedication */}
@@ -179,7 +177,7 @@ const Credits: React.FC = () => {
                                 <div className="text-lg leading-loose text-yellow-400/70 space-y-2">
                                     <p>Pela paciência infinita,</p>
                                     <p>pelo conhecimento compartilhado,</p>
-                                    <p>pelos cafés frios e noites de código,</p>
+                                    <p>pelas listas e noites de código,</p>
                                     <p>por cada bug resolvido no quadro,</p>
                                     <p>e por transformar curiosidade em carreira.</p>
                                 </div>
@@ -192,7 +190,7 @@ const Credits: React.FC = () => {
                                     <p>React 19 · TypeScript · Vite</p>
                                     <p>Framer Motion · Tailwind CSS</p>
                                     <p>Lucide Icons · html2canvas · jsPDF</p>
-                                    <p>Cafeína Pura · Vontade de se Formar</p>
+                                    <p>Toddynho Puro · Vontade de se Formar</p>
                                 </div>
                             </div>
 
@@ -213,8 +211,8 @@ const Credits: React.FC = () => {
                                     <p>Aos indianos do YouTube</p>
                                     <p>Ao Stack Overflow</p>
                                     <p>Aos grupos de WhatsApp da turma</p>
-                                    <p>Ao café da cantina (mesmo sendo fraco)</p>
-                                    <p>À padaria do Seu Jorge</p>
+                                    <p>Ao salgado de Poli Lanches</p>
+                                    <p>À uma dúzia de IAs diferentes</p>
                                     <p>E a todos os professores que não desistiram</p>
                                 </div>
                             </div>
@@ -222,9 +220,9 @@ const Credits: React.FC = () => {
                             {/* Developer */}
                             <div className="space-y-6">
                                 <p className="text-lg tracking-widest uppercase text-yellow-500/70">Desenvolvido por</p>
-                                <h3 className="text-3xl font-cinzel text-white">YURI ZINLALA</h3>
-                                <p className="text-base text-gray-500">Ciência da Computação — UERN 2025</p>
-                                <p className="text-base text-gray-600 italic">Campus Natal — Setor IV</p>
+                                <h3 className="text-3xl font-cinzel text-white">Yuri Dantas da Silva</h3>
+                                <p className="text-base text-gray-500">Ciência da Computação — UERN 2026</p>
+                                <p className="text-base text-gray-600 italic">Campus Natal</p>
                             </div>
 
                             {/* Closing */}

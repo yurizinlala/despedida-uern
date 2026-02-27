@@ -98,10 +98,20 @@ A aplicação possui um sistema completo de **25 conquistas** com pontuação in
 
 O sistema suporta múltiplos perfis de professores com dados totalmente personalizados:
 
-| Professor | Tema | Matérias | Senha |
-|-----------|------|----------|-------|
-| **Prof. Dr. Raul Benites Paradeda** | `web` (rosa/roxo) | Intro à Programação, IHC, Web Dev, Computação Afetiva | `afeto` |
-| **Profa. Dra. Camila de Araújo Sena** | `logic` (azul) | Lógica Matemática, ED, Grafos, Compiladores | `grafo` |
+| Professor(a) | Tema | Matérias | Senha |
+|-------------|------|----------|-------|
+| **Prof. Dr. Raul Benites Paradeda** | `web` | Intro à Programação, IHC, Web Dev, Computação Afetiva | `afeto` |
+| **Profa. Dra. Camila de Araújo Sena** | `logic` | Lógica Matemática, ED, Grafos, Compiladores | `dijkstra` |
+| **Profa. Adriana Bessa Vasconcelos** | `math` | Álgebra, Cálculo, IA, Comp. Gráfica | `limite` |
+| **Profa. Dra. Gláucia Braga e Silva** | `sysop` | SO, Computadores e Sociedade | `sudo` |
+| **Profa. Dra. Rosiery Silva** | `math` | Matemática Fundamental, Desafios, Complexidade | `puzzle` |
+| **Profa. Dra. Bartira Soares** | `db` | Banco de Dados, Métodos Formais, Projeto TCC | `select` |
+| **Prof. Me. André Gustavo** | `distributed` | Paradigmas, Sist. Distribuídos, Python | `docker` |
+| **Prof. Dr. Anderson Abner** | `hardware` | Circuitos, Arquitetura, Robótica | `arduino` |
+| **Prof. Me. Felipe Denis** | `network` | Redes, Transmissão, Embarcados | `tcp` |
+| **Prof. Dr. Carlos André** | `manager` | Metodologia, TCC, Matemática Fundamental | `abnt` |
+| **Prof. Dr. Bruno Cruz** | `parallel` | Programação Paralela | `thread` |
+| **Prof. Dr. Wilfredo Blanco** | `manager` | Análise de Sistemas | `uml` |
 
 Cada professor possui:
 - **Wrapped personalizado**: extrato acadêmico, métricas de estresse, aura, trilha sonora, word-cloud, arquétipo tech
@@ -293,7 +303,7 @@ npm run preview
 
 | Dado | Chave localStorage | Descrição |
 |------|-------------------|-----------|
-| Conquistas | `achievements_unlocked` | Array de IDs das conquistas desbloqueadas |
+| Conquistas | `despedida_achievements` | Array de IDs das conquistas desbloqueadas |
 | Stage do jogo | `grad_adventure_stage` | Progresso sequencial (0-3) |
 
 ---
@@ -308,6 +318,6 @@ Projeto acadêmico criado com ❤️ como homenagem aos professores da UERN.
 
 *"Obrigado por tudo, professores. Pelo conhecimento, pela paciência e por cada bug resolvido no quadro."* 🎓
 
-**UERN — Campus Natal — Ciência da Computação — 2025**
+**UERN — Campus Natal — Ciência da Computação — 2026**
 
 </div>
