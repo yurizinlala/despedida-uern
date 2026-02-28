@@ -101,17 +101,17 @@ O sistema suporta múltiplos perfis de professores com dados totalmente personal
 | Professor(a) | Tema | Matérias | Senha |
 |-------------|------|----------|-------|
 | **Prof. Dr. Raul Benites Paradeda** | `web` | Intro à Programação, IHC, Web Dev, Computação Afetiva | `afeto` |
-| **Profa. Dra. Camila de Araújo Sena** | `logic` | Lógica Matemática, ED, Grafos, Compiladores | `dijkstra` |
-| **Profa. Adriana Bessa Vasconcelos** | `math` | Álgebra, Cálculo, IA, Comp. Gráfica | `limite` |
-| **Profa. Dra. Gláucia Braga e Silva** | `sysop` | SO, Computadores e Sociedade | `sudo` |
-| **Profa. Dra. Rosiery Silva** | `math` | Matemática Fundamental, Desafios, Complexidade | `puzzle` |
-| **Profa. Dra. Bartira Soares** | `db` | Banco de Dados, Métodos Formais, Projeto TCC | `select` |
-| **Prof. Me. André Gustavo** | `distributed` | Paradigmas, Sist. Distribuídos, Python | `docker` |
-| **Prof. Dr. Anderson Abner** | `hardware` | Circuitos, Arquitetura, Robótica | `arduino` |
-| **Prof. Me. Felipe Denis** | `network` | Redes, Transmissão, Embarcados | `tcp` |
-| **Prof. Dr. Carlos André** | `manager` | Metodologia, TCC, Matemática Fundamental | `abnt` |
-| **Prof. Dr. Bruno Cruz** | `parallel` | Programação Paralela | `thread` |
-| **Prof. Dr. Wilfredo Blanco** | `manager` | Análise de Sistemas | `uml` |
+| **Profa. Dra. Camila de Araújo Sena** | `logic` | Lógica Matemática, ED, Eng. Software, Linguagens Formais, Grafos, Compiladores | `dijkstra` |
+| **Profa. Dra. Adriana Takahashi** | `math` | Álgebra Linear, Cálculo Numérico, IA, Computação Gráfica | `codelab` |
+| **Profa. Msc. Gláucia Melissa Medeiros Campos** | `sysop` | Sistemas Operacionais, Computadores e Sociedade | `podcast` |
+| **Profa. Dra. Rosiery da Silva Maia** | `math` | Matemática Fundamental, Desafios de Programação, Complexidade, TGA e Empreendedorismo | `crianças` |
+| **Profa. Dra. Bartira Paraguaçu Falcão Dantas Rocha** | `db` | Banco de Dados, Métodos Formais, Projeto de TCC | `orientadora` |
+| **Prof. Msc. André Gustavo Pereira da Silva** | `web` | Paradigmas, Sist. Distribuídos, Projeto de Graduação, Prática II | `notadez` |
+| **Prof. Dr. Anderson Abner de Santana Souza** | `hardware` | Circuitos Digitais, Sistemas Digitais, Arquitetura, Arq. Avançada, Robótica | `theconstruct` |
+| **Prof. Dr. Felipe Denis Mendonça de Oliveira** | `sysop` | Geometria Analítica, Redes, Transmissão de Dados, Sistemas Embarcados | `vampirao` |
+| **Prof. Dr. Carlos André Guerra Fonseca** | `manager` | Matemática Fundamental, Metodologia Científica, TCC | `normas` |
+| **Prof. Msc. Bruno Cruz de Oliveira** | `parallel` | Programação Paralela | `paralela` |
+| **Prof. Dr. Wilfredo Blanco Figuerola** | `manager` | Análise de Sistemas | `requisitos` |
 
 Cada professor possui:
 - **Wrapped personalizado**: extrato acadêmico, métricas de estresse, aura, trilha sonora, word-cloud, arquétipo tech

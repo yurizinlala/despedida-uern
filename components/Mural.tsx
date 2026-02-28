@@ -284,13 +284,22 @@ const Mural: React.FC = () => {
     const renderPhotoContent = () => (
         <div className="flex flex-col items-center gap-4">
             <div className="p-4 bg-white shadow-lg border border-gray-200 transform -rotate-1">
-                <img
-                    src={photoItem?.content}
-                    alt="Foto da turma"
-                    className="max-w-full max-h-[280px] h-auto grayscale hover:grayscale-0 transition-all duration-1000 cursor-pointer"
-                />
+                {photoItem?.content ? (
+                    <img
+                        src={photoItem.content}
+                        alt="Foto com o professor"
+                        className="w-[480px] h-[340px] object-cover grayscale hover:grayscale-0 transition-all duration-1000 cursor-pointer"
+                    />
+                ) : (
+                    <div className="w-[480px] h-[340px] bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center gap-3 px-6 text-center">
+                        <span className="text-4xl">📷</span>
+                        <p className="text-gray-500 text-xs italic font-serif leading-relaxed">
+                            {photoItem?.meta}
+                        </p>
+                    </div>
+                )}
                 <div className="mt-4 border-t border-gray-200 pt-3 flex justify-between items-center">
-                    <p className="font-serif text-lg italic text-blue-900">{photoItem?.meta}</p>
+                    <p className="font-serif text-lg italic text-blue-900">{photoItem?.content ? photoItem?.meta : 'Sem registro, mas com saudade.'}</p>
                     <div className="text-[10px] text-gray-400 font-w95">{today}</div>
                 </div>
             </div>

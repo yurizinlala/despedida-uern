@@ -65,7 +65,7 @@ export const professors: Professor[] = [
       {
         id: 'photo-raul',
         type: 'polaroid',
-        content: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+        content: "/assets/raul.jpg",
         meta: "O melhor professor de IHC",
         style: { x: 10, y: 60, rotation: -5 }
       }
@@ -181,7 +181,7 @@ export const professors: Professor[] = [
       {
         id: 'photo-camila',
         type: 'polaroid',
-        content: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+        content: "/assets/camila.jpg",
         meta: "Quadro cheio de grafos",
         style: { x: 75, y: 65, rotation: 8 }
       }
@@ -303,7 +303,7 @@ export const professors: Professor[] = [
       {
         id: 'photo-adriana',
         type: 'polaroid',
-        content: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+        content: "/assets/takahashi.jpg",
         meta: "A matriz que me venceu",
         style: { x: 70, y: 62, rotation: 6 }
       }
@@ -431,8 +431,8 @@ export const professors: Professor[] = [
       {
         id: 'photo-glaucia',
         type: 'polaroid',
-        content: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-        meta: "Tribunal de Fake News (lendário)",
+        content: "",
+        meta: "Não tiramos fotos juntos, mas você estará pra sempre no meu coração.",
         style: { x: 68, y: 62, rotation: 7 }
       }
     ],
@@ -556,6 +556,13 @@ export const professors: Professor[] = [
         type: 'note',
         content: "Professora Rosiery,\n\nMinha primeira impressão com você veio lá em Matemática Fundamental. Logo de cara deu pra perceber que você não era uma professora comum. Tinha dinâmica, tinha gincana, tinha lista, tinha sondagem — você sempre queria saber o que a gente realmente entendia antes de seguir em frente. A matéria já era difícil por natureza, e você sempre deixou claro que não fazia sentido transformar isso em trauma. Você explicava com calma, com paciência, e tornava tudo mais leve. Não à toa, enquanto era você na matéria, as notas iam bem.\n\nDepois vieram outras ondas. Em Desafios de Programação, você chegou com uma proposta muito clara: pensar. Pensar de verdade. Nada de internet, nada de GPT, nada de atalhos mágicos. Era a lógica nua e crua. Lembro bem da Torre de Hanoi — no brinquedo e no código — e de como aquilo parecia simples… até não ser. Pensar logicamente e matematicamente nunca foi meu ponto mais forte, então confesso que a matéria inteira me quebrava um pouco. Mas você nunca deixou virar desespero. Sempre acompanhou, passou lista, ajudou, puxou, acreditou. E isso fez toda a diferença.\n\nEm Complexidade de Algoritmos, você deixou uma marca que eu nunca esqueci. A definição de complexidade, do porquê não basta o código funcionar, mas sim funcionar bem, otimizado, eficiente — isso ficou comigo. Entender O(n), O(log n), comparar soluções, analisar prós e contras… eu lembro de escrever tabelas inteiras na prova só pra tentar visualizar o comportamento das funções. Era confuso, era difícil, mas fazia sentido. E hoje eu penso código de um jeito muito diferente por causa disso.\n\nJá em Teoria Geral da Administração e Empreendedorismo, você abriu outra porta. Mesmo sendo uma matéria mais teórica — e eu não sendo o maior fã disso — você conseguiu trazer tudo para o nosso universo. Falou de empreendedorismo, de produto, de ideias, de computação aplicada ao mundo real. E quando veio o projeto final… pronto. Desenvolver um produto, pensar no cliente, usar Figma, montar apresentação, estruturar tudo em grupo — eu amei. Descobri ali que talvez eu não seja líder, mas sou apaixonado por fazer parte de equipes, pensar no produto final e no impacto dele.\n\nMas o momento mais marcante com você, sem dúvida, foi o TCC. Você aceitar ser minha co-orientadora mudou tudo. Foi graças a você que a ideia tomou forma, que o projeto ganhou corpo. Você apoiou, sugeriu, corrigiu, cobrou quando precisava e até ofereceu sua própria mãe como usuária de teste. Isso não é pouca coisa.\n\nEu nunca vou esquecer o dia da apresentação, quando você pediu desculpa por ter sumido e disse que não tinha sido uma boa orientadora. E eu discordo profundamente disso. Orientar não é estar disponível 24 horas por dia. Orientar é direcionar, influenciar, dar segurança, corrigir quando precisa e manter o aluno no caminho certo. E você fez exatamente isso. Eu apresentei meu TCC confiante porque confiei nas suas orientações. E isso vale mais do que presença constante.\n\nVocê sempre foi motivadora. Nunca aceitou ver ninguém para baixo. Sempre perguntou se a gente estava bem. Sempre incentivou sonhos. Sempre chamou a gente de \"garoto\". E eu espero, de verdade, ser eternamente o garoto da Rosiery. Mesmo quando você parecia sumir como o Mestre dos Magos, você nunca deixou ninguém na mão.\n\nObrigado por acreditar em mim, por me desafiar, por me apoiar e por me ajudar a chegar até o fim. Você não foi uma orientadora de coração. Você foi — e é — uma orientadora de verdade. E tem um lugar muito especial no meu coração.\n\nCom carinho e admiração,\nGaroto Yuri",
         style: { x: 32, y: 24, rotation: -2 }
+      },
+      {
+        id: 'photo-rosiery',
+        type: 'polaroid',
+        content: "/assets/rosiery.jpg",
+        meta: "BOM DIA, CRIANÇAS!",
+        style: { x: 68, y: 62, rotation: 5 }
       }
     ],
     wrapped: {
@@ -676,7 +683,7 @@ export const professors: Professor[] = [
       {
         id: 'photo-bartira',
         type: 'polaroid',
-        content: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+        content: "/assets/bartira.jpg",
         meta: "DER, café e conselhos (combo mortal)",
         style: { x: 68, y: 62, rotation: 6 }
       }
@@ -809,7 +816,7 @@ export const professors: Professor[] = [
       {
         id: 'photo-andre-gustavo',
         type: 'polaroid',
-        content: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+        content: "/assets/andre.jpg",
         meta: "Sem Uber. Sem lanche. Só nota 10.",
         style: { x: 66, y: 62, rotation: 7 }
       }
@@ -942,8 +949,8 @@ export const professors: Professor[] = [
       {
         id: 'photo-anderson-abner',
         type: 'polaroid',
-        content: "https://images.unsplash.com/photo-1581090700227-1e37b190418e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-        meta: "LEDs, robôs e um “show” no final",
+        content: "",
+        meta: "Não tiramos fotos juntos, mas você estará pra sempre no meu coração.",
         style: { x: 66, y: 62, rotation: 7 }
       }
     ],
@@ -1081,8 +1088,8 @@ export const professors: Professor[] = [
       {
         id: 'photo-felipe-denis',
         type: 'polaroid',
-        content: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-        meta: "Pacotes, sinais, sensores… e respostas 02:13 no Telegram.",
+        content: "",
+        meta: "Não tiramos fotos juntos, mas você estará pra sempre no meu coração.",
         style: { x: 66, y: 62, rotation: 8 }
       }
     ],
@@ -1215,8 +1222,8 @@ export const professors: Professor[] = [
       {
         id: 'photo-carlos-andre',
         type: 'polaroid',
-        content: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=500&auto=format&fit=crop&q=60",
-        meta: "O guardião das normas e do 9,5.",
+        content: "",
+        meta: "Não tiramos fotos juntos, mas você estará pra sempre no meu coração.",
         style: { x: 65, y: 60, rotation: 6 }
       }
     ],
@@ -1337,7 +1344,7 @@ export const professors: Professor[] = [
       {
         id: 'photo-bruno',
         type: 'polaroid',
-        content: "https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=500&auto=format&fit=crop&q=60",
+        content: "/assets/bruno.jpg",
         meta: "Threads, Linux e um 10.0 rodando em múltiplos núcleos.",
         style: { x: 65, y: 60, rotation: 6 }
       }
@@ -1455,6 +1462,13 @@ export const professors: Professor[] = [
         type: 'note',
         content: "Professor Wilfredo,\n\nAnálise de Sistemas foi, tecnicamente falando, Engenharia de Software 2.0.\n\nMesma essência, mesmo princípio ativo do remédio: requisitos funcionais, não funcionais, casos de uso, levantamento, validação, documentação… mas com aquele tempero especial do portunhol.\n\nE eu nunca tinha tido um professor estrangeiro antes. Um cubano explicando requisitos com sotaque latino transforma qualquer sala em experiência internacional.\n\n\"Requisitos\" nunca mais foi a mesma palavra.\n\nO projeto da escola para pessoas com TEA foi um dos trabalhos mais humanos que eu já fiz na graduação. Eu vi o quanto o senhor se empolgou com a ideia. Vi o brilho nos olhos. Vi o interesse genuíno. E isso marcou.\n\nPeço até desculpa por não ter seguido com o tema depois, mas foi bonito ver um professor acreditar no potencial do nosso projeto mais do que a gente às vezes acreditava.\n\nEntre idas e vindas, correções, ajustes, requisitos mal escritos, casos de uso reescritos três vezes… aprendemos disciplina. Organização. Estrutura.\n\nE no meio de tudo isso…\n\nA aula de salsa.\n\nEu até hoje não sei qual era o contexto técnico que levou a gente a aprender passos latinos no meio de uma disciplina de modelagem de sistemas. Mas eu sei que foi uma das aulas mais memoráveis da graduação.\n\nAli eu entendi uma coisa: sistema também é ritmo. Se cada parte não estiver coordenada, vira bagunça. Se cada passo não estiver sincronizado, alguém pisa no pé do outro.\n\nO senhor ensinou requisitos.\nMas também ensinou leveza.\n\nE sempre que eu encontrar o senhor no corredor, a única coisa possível de dizer é:\n\nE aí, professor… requisitos?\n\nCom respeito e um leve sotaque imaginário,\n\nYuri Alejandro Valdez Ramón Gutierrez de la Computación y los Requisitos Funcionales",
         style: { x: 35, y: 20, rotation: -2 }
+      },
+      {
+        id: 'photo-wilfredo',
+        type: 'polaroid',
+        content: "/assets/wilfredo.jpg",
+        meta: "Requisitos, salsa e um portunhol que ficou na alma.",
+        style: { x: 65, y: 60, rotation: 7 }
       }
     ],
     wrapped: {
