@@ -55,8 +55,6 @@ const Credits: React.FC = () => {
     const navigate = useNavigate();
     const [phase, setPhase] = useState<'crawl' | 'video' | 'achievements'>('crawl');
     const [crawlDone, setCrawlDone] = useState(false);
-    const [videoPlaying, setVideoPlaying] = useState(false);
-    const videoRef = useRef<HTMLVideoElement>(null);
     const crawlAudioRef = useRef<HTMLAudioElement | null>(null);
     const { unlock, isUnlocked } = useAchievements();
 
@@ -260,52 +258,14 @@ const Credits: React.FC = () => {
                         className="absolute inset-0 flex items-center justify-center z-10 bg-black"
                     >
                         <div className="relative w-full h-full flex items-center justify-center">
-                            <video
-                                ref={videoRef}
-                                className="w-full h-full object-contain"
-                                src="/assets/farewell-video.mp4"
-                                preload="auto"
-                                onEnded={() => {
-                                    if (document.fullscreenElement) {
-                                        document.exitFullscreen().catch(() => { });
-                                    }
-                                    handleVideoEnd();
-                                }}
-                                onPlay={(e) => {
-                                    setVideoPlaying(true);
-                                    const el = e.currentTarget;
-                                    if (el.requestFullscreen) {
-                                        el.requestFullscreen().catch(() => { });
-                                    }
-                                }}
-                                onError={() => {
-                                    // If video fails to load, skip to achievements
-                                    handleVideoEnd();
-                                }}
-                                controls
-                                playsInline
+                            <iframe
+                                className="w-full h-full"
+                                src="https://www.youtube.com/embed/N3nTAGLb3y8?autoplay=1&rel=0&modestbranding=1"
+                                title="Vídeo de Despedida"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                                allowFullScreen
+                                frameBorder="0"
                             />
-
-                            {/* Play button overlay (click to start) */}
-                            {!videoPlaying && (
-                                <div
-                                    className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer group"
-                                    onClick={() => {
-                                        if (videoRef.current) {
-                                            videoRef.current.play().catch(() => { });
-                                        }
-                                    }}
-                                >
-                                    <motion.div
-                                        initial={{ scale: 0.8, opacity: 0 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        className="w-24 h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:bg-white/20 transition-all"
-                                    >
-                                        <div className="w-0 h-0 border-t-[18px] border-t-transparent border-b-[18px] border-b-transparent border-l-[30px] border-l-white ml-2" />
-                                    </motion.div>
-                                    <p className="mt-6 text-white/40 text-xs font-mono uppercase tracking-widest">Clique para assistir</p>
-                                </div>
-                            )}
 
                             {/* Skip video button */}
                             <button
