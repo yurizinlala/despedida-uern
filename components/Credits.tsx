@@ -92,6 +92,62 @@ const Credits: React.FC = () => {
         return () => clearTimeout(timer);
     }, []);
 
+    // YouTube IFrame Player API - detect video end & hide controls
+    useEffect(() => {
+        if (phase !== 'video') return;
+
+        // Load YouTube IFrame API script if not loaded
+        const loadYTApi = () => {
+            return new Promise<void>((resolve) => {
+                if ((window as any).YT && (window as any).YT.Player) {
+                    resolve();
+                    return;
+                }
+                const tag = document.createElement('script');
+                tag.src = 'https://www.youtube.com/iframe_api';
+                document.head.appendChild(tag);
+                (window as any).onYouTubeIframeAPIReady = () => resolve();
+            });
+        };
+
+        let player: any = null;
+
+        loadYTApi().then(() => {
+            const container = document.getElementById('yt-player');
+            if (!container) return;
+
+            player = new (window as any).YT.Player('yt-player', {
+                videoId: 'N3nTAGLb3y8',
+                width: '100%',
+                height: '100%',
+                playerVars: {
+                    autoplay: 1,
+                    controls: 0,
+                    disablekb: 1,
+                    rel: 0,
+                    modestbranding: 1,
+                    iv_load_policy: 3,
+                    fs: 0,
+                    showinfo: 0,
+                },
+                events: {
+                    onStateChange: (event: any) => {
+                        // 0 = ENDED
+                        if (event.data === 0) {
+                            handleVideoEnd();
+                        }
+                    },
+                },
+            });
+        });
+
+        return () => {
+            if (player && player.destroy) {
+                player.destroy();
+            }
+        };
+    }, [phase]);
+
     const skipToVideo = () => {
         setCrawlDone(true);
         unlock('no_time');
@@ -258,14 +314,7 @@ const Credits: React.FC = () => {
                         className="absolute inset-0 flex items-center justify-center z-10 bg-black"
                     >
                         <div className="relative w-full h-full flex items-center justify-center">
-                            <iframe
-                                className="w-full h-full"
-                                src="https://www.youtube.com/embed/N3nTAGLb3y8?autoplay=1&rel=0&modestbranding=1"
-                                title="Vídeo de Despedida"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                                allowFullScreen
-                                frameBorder="0"
-                            />
+                            <div id="yt-player" className="w-full h-full" />
 
                             {/* Skip video button */}
                             <button
