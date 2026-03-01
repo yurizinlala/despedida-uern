@@ -55,6 +55,7 @@ const Credits: React.FC = () => {
     const navigate = useNavigate();
     const [phase, setPhase] = useState<'crawl' | 'video' | 'achievements'>('crawl');
     const [crawlDone, setCrawlDone] = useState(false);
+    const [videoPlaying, setVideoPlaying] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
     const crawlAudioRef = useRef<HTMLAudioElement | null>(null);
     const { unlock, isUnlocked } = useAchievements();
@@ -256,33 +257,59 @@ const Credits: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 flex items-center justify-center z-10"
+                        className="absolute inset-0 flex items-center justify-center z-10 bg-black"
                     >
-                        <div className="relative w-full max-w-3xl aspect-video bg-black/80 border border-white/10 shadow-2xl">
+                        <div className="relative w-full h-full flex items-center justify-center">
                             <video
                                 ref={videoRef}
                                 className="w-full h-full object-contain"
-                                onEnded={handleVideoEnd}
-                                autoPlay
+                                onEnded={() => {
+                                    if (document.fullscreenElement) {
+                                        document.exitFullscreen().catch(() => { });
+                                    }
+                                    handleVideoEnd();
+                                }}
+                                onPlay={(e) => {
+                                    setVideoPlaying(true);
+                                    const el = e.currentTarget;
+                                    if (el.requestFullscreen) {
+                                        el.requestFullscreen().catch(() => { });
+                                    }
+                                }}
+                                controls
                                 playsInline
                             >
                                 <source src="/assets/farewell-video.mp4" type="video/mp4" />
-                                {/* Fallback if no video found */}
                             </video>
+
+                            {/* Play button overlay (click to start) */}
+                            {!videoPlaying && (
+                                <div
+                                    className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer group"
+                                    onClick={() => {
+                                        if (videoRef.current) {
+                                            videoRef.current.play().catch(() => { });
+                                        }
+                                    }}
+                                >
+                                    <motion.div
+                                        initial={{ scale: 0.8, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        className="w-24 h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:bg-white/20 transition-all"
+                                    >
+                                        <div className="w-0 h-0 border-t-[18px] border-t-transparent border-b-[18px] border-b-transparent border-l-[30px] border-l-white ml-2" />
+                                    </motion.div>
+                                    <p className="mt-6 text-white/40 text-xs font-mono uppercase tracking-widest">Clique para assistir</p>
+                                </div>
+                            )}
 
                             {/* Skip video button */}
                             <button
                                 onClick={skipVideo}
-                                className="absolute bottom-4 right-4 bg-black/60 hover:bg-black/80 border border-white/20 px-4 py-2 text-[10px] text-white/60 hover:text-white flex items-center gap-2 transition-all uppercase tracking-widest backdrop-blur-sm z-20"
+                                className="absolute bottom-6 right-6 bg-black/60 hover:bg-black/80 border border-white/20 px-4 py-2 text-[10px] text-white/60 hover:text-white flex items-center gap-2 transition-all uppercase tracking-widest backdrop-blur-sm z-20"
                             >
                                 <SkipForward size={12} /> Pular Vídeo
                             </button>
-
-                            {/* If video doesn't load, show placeholder */}
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-white/30 pointer-events-none">
-                                <GraduationCap size={48} className="mb-4 opacity-20" />
-                                <p className="text-xs opacity-20 font-mono">farewell-video.mp4</p>
-                            </div>
                         </div>
                     </motion.div>
                 )}
