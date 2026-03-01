@@ -263,6 +263,8 @@ const Credits: React.FC = () => {
                             <video
                                 ref={videoRef}
                                 className="w-full h-full object-contain"
+                                src="/assets/farewell-video.mp4"
+                                preload="auto"
                                 onEnded={() => {
                                     if (document.fullscreenElement) {
                                         document.exitFullscreen().catch(() => { });
@@ -276,11 +278,13 @@ const Credits: React.FC = () => {
                                         el.requestFullscreen().catch(() => { });
                                     }
                                 }}
+                                onError={() => {
+                                    // If video fails to load, skip to achievements
+                                    handleVideoEnd();
+                                }}
                                 controls
                                 playsInline
-                            >
-                                <source src="/assets/farewell-video.mp4" type="video/mp4" />
-                            </video>
+                            />
 
                             {/* Play button overlay (click to start) */}
                             {!videoPlaying && (
